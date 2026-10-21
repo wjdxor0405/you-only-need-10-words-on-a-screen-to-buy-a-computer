@@ -42,6 +42,7 @@ Build mode: fast
 ## Hands-on Checkpoints
 
 - [ ] Early usable behavior explored — after slice 1 (the verdict and evidence screen; does it convince?)
+  Feedback: "Only text" → added a price range bar (quoted vs. reasonable range, typical, listings) and part-type icons; awaiting the learner's retry.
 - [ ] Final kick-the-tires exploration and feedback completed
 
 ## Final Review

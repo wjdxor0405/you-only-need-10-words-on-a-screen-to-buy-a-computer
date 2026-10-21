@@ -251,7 +251,7 @@ select {
 .result-summary {
   width: 100%;
   display: grid;
-  grid-template-columns: 96px 1fr auto 16px;
+  grid-template-columns: 88px 1fr auto 16px;
   grid-template-areas:
     'type name price chevron'
     'type verdict verdict chevron';
@@ -267,8 +267,22 @@ select {
 
 .part-type {
   grid-area: type;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
   color: var(--muted);
-  font-size: 0.875rem;
+  font-size: 0.8125rem;
+}
+
+.part-icon {
+  width: 28px;
+  height: 28px;
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
 .part-name {
@@ -344,4 +358,126 @@ select {
   color: var(--muted);
   font-size: 0.8125rem;
   font-style: italic;
+}
+
+/* Price bar */
+.price-bar {
+  margin: 16px 0 4px;
+}
+
+.price-bar-labels {
+  position: relative;
+  height: 22px;
+  font-size: 0.8125rem;
+}
+
+.price-label {
+  position: absolute;
+  white-space: nowrap;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.price-label.quoted {
+  color: var(--verdict);
+  font-weight: 700;
+}
+
+.verdict-cant_verify.price-label.quoted {
+  color: var(--text);
+}
+
+.anchor-middle {
+  transform: translateX(-50%);
+}
+
+.anchor-end {
+  transform: translateX(-100%);
+}
+
+.price-bar-labels.top .price-label {
+  bottom: 2px;
+}
+
+.price-bar-labels.bottom .price-label {
+  top: 4px;
+}
+
+.price-bar-track {
+  position: relative;
+  height: 14px;
+  background: #e9edf5;
+  border-radius: 7px;
+}
+
+.price-bar-band {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  background: color-mix(in srgb, var(--ok) 28%, transparent);
+  border: 1px solid color-mix(in srgb, var(--ok) 55%, transparent);
+  border-radius: 7px;
+}
+
+.price-bar-listing {
+  position: absolute;
+  top: 50%;
+  width: 6px;
+  height: 6px;
+  margin: -3px 0 0 -3px;
+  border-radius: 50%;
+  background: var(--muted);
+}
+
+.price-bar-typical {
+  position: absolute;
+  top: -4px;
+  bottom: -4px;
+  width: 2px;
+  margin-left: -1px;
+  background: var(--text);
+}
+
+.price-bar-quoted {
+  position: absolute;
+  top: 50%;
+  width: 18px;
+  height: 18px;
+  margin: -9px 0 0 -9px;
+  border-radius: 50%;
+  background: var(--verdict);
+  border: 3px solid var(--surface);
+  box-shadow: 0 0 0 1px var(--verdict);
+}
+
+.price-bar-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-top: 6px;
+  font-size: 0.8125rem;
+  color: var(--muted);
+}
+
+.price-bar-legend > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.legend-band {
+  display: inline-block;
+  width: 18px;
+  height: 10px;
+  border-radius: 5px;
+  background: color-mix(in srgb, var(--ok) 28%, transparent);
+  border: 1px solid color-mix(in srgb, var(--ok) 55%, transparent);
+}
+
+.legend-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--muted);
 }

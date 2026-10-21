@@ -1,5 +1,7 @@
 import { useState } from 'react'
 import type { LineResult, Verdict } from '../types'
+import PartIcon from './PartIcon'
+import PriceBar from './PriceBar'
 
 export const VERDICT_LABEL: Record<Verdict, string> = {
   reasonable: 'Reasonable',
@@ -31,7 +33,10 @@ export default function ResultRow({ result, ruleText, sampleNote }: Props) {
   return (
     <li className={`result-row verdict-${verdict}`}>
       <button className="result-summary" aria-expanded={open} onClick={() => setOpen(!open)}>
-        <span className="part-type">{line.part_type}</span>
+        <span className="part-type">
+          <PartIcon type={line.part_type} />
+          {line.part_type}
+        </span>
         <span className="part-name">{line.name}</span>
         <span className="part-price">{usd(line.price_usd)}</span>
         <span className="verdict">
@@ -44,6 +49,12 @@ export default function ResultRow({ result, ruleText, sampleNote }: Props) {
         <div className="evidence">
           {result.typical_price_usd !== null ? (
             <>
+              <PriceBar
+                quoted={line.price_usd}
+                typical={result.typical_price_usd}
+                listings={result.listings}
+                verdict={verdict}
+              />
               <p>
                 Quoted <strong>{usd(line.price_usd)}</strong> · typical price{' '}
                 <strong>{usd(result.typical_price_usd)}</strong>, the middle of these {result.listings.length} listings:
