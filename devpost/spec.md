@@ -65,11 +65,11 @@ cd server && uv sync
 cd ../web && npm install
 
 # every time — two terminals
-cd server && uv run uvicorn app.main:app --reload --port 8000
+cd server && uv run uvicorn app.main:app --reload --port 8010
 cd web && npm run dev           # open http://localhost:5173
 ```
 
-The Vite dev server forwards `/api/*` to port 8000, so the browser talks to one address.
+The Vite dev server forwards `/api/*` to port 8010, so the browser talks to one address.
 
 **For the demo recording:** open http://localhost:5173 → drag in `samples/sample-quote.png` → step ② → step ③ → expand one Reasonable row, the Worth questioning row, and the Can't verify row. Submission needs the video plus the public GitHub repo; `6-ship` handles both.
 
@@ -115,6 +115,7 @@ PRD ref: `prd.md > Reading the Quote`.
 `server/app/matcher.py`. Finds the sample product for a line name, or says why not.
 - Normalize: lowercase; drop spaces, hyphens, and punctuation.
 - Match if the normalized name contains a normalized alias of exactly one product of the same part type (aliases live in `prices.json`, e.g., `rtx4060`, `geforcertx4060`). More than one product matching → no match, reason "name too vague."
+- An alias followed by a model-variant suffix (`ti`, `super`, `xt`, `x3d`, `x`, `k`, `f`, ...) does not count: "RTX 4060 Ti" is not an RTX 4060.
 - **Vague-name check** (also drives the swap-risk note): after removing generic words (`ssd`, `nvme`, `hdd`, `psu`, `power supply`, `ram`, `memory`, `ddr4`, `ddr5`, `case`, `cooler`, ...) and sizes/ratings (`1tb`, `650w`, `16gb`, `80+ gold`, ...), nothing that looks like a maker or model is left.
 - Results: `matched(product)`, `vague` → Can't verify "name too vague," `not_found` → Can't verify "not in our sample data."
 PRD ref: `prd.md > Price Verdicts` (Can't verify), `prd.md > Swap-Risk Flag`.
@@ -193,7 +194,7 @@ devpost-basics/
 │       └── test_matcher.py     # alias match, vague names, not-in-sample
 ├── web/
 │   ├── package.json
-│   ├── vite.config.ts          # proxies /api to :8000
+│   ├── vite.config.ts          # proxies /api to :8010
 │   ├── index.html
 │   └── src/
 │       ├── main.tsx

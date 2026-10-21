@@ -1,0 +1,440 @@
+{
+  "note": "Sample prices for demonstration, not live data. Store names are fictional.",
+  "products": [
+    {
+      "id": "cpu-ryzen5-7600",
+      "part_type": "CPU",
+      "name": "AMD Ryzen 5 7600",
+      "aliases": [
+        "ryzen57600"
+      ],
+      "listings": [
+        {
+          "store": "Store A",
+          "price_usd": 192,
+          "date": "2026-10-03"
+        },
+        {
+          "store": "Store B",
+          "price_usd": 195,
+          "date": "2026-10-08"
+        },
+        {
+          "store": "Store C",
+          "price_usd": 199,
+          "date": "2026-10-12"
+        }
+      ]
+    },
+    {
+      "id": "cpu-ryzen7-7800x3d",
+      "part_type": "CPU",
+      "name": "AMD Ryzen 7 7800X3D",
+      "aliases": [
+        "ryzen77800x3d"
+      ],
+      "listings": [
+        {
+          "store": "Store A",
+          "price_usd": 449,
+          "date": "2026-10-03"
+        },
+        {
+          "store": "Store B",
+          "price_usd": 469,
+          "date": "2026-10-08"
+        },
+        {
+          "store": "Store C",
+          "price_usd": 479,
+          "date": "2026-10-12"
+        }
+      ]
+    },
+    {
+      "id": "cpu-i5-14400f",
+      "part_type": "CPU",
+      "name": "Intel Core i5-14400F",
+      "aliases": [
+        "i514400f"
+      ],
+      "listings": [
+        {
+          "store": "Store A",
+          "price_usd": 189,
+          "date": "2026-10-03"
+        },
+        {
+          "store": "Store B",
+          "price_usd": 199,
+          "date": "2026-10-08"
+        },
+        {
+          "store": "Store C",
+          "price_usd": 209,
+          "date": "2026-10-12"
+        }
+      ]
+    },
+    {
+      "id": "gpu-rtx4060",
+      "part_type": "GPU",
+      "name": "NVIDIA GeForce RTX 4060 8GB",
+      "aliases": [
+        "rtx4060"
+      ],
+      "listings": [
+        {
+          "store": "Store A",
+          "price_usd": 289,
+          "date": "2026-10-03"
+        },
+        {
+          "store": "Store B",
+          "price_usd": 299,
+          "date": "2026-10-08"
+        },
+        {
+          "store": "Store C",
+          "price_usd": 299,
+          "date": "2026-10-12"
+        },
+        {
+          "store": "Store D",
+          "price_usd": 309,
+          "date": "2026-10-15"
+        }
+      ]
+    },
+    {
+      "id": "gpu-rtx4070super",
+      "part_type": "GPU",
+      "name": "NVIDIA GeForce RTX 4070 SUPER 12GB",
+      "aliases": [
+        "rtx4070super"
+      ],
+      "listings": [
+        {
+          "store": "Store A",
+          "price_usd": 589,
+          "date": "2026-10-03"
+        },
+        {
+          "store": "Store B",
+          "price_usd": 599,
+          "date": "2026-10-08"
+        },
+        {
+          "store": "Store C",
+          "price_usd": 619,
+          "date": "2026-10-12"
+        }
+      ]
+    },
+    {
+      "id": "gpu-rx7600",
+      "part_type": "GPU",
+      "name": "AMD Radeon RX 7600 8GB",
+      "aliases": [
+        "rx7600"
+      ],
+      "listings": [
+        {
+          "store": "Store A",
+          "price_usd": 249,
+          "date": "2026-10-03"
+        },
+        {
+          "store": "Store B",
+          "price_usd": 259,
+          "date": "2026-10-08"
+        },
+        {
+          "store": "Store C",
+          "price_usd": 269,
+          "date": "2026-10-12"
+        }
+      ]
+    },
+    {
+      "id": "mb-msi-b650m-a",
+      "part_type": "Motherboard",
+      "name": "MSI PRO B650M-A WIFI",
+      "aliases": [
+        "prob650ma"
+      ],
+      "listings": [
+        {
+          "store": "Store A",
+          "price_usd": 155,
+          "date": "2026-10-03"
+        },
+        {
+          "store": "Store B",
+          "price_usd": 159,
+          "date": "2026-10-08"
+        },
+        {
+          "store": "Store C",
+          "price_usd": 165,
+          "date": "2026-10-12"
+        }
+      ]
+    },
+    {
+      "id": "mb-asus-tuf-b650-plus",
+      "part_type": "Motherboard",
+      "name": "ASUS TUF Gaming B650-PLUS WIFI",
+      "aliases": [
+        "tufgamingb650plus"
+      ],
+      "listings": [
+        {
+          "store": "Store A",
+          "price_usd": 179,
+          "date": "2026-10-03"
+        },
+        {
+          "store": "Store B",
+          "price_usd": 189,
+          "date": "2026-10-08"
+        },
+        {
+          "store": "Store C",
+          "price_usd": 199,
+          "date": "2026-10-12"
+        }
+      ]
+    },
+    {
+      "id": "ram-vengeance-32-ddr5",
+      "part_type": "RAM",
+      "name": "Corsair Vengeance 32GB (2x16GB) DDR5-6000",
+      "aliases": [
+        "vengeance32gbddr5",
+        "vengeance32gb2x16gbddr5",
+        "vengeance2x16gbddr5",
+        "cmk32gx5m2b6000"
+      ],
+      "listings": [
+        {
+          "store": "Store A",
+          "price_usd": 95,
+          "date": "2026-10-03"
+        },
+        {
+          "store": "Store B",
+          "price_usd": 99,
+          "date": "2026-10-08"
+        },
+        {
+          "store": "Store C",
+          "price_usd": 104,
+          "date": "2026-10-12"
+        }
+      ]
+    },
+    {
+      "id": "ram-flare-x5-32",
+      "part_type": "RAM",
+      "name": "G.Skill Flare X5 32GB (2x16GB) DDR5-6000",
+      "aliases": [
+        "flarex532gb",
+        "flarex52x16gb"
+      ],
+      "listings": [
+        {
+          "store": "Store A",
+          "price_usd": 99,
+          "date": "2026-10-03"
+        },
+        {
+          "store": "Store B",
+          "price_usd": 105,
+          "date": "2026-10-08"
+        },
+        {
+          "store": "Store C",
+          "price_usd": 109,
+          "date": "2026-10-12"
+        }
+      ]
+    },
+    {
+      "id": "ssd-990-evo-plus-1tb",
+      "part_type": "Storage",
+      "name": "Samsung 990 EVO Plus 1TB",
+      "aliases": [
+        "990evoplus1tb"
+      ],
+      "listings": [
+        {
+          "store": "Store A",
+          "price_usd": 79,
+          "date": "2026-10-03"
+        },
+        {
+          "store": "Store B",
+          "price_usd": 84,
+          "date": "2026-10-08"
+        },
+        {
+          "store": "Store C",
+          "price_usd": 89,
+          "date": "2026-10-12"
+        }
+      ]
+    },
+    {
+      "id": "ssd-sn850x-1tb",
+      "part_type": "Storage",
+      "name": "WD Black SN850X 1TB",
+      "aliases": [
+        "sn850x1tb"
+      ],
+      "listings": [
+        {
+          "store": "Store A",
+          "price_usd": 89,
+          "date": "2026-10-03"
+        },
+        {
+          "store": "Store B",
+          "price_usd": 95,
+          "date": "2026-10-08"
+        },
+        {
+          "store": "Store C",
+          "price_usd": 99,
+          "date": "2026-10-12"
+        }
+      ]
+    },
+    {
+      "id": "psu-rm650e",
+      "part_type": "PSU",
+      "name": "Corsair RM650e 650W 80+ Gold",
+      "aliases": [
+        "rm650e"
+      ],
+      "listings": [
+        {
+          "store": "Store A",
+          "price_usd": 85,
+          "date": "2026-10-03"
+        },
+        {
+          "store": "Store B",
+          "price_usd": 89,
+          "date": "2026-10-08"
+        },
+        {
+          "store": "Store C",
+          "price_usd": 92,
+          "date": "2026-10-12"
+        }
+      ]
+    },
+    {
+      "id": "psu-rm750e",
+      "part_type": "PSU",
+      "name": "Corsair RM750e 750W 80+ Gold",
+      "aliases": [
+        "rm750e"
+      ],
+      "listings": [
+        {
+          "store": "Store A",
+          "price_usd": 99,
+          "date": "2026-10-03"
+        },
+        {
+          "store": "Store B",
+          "price_usd": 105,
+          "date": "2026-10-08"
+        },
+        {
+          "store": "Store C",
+          "price_usd": 109,
+          "date": "2026-10-12"
+        }
+      ]
+    },
+    {
+      "id": "case-h5-flow",
+      "part_type": "Case",
+      "name": "NZXT H5 Flow",
+      "aliases": [
+        "nzxth5flow"
+      ],
+      "listings": [
+        {
+          "store": "Store A",
+          "price_usd": 89,
+          "date": "2026-10-03"
+        },
+        {
+          "store": "Store B",
+          "price_usd": 95,
+          "date": "2026-10-08"
+        },
+        {
+          "store": "Store C",
+          "price_usd": 99,
+          "date": "2026-10-12"
+        }
+      ]
+    },
+    {
+      "id": "case-north",
+      "part_type": "Case",
+      "name": "Fractal Design North",
+      "aliases": [
+        "fractaldesignnorth",
+        "fractalnorth"
+      ],
+      "listings": [
+        {
+          "store": "Store A",
+          "price_usd": 129,
+          "date": "2026-10-03"
+        },
+        {
+          "store": "Store B",
+          "price_usd": 139,
+          "date": "2026-10-08"
+        },
+        {
+          "store": "Store C",
+          "price_usd": 139,
+          "date": "2026-10-12"
+        }
+      ]
+    },
+    {
+      "id": "cooler-ak400",
+      "part_type": "Cooler",
+      "name": "DeepCool AK400",
+      "aliases": [
+        "ak400"
+      ],
+      "listings": [
+        {
+          "store": "Store A",
+          "price_usd": 29,
+          "date": "2026-10-03"
+        },
+        {
+          "store": "Store B",
+          "price_usd": 34,
+          "date": "2026-10-08"
+        },
+        {
+          "store": "Store C",
+          "price_usd": 35,
+          "date": "2026-10-12"
+        }
+      ]
+    }
+  ]
+}
