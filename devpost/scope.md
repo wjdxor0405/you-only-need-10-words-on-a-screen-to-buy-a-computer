@@ -22,7 +22,7 @@ They come back each time someone hands them a new quote.
 - Tone is honest and plain, not salesy. Saying "can't verify" earns more trust than a confident guess.
 
 ## Why This Matters to the Learner
-Finish one project end to end, from an empty folder to submission, in a short time. The learner wanted to build a piece themselves that their teammates had not built, in a domain they already know.
+Finish one project end to end, from an empty folder to submission, in a short time. The learner chose a focused version of a product idea they already know well: one core loop — a quote in, price evidence out — small enough to build, verify, and demo within the hackathon.
 
 ## What "Working" Looks Like
 The learner's own definition: the user sees the evidence and **is convinced** — that is when it is "done."
