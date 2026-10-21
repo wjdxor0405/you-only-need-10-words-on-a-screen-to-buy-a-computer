@@ -51,6 +51,7 @@ class LineResult(BaseModel):
     typical_price_usd: float | None
     listings: list[Listing]
     swap_risk: bool
+    ask_seller: str | None
 
 
 class CheckRequest(BaseModel):

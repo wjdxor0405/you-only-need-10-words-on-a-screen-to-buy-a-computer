@@ -25,6 +25,7 @@ export interface LineResult {
   typical_price_usd: null | number
   listings: Listing[]
   swap_risk: boolean
+  ask_seller: null | string
 }
 
 export interface CheckResult {

@@ -21,21 +21,26 @@ def check_line(line: PartLine, data: PriceData) -> LineResult:
     if found.kind == "vague":
         return LineResult(line=line, verdict="cant_verify", headline="Name too vague to match",
                           cant_verify_reason="name_too_vague", typical_price_usd=None,
-                          listings=[], swap_risk=swap_risk)
+                          listings=[], swap_risk=swap_risk,
+                          ask_seller=verdict.ask_seller(line.part_type, line.name, "cant_verify", None, True))
     if found.kind == "not_found":
         return LineResult(line=line, verdict="cant_verify", headline="Not in our sample data",
                           cant_verify_reason="not_in_sample", typical_price_usd=None,
-                          listings=[], swap_risk=swap_risk)
+                          listings=[], swap_risk=swap_risk,
+                          ask_seller=verdict.ask_seller(line.part_type, line.name, "cant_verify", None, swap_risk))
     listings = found.product.listings
     typical = verdict.typical_price_cents(listings)
+    judged = verdict.judge(line.price_usd, typical)
+    diff = verdict.difference_dollars(line.price_usd, typical)
     return LineResult(
         line=line,
-        verdict=verdict.judge(line.price_usd, typical),
+        verdict=judged,
         headline=verdict.headline(line.price_usd, typical),
         cant_verify_reason=None,
         typical_price_usd=round(float(typical) / 100, 2),
         listings=listings,
         swap_risk=swap_risk,
+        ask_seller=verdict.ask_seller(line.part_type, line.name, judged, diff, swap_risk),
     )
 
 

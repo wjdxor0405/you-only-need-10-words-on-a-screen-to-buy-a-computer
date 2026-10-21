@@ -99,7 +99,7 @@ PRD ref: `prd.md > Reading the Quote`, `prd.md > States and Boundaries` (First u
 PRD ref: `prd.md > Reading the Quote`, `prd.md > States and Boundaries` (Couldn't read / Partly read).
 
 ### Results Step
-`web/src/components/ResultsStep.tsx` and `ResultRow.tsx`. Summary on top (count per verdict, quote total). One row per part, collapsed: part type, name, verdict phrase, one number. Expanded: typical price, the rule, each listing (store, price, date), sample-data label, swap-risk note if any.
+`web/src/components/ResultsStep.tsx`, `ResultRow.tsx`, `PriceBar.tsx`, `PartIcon.tsx`. One-sentence overview, then summary (count per verdict, quote total), then "Questions to ask the seller". One row per part, collapsed: part type, name, verdict phrase, one number. Expanded: price range bar, typical price, the rule, each listing (store, price, date), sample-data label, swap-risk note if any.
 PRD ref: `prd.md > Price Verdicts`, `prd.md > Swap-Risk Flag`.
 
 ### Quote Reader (server)
@@ -128,6 +128,7 @@ PRD ref: `prd.md > Price Verdicts` (Can't verify), `prd.md > Swap-Risk Flag`.
   - quoted × 100 < typical × 70 → **Unusually low**
   - otherwise → **Reasonable**
 - Collapsed number: the difference in dollars, e.g., "$12 below typical" / "$25 above typical" / "Matches typical."
+- `ask_seller(...)` = one fixed-template question per Worth questioning / Unusually low / too-vague line; `None` otherwise.
 - `RULE_TEXT` = "We call a price reasonable from 30% below to 10% above the typical price (the middle of the listings we have)." Sent with every result so the screen shows the code's own rule.
 PRD ref: `prd.md > Price Verdicts`.
 
@@ -151,7 +152,8 @@ LineResult   { line: PartLine,
                cant_verify_reason: null | "not_in_sample" | "name_too_vague",
                typical_price_usd: null | number,
                listings: Listing[],
-               swap_risk: boolean }
+               swap_risk: boolean,
+               ask_seller: null | string }     // fixed-rule question, see Verdict Engine
 CheckResult  { results: LineResult[], rule_text: string, sample_data_note: string, total_usd: number }
 ```
 

@@ -25,7 +25,7 @@ Build mode: fast
   PRD ref: `prd.md > Reading the Quote`, `prd.md > Screens and Layout`, `prd.md > States and Boundaries` (First use)
   Spec ref: `spec.md > Quote Reader (server)`, `spec.md > External Services and Dependencies`, `spec.md > API (server)` (`/api/read`), `spec.md > Step Bar`, `spec.md > Upload Step`, `spec.md > Stack` (unverified model)
   Build: Run a one-call probe to confirm the model name, structured output, and image input (fix `OPENAI_MODEL` if needed). Write `quote_reader.py` (prompt written from scratch, `responses.parse` → `ReadResult`) and add the text path of `POST /api/read`. Add `StepBar`, `UploadStep` (text box, "Read quote", "Try a sample quote", loading state), and three-step navigation in `App.tsx`.
-  Verify (mechanical): The probe script's real call returns a parsed `ReadResult`. `curl` `/api/read` with the sample quote text returns the same lines as `sampleQuote.ts` (part type, name, and price all match). `npm run build` passes.
+  Verify (mechanical): The probe script's real call returns a parsed `ReadResult`. `curl` `/api/read` with the sample quote text returns the same lines as `sampleQuote.ts` (part type, name, and price all match). A kit like "32GB (2x16GB)" stays one line at the kit price, not quantity 2. `npm run build` passes.
   Learner check: Open the app, press "Try a sample quote" → "Read quote", and confirm the lines in ② match the quote. Then paste a quote of your own (any format) and see whether it reads correctly.
   Commit: `Read pasted quotes into part lines with the model`
 
@@ -41,8 +41,8 @@ Build mode: fast
 
 ## Hands-on Checkpoints
 
-- [ ] Early usable behavior explored — after slice 1 (the verdict and evidence screen; does it convince?)
-  Feedback: "Only text" → added a price range bar (quoted vs. reasonable range, typical, listings) and part-type icons; awaiting the learner's retry.
+- [x] Early usable behavior explored — after slice 1 (the verdict and evidence screen; does it convince?)
+  Feedback: "Only text" → added a price range bar and part-type icons (learner: "looks fine"). Learner also chose a one-sentence overview and "Questions to ask the seller" (fixed-rule questions).
 - [ ] Final kick-the-tires exploration and feedback completed
 
 ## Final Review
@@ -66,3 +66,5 @@ Activity mode:
 - Server port 8000 → 8010 — port 8000 was already taken by another app on the learner's machine.
 - Matcher rejects an alias followed by a model-variant suffix (Ti, Super, XT, X3D, X, K, F…) — plain "name contains alias" would judge an RTX 4060 Ti against RTX 4060 prices.
 - Sample data has 17 products instead of 10–15 — a few extra so edits in step ② still find matches.
+- Added a one-sentence overview, "Questions to ask the seller", a price range bar, and part-type icons to Results — the learner's first hands-on check found the evidence screen text-only; the questions use fixed rules so the model never writes evidence.
+- Slice 2 verification checks that a RAM kit ("2x16GB") is read as one line at the kit price — a comparable quote reader was seen reading the kit as quantity 2.

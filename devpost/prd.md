@@ -61,6 +61,13 @@ Develops `scope.md > The POC Boundary`. First to cut if time runs short.
 - A line with no maker or model (e.g., "SSD 1TB", "PSU 650W") gets a note: without a model name, a cheaper part could be put in and there is nothing to point to.
   - [ ] "SSD 1TB" in the sample quote shows the swap-risk note.
 
+### Overview and Questions to Ask the Seller
+Added during the build after the first hands-on check: turns verdicts into something a beginner can act on.
+- The results open with one plain sentence (e.g., "Of 8 parts, 4 look reasonable, 2 need a closer look and 2 couldn't be verified.").
+- A "Questions to ask the seller" list gives one question per Worth questioning, Unusually low, or too-vague line, written by fixed rules from the verdict — never by the model.
+- Each expanded row with a typical price also shows a price range bar: the quoted price against the reasonable range, the typical price, and each listing.
+  - [ ] The sample quote lists questions for the PSU, the GPU, and "SSD 1TB", and none for Reasonable lines.
+
 ## States and Boundaries
 - **First use** — step ① with an empty input area and the one-line explanation. A "Try a sample quote" link fills in the sample so the demo never starts empty.
 - **Couldn't read the image** — if no part lines can be read, step ② shows a plain message instead of an empty list (e.g., "We couldn't read this image. It may be blurry, or it may not be a PC quote."), plus a way to try another image or paste text. Distinguishing "blurry" from "not a quote" is best-effort, not required.

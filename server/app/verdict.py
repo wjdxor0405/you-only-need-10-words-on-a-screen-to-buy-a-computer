@@ -33,9 +33,27 @@ def judge(quoted_usd: float, typical_cents: Fraction) -> Verdict:
     return "reasonable"
 
 
-def headline(quoted_usd: float, typical_cents: Fraction) -> str:
+def difference_dollars(quoted_usd: float, typical_cents: Fraction) -> int:
+    """Whole dollars between quoted and typical, rounded half up; negative when below."""
     diff_cents = to_cents(quoted_usd) - typical_cents
-    dollars = int(abs(diff_cents) / 100 + Fraction(1, 2))  # round half up
+    dollars = int(abs(diff_cents) / 100 + Fraction(1, 2))
+    return dollars if diff_cents >= 0 else -dollars
+
+
+def headline(quoted_usd: float, typical_cents: Fraction) -> str:
+    diff = difference_dollars(quoted_usd, typical_cents)
+    dollars = abs(diff)
     if dollars == 0:
         return "Matches typical"
-    return f"${dollars} {'above' if diff_cents > 0 else 'below'} typical"
+    return f"${dollars} {'above' if diff > 0 else 'below'} typical"
+
+
+def ask_seller(part_type: str, name: str, verdict: Verdict, diff_dollars: int | None, vague: bool) -> str | None:
+    """One plain question a beginner can send the seller, or None when there is nothing to ask."""
+    if verdict == "worth_questioning":
+        return f"Why does the {part_type} ({name}) cost ${diff_dollars} more than the typical price?"
+    if verdict == "unusually_low":
+        return f"Is the {part_type} ({name}) the exact model, and brand new? It's ${-diff_dollars} below the typical price."
+    if vague:
+        return f"Which exact maker and model is the \"{name}\" in the quote?"
+    return None

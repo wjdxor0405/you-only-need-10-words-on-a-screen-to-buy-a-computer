@@ -3,7 +3,7 @@ from fractions import Fraction
 import pytest
 
 from app.models import Listing
-from app.verdict import headline, judge, typical_price_cents
+from app.verdict import ask_seller, headline, judge, typical_price_cents
 
 
 def listings(*prices):
@@ -44,3 +44,17 @@ def test_boundary_survives_float_noise():
 ])
 def test_headline(quoted, expected):
     assert headline(quoted, Fraction(10000)) == expected
+
+
+def test_ask_seller_for_each_verdict():
+    assert ask_seller("PSU", "Corsair RM650e", "worth_questioning", 20, False) == (
+        "Why does the PSU (Corsair RM650e) cost $20 more than the typical price?"
+    )
+    assert ask_seller("GPU", "RTX 4060", "unusually_low", -104, False) == (
+        "Is the GPU (RTX 4060) the exact model, and brand new? It's $104 below the typical price."
+    )
+    assert ask_seller("Storage", "SSD 1TB", "cant_verify", None, True) == (
+        'Which exact maker and model is the "SSD 1TB" in the quote?'
+    )
+    assert ask_seller("CPU", "Ryzen 5 7600", "reasonable", 4, False) is None
+    assert ask_seller("Cooler", "Peerless Assassin", "cant_verify", None, False) is None
