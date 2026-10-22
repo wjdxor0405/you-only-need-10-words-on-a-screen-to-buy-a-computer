@@ -30,7 +30,7 @@ Build mode: fast
   Commit: `Read pasted quotes into part lines with the model`
 
 - [ ] **3. Upload a screenshot, with clear messages when reading fails**
-  Becomes usable: Drop a screenshot (PNG/JPEG/WebP, up to 5 MB) into ① and it is read just like text. If the image isn't a quote or is blurry, ② shows the couldn't-read message and a way back. If the server or model fails, ① shows "Reading failed" and the text box still works. `samples/sample-quote.png` exists for the demo.
+  Becomes usable: Drop a screenshot (PNG/JPEG/WebP, up to 5 MB) into ① and it is read just like text. If the image isn't a quote or is blurry, ② shows the couldn't-read message and a way back. If the server or model fails, ① shows "Reading failed" and the text box still works. `samples/sample-quote.png` exists for the demo. On a phone, the image picker opens the photo library.
   Why now: Image input reuses the model call verified in slice 2, so it's lower risk. With failure states added, the full demo path is complete.
   PRD ref: `prd.md > Reading the Quote`, `prd.md > States and Boundaries` (Couldn't read / Partly read)
   Spec ref: `spec.md > Upload Step`, `spec.md > Confirm Parts Step`, `spec.md > Quote Reader (server)`, `spec.md > API (server)`, `spec.md > Important Failure Modes`, `spec.md > Where It Runs and How Someone Tries It`
@@ -38,6 +38,16 @@ Build mode: fast
   Verify (mechanical): `curl` `/api/read` with `sample-quote.png` returns the same lines as the text input. A non-quote image returns `problem`. A `.gif` or a file over 5 MB is rejected with a plain message. With a wrong `OPENAI_MODEL`, a request returns an error the screen can display. `npm run build` passes.
   Learner check: Drag `samples/sample-quote.png` in and go all the way to ③ (the demo run). Then drop an unrelated photo and check that the message makes sense.
   Commit: `Read quote screenshots and show reading failures`
+
+- [ ] **4. Large type and one part per screen, readable on a phone**
+  Becomes usable: On a phone (or a 360px-wide window), every step reads without zooming: large type, full-width buttons. ② shows one card per line with "Fix". ③ opens on an overview card, then one card per part with Back/Next and "Show proof", then the questions card. Long product names show a short name.
+  Why now: The learner chose this design after reviewing the judging criteria (reviewers only watch the video; the demo persona can't read small print). It reshapes every screen, so it follows the last input path (slice 3) and comes before the final review.
+  PRD ref: `prd.md > Large Type and Character Limit`, `prd.md > Look and Feel`, `prd.md > Screens and Layout`, `prd.md > Price Verdicts`, `prd.md > Overview and Questions to Ask the Seller`
+  Spec ref: `spec.md > Look and Feel`, `spec.md > Results Step`, `spec.md > Confirm Parts Step`, `spec.md > Verdict Engine (server)`, `spec.md > Data Model`, `spec.md > Where It Runs and How Someone Tries It`
+  Build: Add type-scale and tap-size variables to `styles.css`. Add `short_name` to long-named products in `prices.json`, and `display_name` and `advice` to `LineResult`; shorten the `ask_seller` templates to the part type. Add `test_card_text.py` (`CARD_TEXT_LIMIT = 120`). Rework `ResultsStep` into paged cards with `ResultCard` (renamed from `ResultRow`) and "Show proof"; rework `ConfirmStep` into cards with "Fix".
+  Verify (mechanical): `pytest` passes, including `test_card_text.py` for every verdict path. `npm run build` passes. A headless browser at 360×740 shows ①, ②, and every ③ card with no sideways scrolling (page scroll width ≤ viewport width), and screenshots are reviewed.
+  Learner check: Open the app on your phone (`npm run dev -- --host`, then the Network URL on the same Wi-Fi). Hold it at a normal distance and read every card without zooming. Open "Show proof" on one card, then go back.
+  Commit: `Use large type and one part per screen, readable on a phone`
 
 ## Hands-on Checkpoints
 
@@ -69,3 +79,4 @@ Activity mode:
 - Added a one-sentence overview, "Questions to ask the seller", a price range bar, and part-type icons to Results — the learner's first hands-on check found the evidence screen text-only; the questions use fixed rules so the model never writes evidence.
 - Slice 2 verification checks that a RAM kit ("2x16GB") is read as one line at the kit price — a comparable quote reader was seen reading the kit as quantity 2.
 - The slice 2 probe confirmed the model name and structured output with text only; image input is checked in slice 3, where the sample screenshot is created.
+- Added slice 4 (large type, one part per screen, phone layout) and changed the demo persona to a parent in their 50s buying a PC for their teen — after reviewing the judging criteria (Design, Potential Impact, Innovation, Presentation; reviewers judge from the video alone). A text-size toggle and a native phone app were rejected; a post-delivery parts check stays under Later because it would take most of the remaining time. Measured cost: with full product names, the sample quote's GPU card was 186 characters, so cards get short names and part-type-only seller questions to fit 120.
