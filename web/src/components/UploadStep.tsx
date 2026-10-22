@@ -35,7 +35,7 @@ export default function UploadStep({ text, onTextChange, image, onImageChange, o
   return (
     <section className="card">
       <h2>Upload your quote</h2>
-      <p className="muted">Add a screenshot of the quote, or paste its text. We'll pull out each part and its price for you to check.</p>
+      <p className="step-intro">Add a screenshot of the quote, or paste its text.</p>
       <label
         className={`drop-area${dragging ? ' dragging' : ''}${image ? ' has-file' : ''}`}
         onDragOver={(e) => {
@@ -70,7 +70,7 @@ export default function UploadStep({ text, onTextChange, image, onImageChange, o
         )}
       </label>
       {image && (
-        <button className="link-button" onClick={() => onImageChange(null)}>
+        <button className="secondary wide" onClick={() => onImageChange(null)}>
           Remove screenshot
         </button>
       )}
@@ -79,7 +79,7 @@ export default function UploadStep({ text, onTextChange, image, onImageChange, o
       <textarea
         className="quote-text"
         aria-label="Quote text"
-        rows={8}
+        rows={6}
         disabled={image !== null}
         placeholder={image ? 'Remove the screenshot to paste text instead.' : 'CPU: AMD Ryzen 5 7600 ... $199\nGraphics: RTX 4060 8GB ... $299\n...'}
         value={image ? '' : text}
@@ -87,7 +87,7 @@ export default function UploadStep({ text, onTextChange, image, onImageChange, o
       />
       <div className="actions">
         <button
-          className="link-button"
+          className="secondary"
           onClick={() => {
             onImageChange(null)
             onTextChange(SAMPLE_QUOTE_TEXT)

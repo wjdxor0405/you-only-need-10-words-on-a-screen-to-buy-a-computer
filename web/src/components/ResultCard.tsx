@@ -10,13 +10,17 @@ export const VERDICT_LABEL: Record<Verdict, string> = {
   cant_verify: "Can't verify",
 }
 
-const CANT_VERIFY_TEXT = {
-  not_in_sample: "This product isn't in our sample data, so we have no prices to compare it with. We won't guess.",
-  name_too_vague:
-    "The name doesn't say which maker or model this is, so we can't tell which prices to compare it with. We won't guess.",
+function cantVerifyText(result: LineResult) {
+  if (result.cant_verify_reason === 'not_in_sample') {
+    return "This product isn't in our sample data, so we have no prices to compare it with. We won't guess."
+  }
+  if (result.swap_risk) {
+    return "The name doesn't say which maker or model this is, so we can't tell which prices to compare it with. We won't guess."
+  }
+  return "This name could be more than one product in our sample data, so we can't tell which prices to compare it with. We won't guess."
 }
 
-function usd(value: number) {
+export function usd(value: number) {
   return `$${value.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 2 })}`
 }
 
@@ -26,27 +30,30 @@ interface Props {
   sampleNote: string
 }
 
-export default function ResultRow({ result, ruleText, sampleNote }: Props) {
+// One part per card: a beginner can stop at the verdict; "Show proof" opens the evidence.
+export default function ResultCard({ result, ruleText, sampleNote }: Props) {
   const [open, setOpen] = useState(false)
   const { line, verdict } = result
 
   return (
-    <li className={`result-row verdict-${verdict}`}>
-      <button className="result-summary" aria-expanded={open} onClick={() => setOpen(!open)}>
-        <span className="part-type">
-          <PartIcon type={line.part_type} />
-          {line.part_type}
-        </span>
-        <span className="part-name">{line.name}</span>
-        <span className="part-price">{usd(line.price_usd)}</span>
-        <span className="verdict">
-          <span className="dot" aria-hidden="true" />
-          {VERDICT_LABEL[verdict]} · {result.headline}
-        </span>
-        <span className="chevron" aria-hidden="true">{open ? '▴' : '▾'}</span>
+    <article className={`card result-card verdict-${verdict}`}>
+      <p className="card-context">
+        <PartIcon type={line.part_type} />
+        {result.part_label} · {usd(line.price_usd)}
+      </p>
+      <p className="spec-label">{result.display_name}</p>
+      <p className="verdict-phrase">
+        <span className="dot" aria-hidden="true" />
+        {VERDICT_LABEL[verdict]}
+      </p>
+      <p className="headline">{result.headline}</p>
+      <p className="advice">{result.advice}</p>
+      <button className="secondary wide" aria-expanded={open} onClick={() => setOpen(!open)}>
+        {open ? 'Hide proof' : 'Show proof'}
       </button>
       {open && (
-        <div className="evidence">
+        <div className="proof">
+          <p>As written on the quote: {line.name}</p>
           {result.typical_price_usd !== null ? (
             <>
               <PriceBar
@@ -77,13 +84,10 @@ export default function ResultRow({ result, ruleText, sampleNote }: Props) {
                   ))}
                 </tbody>
               </table>
-              {verdict === 'unusually_low' && (
-                <p className="note">Much cheaper than usual. Check that it's the exact model and that it's new.</p>
-              )}
-              <p className="rule">{ruleText}</p>
+              <p>{ruleText}</p>
             </>
           ) : (
-            result.cant_verify_reason && <p>{CANT_VERIFY_TEXT[result.cant_verify_reason]}</p>
+            <p className="proof-reason">{cantVerifyText(result)}</p>
           )}
           {result.swap_risk && (
             <p className="note">
@@ -91,9 +95,9 @@ export default function ResultRow({ result, ruleText, sampleNote }: Props) {
               seller for the exact model.
             </p>
           )}
-          <p className="sample-label">{sampleNote}</p>
+          <p>{sampleNote}</p>
         </div>
       )}
-    </li>
+    </article>
   )
 }

@@ -24,16 +24,16 @@ prices = PriceData.model_validate(json.loads(PRICES_PATH.read_text()))
 def check_line(line: PartLine, data: PriceData) -> LineResult:
     found = match(line, data.products)
     swap_risk = is_vague(line.name)
-    if found.kind == "vague":
-        return LineResult(line=line, verdict="cant_verify", headline="Name too vague to match",
-                          cant_verify_reason="name_too_vague", typical_price_usd=None,
+    label = verdict.part_label(line.part_type)
+    if found.kind != "matched":
+        reason = "name_too_vague" if found.kind == "vague" else "not_in_sample"
+        return LineResult(line=line, verdict="cant_verify",
+                          headline=verdict.cant_verify_headline(reason, swap_risk),
+                          cant_verify_reason=reason, typical_price_usd=None,
                           listings=[], swap_risk=swap_risk,
-                          ask_seller=verdict.ask_seller(line.part_type, line.name, "cant_verify", None, True))
-    if found.kind == "not_found":
-        return LineResult(line=line, verdict="cant_verify", headline="Not in our sample data",
-                          cant_verify_reason="not_in_sample", typical_price_usd=None,
-                          listings=[], swap_risk=swap_risk,
-                          ask_seller=verdict.ask_seller(line.part_type, line.name, "cant_verify", None, swap_risk))
+                          ask_seller=verdict.ask_seller(line.part_type, "cant_verify", None, found.kind == "vague"),
+                          part_label=label, display_name=verdict.display_name(line.name, None),
+                          advice=verdict.advice("cant_verify", reason, swap_risk))
     listings = found.product.listings
     typical = verdict.typical_price_cents(listings)
     judged = verdict.judge(line.price_usd, typical)
@@ -46,7 +46,10 @@ def check_line(line: PartLine, data: PriceData) -> LineResult:
         typical_price_usd=round(float(typical) / 100, 2),
         listings=listings,
         swap_risk=swap_risk,
-        ask_seller=verdict.ask_seller(line.part_type, line.name, judged, diff, swap_risk),
+        ask_seller=verdict.ask_seller(line.part_type, judged, diff, swap_risk),
+        part_label=label,
+        display_name=verdict.display_name(line.name, found.product.spec_label),
+        advice=verdict.advice(judged, None, swap_risk),
     )
 
 

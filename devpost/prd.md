@@ -21,7 +21,7 @@ One page with a three-step bar: ① Upload → ② Confirm parts → ③ Results
 
 - **① Upload:** title, one-line explanation, screenshot drop area, text paste box, "Read quote" button.
 - **② Confirm parts:** one large card per part line (part type, product name, quoted price), each with "Fix" to edit or delete; "Add a line"; a "Check prices" button.
-- **③ Results:** one card per screen — the overview (one sentence, counts per verdict, quote total), then one card per part, then the questions to ask the seller. "Part 3 of 8" shows where the user is.
+- **③ Results:** one card per screen — the overview (one sentence, counts per verdict, parts total), then one card per part, then the questions to ask the seller. "Part 3 of 8" shows where the user is.
 
 ## Look and Feel
 - Light blue-gray page background, white cards with soft shadows.
@@ -31,8 +31,8 @@ One page with a three-step bar: ① Upload → ② Confirm parts → ③ Results
 - Calm, tidy shopping-helper tone. Plain words; no jargon in the short line.
 - **Large type by default**, not a setting, with three levels so that one thing on each card stands out:
   - **Decide** (largest): the verdict phrase (32px) and its one number (24px). On the overview card, the one sentence.
-  - **Read and act** (20px): the spec label, the advice sentence, the seller questions, the swap-risk note, and every button (at least 56px tall, full width on a phone).
-  - **Context** (16px, muted color): the part in plain words with its quoted price, "Part 3 of 8", step bar, quote total, sample-data label, and everything in the proof (full name as read, rule, listings with store, price, and date, range bar legend).
+  - **Read and act** (20px): the spec label, the advice sentence, the seller questions, the swap-risk note, and every button (at least 56px tall, full width on a phone; pairs such as Back and Next sit side by side, and Fix sits beside its price).
+  - **Context** (16px, muted color): the part in plain words with its quoted price, "Part 3 of 8", step bar, parts total, sample-data label, and everything in the proof (full name as read, rule, listings with store, price, and date, range bar legend).
 - **No fine print:** nothing is smaller than 16px — the sample-data label included. Can't-verify reasons and the swap-risk note are never put in the context level; honesty is part of the kernel.
 - Fits a 360px-wide phone screen with no zooming and no sideways scrolling.
 - All UI text in English.
@@ -69,8 +69,8 @@ Develops `scope.md > The POC Boundary`. First to cut if time runs short.
 
 ### Overview and Questions to Ask the Seller
 Added during the build after the first hands-on check: turns verdicts into something a beginner can act on.
-- The first results card is the overview: one plain sentence (e.g., "Of 8 parts, 4 look reasonable, 2 need a closer look and 2 couldn't be verified.") and the counts.
-- The last card, "Questions to ask the seller", gives one short question per Worth questioning, Unusually low, or too-vague line (e.g., "Why is the PSU $20 above typical?"), written by fixed rules from the verdict — never by the model. At most three questions per card.
+- The first results card is the overview: one plain sentence (e.g., "4 of 8 parts look reasonable."), the count per verdict, and the parts total.
+- The last card, "Questions to ask the seller", gives one short question per Worth questioning, Unusually low, or too-vague line (e.g., "Why is the power supply $20 above typical?"), naming the part in plain words, written by fixed rules from the verdict — never by the model. At most two questions per card, so each card stays within the character limit.
 - The proof of each part with a typical price also shows a price range bar: the quoted price against the reasonable range, the typical price, and each listing.
   - [ ] The sample quote lists questions for the PSU, the GPU, and "SSD 1TB", and none for Reasonable lines.
 
@@ -80,8 +80,8 @@ Added during the build: the quote arrives on a phone, the user should decide one
 - Cards name a part by **what it is and what it costs**, not by its full product name:
   - the part in plain words (Processor, Graphics card, Memory, Power supply, …) with the quoted price, so the user can find the line on the quote in front of them;
   - a hand-written spec label for each sample product — the specs that set the price (e.g., "RTX 4060, 8GB", "650W, 80+ Gold"). Brand and series names ("MSI … Ventus 2X") stay in the proof.
-- A line that isn't in the sample data shows its name as read, cut to 28 characters — no invented specs.
-- A line with no maker or model uses its advice sentence for the swap-risk warning ("No maker or model — a cheaper part could be swapped in."), since brands no longer appear on other cards to contrast with.
+- A line that isn't in the sample data shows its name as read, cut to at most 28 characters at a word break — no invented specs.
+- A line with no maker or model says so in place of the number ("No maker or model") and uses its advice sentence for the swap-risk warning ("A cheaper part could be swapped in."), since brands no longer appear on other cards to contrast with.
   - [ ] The sample quote's graphics card shows "Graphics card · $195" and "RTX 4060, 8GB"; its full name as read appears only in the proof.
   - [ ] Every card for the sample quote, and for each verdict path, stays within 120 characters.
   - [ ] On a 360px-wide screen, no step needs zooming or sideways scrolling.

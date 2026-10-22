@@ -83,7 +83,7 @@ From `prd.md > Look and Feel`. Defined as CSS variables in `web/src/styles.css`:
 - `--ok` green, `--caution` amber, `--bad` red (reserved, not used by any verdict), `--muted` gray for Can't verify.
 - Font: `Pretendard, Inter, system-ui, sans-serif` — loaded from a CDN with system fallback.
 - Corners about 10px; generous spacing; one column, max width about 720px, centered.
-- Large type by default, three levels (`prd.md > Look and Feel`): `--text-verdict` 32px and `--text-number` 24px (decide), `--text-body` 20px (read and act), `--text-meta` 16px in `--muted-text` (context). `--tap` 56px minimum button height; line height about 1.5. Buttons are full width under 560px.
+- Large type by default, three levels (`prd.md > Look and Feel`): `--text-verdict` 32px and `--text-number` 24px (decide), `--text-body` 20px (read and act), `--text-meta` 16px in `--muted-text` (context). `--tap` 56px minimum button height; line height about 1.5. Buttons are full width under 560px, except two-button pairs (Back / Next, Delete / Done), which sit side by side, and Fix, which sits beside its price.
 - 16px is the floor for all text, including the sample-data label and the proof. Can't-verify reasons and the swap-risk note use `--text-body`, never `--text-meta`.
 - Fits 360px wide with a 16px side gutter; no sideways scrolling on any step.
 - Copy: short, plain English; no jargon in collapsed rows. Verdict text is never color-only — the phrase is always written.
@@ -105,9 +105,9 @@ PRD ref: `prd.md > Reading the Quote`, `prd.md > States and Boundaries` (Couldn'
 
 ### Results Step
 `web/src/components/ResultsStep.tsx`, `ResultCard.tsx` (renamed from `ResultRow.tsx`), `PriceBar.tsx`, `PartIcon.tsx`. One card per screen; `ResultsStep` holds the card index and shows "Part N of M" with large Back and Next buttons.
-- Overview card: the one-sentence overview, count per verdict, quote total.
+- Overview card: the one-sentence overview ("4 of 8 parts look reasonable."), count per verdict, parts total.
 - Part card: `part_label` · quoted price, `display_name`, verdict phrase, `headline`, `advice`. "Show proof" opens the full name as read, price range bar, typical price, the rule, each listing (store, price, date), and the sample-data label.
-- Questions card(s): the `ask_seller` questions, at most three per card.
+- Questions card(s): the `ask_seller` questions, at most two per card (three would pass the character limit).
 PRD ref: `prd.md > Price Verdicts`, `prd.md > Swap-Risk Flag`, `prd.md > Large Type and Character Limit`.
 
 ### Quote Reader (server)
@@ -136,12 +136,12 @@ PRD ref: `prd.md > Price Verdicts` (Can't verify), `prd.md > Swap-Risk Flag`.
   - quoted × 100 < typical × 70 → **Unusually low**
   - otherwise → **Reasonable**
 - Collapsed number: the difference in dollars, e.g., "$12 below typical" / "$25 above typical" / "Matches typical."
-- `ask_seller(...)` = one fixed-template question per Worth questioning / Unusually low / too-vague line, naming the part type only (e.g., "Why is the PSU $20 above typical?"); `None` otherwise.
+- `ask_seller(...)` = one fixed-template question per Worth questioning / Unusually low / too-vague line, naming the part only, in plain words (e.g., "Why is the power supply $20 above typical?", "Is the graphics card new and the exact model?", "Which maker and model is the storage?"); `None` otherwise.
 - `advice(...)` = one fixed sentence per verdict and Can't verify reason (e.g., "Close to what stores charge.", "Ask the seller why it costs more.").
-- `part_label` = the part type in plain words: CPU → "Processor", GPU → "Graphics card", RAM → "Memory", PSU → "Power supply", Cooler → "CPU cooler"; Motherboard, Storage, Case, Other unchanged.
-- `display_name` = the matched product's `spec_label`; for an unmatched line, the name as read, cut to 28 characters with "…".
-- `advice` for a swap-risk line is the swap-risk warning: "No maker or model — a cheaper part could be swapped in."
-- `CARD_TEXT_LIMIT = 120`: `part_label` + " · $" + quoted price + `display_name` + longest verdict phrase ("Worth questioning") + `headline` + `advice` must fit, for every verdict path. A test enforces it.
+- `part_label` = the part type in plain words: CPU → "Processor", GPU → "Graphics card", RAM → "Memory", PSU → "Power supply", Cooler → "CPU cooler", Other → "Other part"; Motherboard, Storage, Case unchanged.
+- `display_name` = the matched product's `spec_label`; for an unmatched line, the name as read, cut to at most 28 characters with "…", at a word break when that keeps at least half.
+- A swap-risk line's `headline` is "No maker or model" and its `advice` is the swap-risk warning: "A cheaper part could be swapped in." A name that fits several products keeps "Name too vague to match" / "It could be several products." Not in sample: "Not in our sample data" / "We have no prices for this part."
+- `CARD_TEXT_LIMIT = 120`: `part_label` + " · $" + quoted price + `display_name` + longest verdict phrase ("Worth questioning") + `headline` + `advice` must fit, for every verdict path, with prices up to $9,999.99; so must the questions card heading plus two of the longest questions. A test enforces both.
 - `RULE_TEXT` = "We call a price reasonable from 30% below to 10% above the typical price (the middle of the listings we have)." Sent with every result so the screen shows the code's own rule.
 PRD ref: `prd.md > Price Verdicts`.
 
@@ -168,7 +168,7 @@ LineResult   { line: PartLine,
                swap_risk: boolean,
                ask_seller: null | string,      // fixed-rule question, see Verdict Engine
                part_label: string,             // plain part name, e.g. "Graphics card"
-               display_name: string,           // spec label, or the read name cut to 28 chars
+               display_name: string,           // spec label, or the read name cut to ≤ 28 chars
                advice: string }                // one fixed sentence for the card
 CheckResult  { results: LineResult[], rule_text: string, sample_data_note: string, total_usd: number }
 ```
@@ -209,7 +209,7 @@ devpost-basics/
 │   │   └── prices.json         # hand-made sample prices, fictional stores
 │   └── tests/
 │       ├── test_verdict.py     # boundary cases: +10%, +11%, −30%, −31%
-│       ├── test_card_text.py   # every verdict path fits CARD_TEXT_LIMIT
+│       ├── test_card_text.py   # every verdict path and the questions card fit CARD_TEXT_LIMIT
 │       └── test_matcher.py     # alias match, vague names, not-in-sample
 ├── web/
 │   ├── package.json

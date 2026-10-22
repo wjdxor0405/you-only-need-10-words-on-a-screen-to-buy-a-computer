@@ -1,18 +1,29 @@
-/* Look and Feel (spec.md): light blue-gray page, white cards, one cobalt accent. */
+/* Look and Feel (spec.md): light blue-gray page, white cards, one cobalt accent, large type. */
 :root {
   --bg: #f4f7fc;
   --surface: #ffffff;
   --border: #dde4f0;
   --text: #1c2333;
   --muted: #6b7486;
+  --muted-text: #5b6475;
   --accent: #2f5bff;
   --accent-hover: #2148e0;
   --ok: #1f9d55;
+  --ok-text: #17803f;
   --caution: #d98a00;
+  --caution-text: #a35f00;
   --bad: #d64545;
+  --bad-text: #b3261e;
   --shadow: 0 2px 10px rgba(30, 50, 100, 0.07);
   --radius: 10px;
+  /* Three type levels (prd.md > Look and Feel). Nothing is smaller than 16px. */
+  --text-verdict: 32px; /* decide: the verdict phrase, the overview sentence */
+  --text-number: 24px; /* decide: the one number */
+  --text-body: 20px; /* read and act: spec label, advice, questions, buttons */
+  --text-meta: 16px; /* context, in --muted-text */
+  --tap: 56px; /* minimum button height */
   font-family: Pretendard, Inter, system-ui, sans-serif;
+  font-size: var(--text-body);
   color: var(--text);
   line-height: 1.5;
 }
@@ -28,7 +39,8 @@ body {
 
 button,
 input,
-select {
+select,
+textarea {
   font: inherit;
   color: inherit;
 }
@@ -36,17 +48,19 @@ select {
 .page {
   max-width: 720px;
   margin: 0 auto;
-  padding: 40px 16px 64px;
+  padding: 24px 16px 48px;
 }
 
 .page-header h1 {
-  margin: 0 0 4px;
-  font-size: 1.75rem;
+  margin: 0;
+  font-size: 28px;
+  line-height: 1.25;
 }
 
 .page-header p {
-  margin: 0 0 24px;
-  color: var(--muted);
+  margin: 4px 0 16px;
+  font-size: var(--text-meta);
+  color: var(--muted-text);
 }
 
 .card {
@@ -54,32 +68,41 @@ select {
   border: 1px solid var(--border);
   border-radius: var(--radius);
   box-shadow: var(--shadow);
-  padding: 24px;
+  padding: 20px;
 }
 
-.card h2 {
-  margin: 0 0 4px;
-  font-size: 1.25rem;
+.card h2,
+.step-title {
+  margin: 0 0 8px;
+  font-size: var(--text-number);
+  line-height: 1.25;
 }
 
-.muted {
-  color: var(--muted);
+.step-intro {
   margin: 0 0 16px;
 }
 
-/* Buttons */
+/* Buttons: every one at least --tap tall, full width on a phone */
+.primary,
+.secondary {
+  min-height: var(--tap);
+  padding: 12px 20px;
+  border-radius: var(--radius);
+  font-size: var(--text-body);
+  font-weight: 600;
+  line-height: 1.25;
+  cursor: pointer;
+}
+
 .primary {
   background: var(--accent);
+  border: 2px solid var(--accent);
   color: #fff;
-  border: none;
-  border-radius: var(--radius);
-  padding: 10px 20px;
-  font-weight: 600;
-  cursor: pointer;
 }
 
 .primary:hover:not(:disabled) {
   background: var(--accent-hover);
+  border-color: var(--accent-hover);
 }
 
 .primary:disabled {
@@ -87,197 +110,236 @@ select {
   cursor: default;
 }
 
-.link-button {
-  background: none;
-  border: none;
+.secondary {
+  background: var(--surface);
+  border: 2px solid var(--accent);
   color: var(--accent);
-  padding: 8px 0;
-  cursor: pointer;
-  font-weight: 500;
 }
 
-.icon-button {
-  background: none;
-  border: 1px solid transparent;
-  border-radius: 8px;
-  color: var(--muted);
-  font-size: 1.25rem;
-  line-height: 1;
-  width: 32px;
-  height: 32px;
-  cursor: pointer;
+.secondary:hover {
+  background: color-mix(in srgb, var(--accent) 6%, var(--surface));
 }
 
-.icon-button:hover {
-  border-color: var(--border);
-  color: var(--bad);
+.secondary.danger {
+  border-color: var(--bad);
+  color: var(--bad-text);
+}
+
+.wide {
+  width: 100%;
+  margin-top: 16px;
 }
 
 .actions {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 12px;
   margin-top: 20px;
 }
 
+/* Back / Next, and Delete / Done: two buttons side by side */
+.pager {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+@media (max-width: 560px) {
+  .actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
 .hint {
-  color: var(--muted);
-  font-size: 0.875rem;
-  text-align: right;
   margin: 8px 0 0;
+  font-size: var(--text-meta);
+  color: var(--muted-text);
 }
 
 .error {
-  color: var(--bad);
   margin: 12px 0 0;
+  color: var(--bad-text);
 }
 
-/* Confirm parts */
-.part-rows {
-  display: grid;
+/* Step bar */
+.step-bar {
+  display: flex;
   gap: 8px;
+  list-style: none;
+  margin: 0 0 16px;
+  padding: 0;
 }
 
-.part-row {
-  display: grid;
-  grid-template-columns: 150px 1fr 104px 32px;
-  gap: 8px;
+.step {
+  flex: 1;
+  display: flex;
+}
+
+.step button {
+  width: 100%;
+  min-height: var(--tap);
+  display: flex;
   align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  font-size: var(--text-meta);
+  font-weight: 500;
+  line-height: 1.25;
+  text-align: left;
+  color: var(--muted-text);
 }
 
-.part-row-head {
-  font-size: 0.8125rem;
-  color: var(--muted);
+.step-number {
+  display: inline-grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1px solid currentColor;
+  flex-shrink: 0;
 }
 
-.part-row select,
-.part-row input {
+.step-active button {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: #fff;
+}
+
+.step-done button {
+  color: var(--accent);
+  cursor: pointer;
+}
+
+.step-done button:hover {
+  border-color: var(--accent);
+}
+
+.step-todo button {
+  cursor: default;
+}
+
+@media (max-width: 560px) {
+  .step-bar {
+    gap: 6px;
+  }
+  .step button {
+    gap: 6px;
+    padding: 6px 8px;
+  }
+}
+
+/* ① Upload */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.drop-area {
+  display: block;
+  padding: 24px 16px;
+  border: 2px dashed var(--border);
+  border-radius: var(--radius);
+  text-align: center;
+  cursor: pointer;
+  background: var(--bg);
+  overflow-wrap: anywhere;
+}
+
+.drop-area:hover,
+.drop-area.dragging,
+.drop-area:focus-within {
+  border-color: var(--accent);
+}
+
+.drop-area.has-file {
+  border-style: solid;
+  border-color: var(--accent);
+}
+
+.drop-area strong {
+  color: var(--accent);
+}
+
+.drop-area small {
+  display: block;
+  margin-top: 4px;
+  font-size: var(--text-meta);
+  color: var(--muted-text);
+}
+
+.or {
+  margin: 16px 0 8px;
+  text-align: center;
+  font-size: var(--text-meta);
+  color: var(--muted-text);
+}
+
+.quote-text {
   width: 100%;
   border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 8px 10px;
+  border-radius: var(--radius);
+  padding: 12px;
   background: var(--surface);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: var(--text-meta);
+  resize: vertical;
 }
 
-.part-row select:focus,
-.part-row input:focus {
+.quote-text:disabled {
+  background: var(--bg);
+}
+
+.quote-text:focus,
+.field select:focus,
+.field input:focus,
+.field textarea:focus {
   outline: 2px solid var(--accent);
   outline-offset: -1px;
 }
 
-.price-input {
-  text-align: right;
-}
-
-@media (max-width: 560px) {
-  .part-row {
-    grid-template-columns: 1fr 96px 32px;
-  }
-  .part-row select {
-    grid-column: 1 / -1;
-  }
-  .part-row-head {
-    display: none;
-  }
-}
-
-/* Verdict colors: the phrase is always written, color only supports it. */
-.verdict-reasonable {
-  --verdict: var(--ok);
-}
-.verdict-worth_questioning,
-.verdict-unusually_low {
-  --verdict: var(--caution);
-}
-.verdict-cant_verify {
-  --verdict: var(--muted);
-}
-
-.dot {
-  display: inline-block;
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background: var(--verdict);
-  margin-right: 6px;
-  flex-shrink: 0;
-}
-
-/* Results */
-.summary {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  align-items: center;
-  gap: 12px;
-  margin: 12px 0 16px;
-  padding: 12px 16px;
+/* ② Confirm parts */
+.unreadable {
+  padding: 16px;
+  border-radius: var(--radius);
   background: var(--bg);
-  border-radius: var(--radius);
-}
-
-.summary-counts {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 16px;
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.summary-counts li {
-  display: flex;
-  align-items: center;
-}
-
-.summary-total {
-  margin: 0;
-}
-
-.result-rows {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: grid;
-  gap: 8px;
-}
-
-.result-row {
   border: 1px solid var(--border);
-  border-left: 4px solid var(--verdict);
-  border-radius: var(--radius);
 }
 
-.result-summary {
-  width: 100%;
+.part-cards {
+  list-style: none;
+  margin: 0;
+  padding: 0;
   display: grid;
-  grid-template-columns: 88px 1fr auto 16px;
-  grid-template-areas:
-    'type name price chevron'
-    'type verdict verdict chevron';
-  column-gap: 12px;
-  row-gap: 2px;
-  align-items: center;
-  text-align: left;
-  background: none;
-  border: none;
-  padding: 12px 16px;
-  cursor: pointer;
+  gap: 12px;
 }
 
-.part-type {
-  grid-area: type;
+.part-card {
+  padding: 16px 20px;
+}
+
+.card-context {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  gap: 2px;
-  color: var(--muted);
-  font-size: 0.8125rem;
+  gap: 8px;
+  margin: 0;
+  font-size: var(--text-meta);
+  color: var(--muted-text);
 }
 
 .part-icon {
-  width: 28px;
-  height: 28px;
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
   fill: none;
   stroke: var(--accent);
   stroke-width: 1.5;
@@ -286,78 +348,196 @@ select {
 }
 
 .part-name {
-  grid-area: name;
-  font-weight: 500;
+  margin: 4px 0 0;
+  overflow-wrap: anywhere;
+}
+
+.part-price-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-top: 8px;
 }
 
 .part-price {
-  grid-area: price;
+  font-weight: 600;
   font-variant-numeric: tabular-nums;
 }
 
-.verdict {
-  grid-area: verdict;
+.part-price-row .secondary {
+  min-width: 96px;
+}
+
+.field {
+  display: block;
+  margin-bottom: 12px;
+  font-size: var(--text-meta);
+  color: var(--muted-text);
+}
+
+.field select,
+.field input,
+.field textarea {
+  display: block;
+  width: 100%;
+  min-height: var(--tap);
+  margin-top: 4px;
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  font-size: var(--text-body);
+  color: var(--text);
+}
+
+.field textarea {
+  resize: vertical;
+}
+
+/* Verdict colors: the phrase is always written, color only supports it. */
+.verdict-reasonable {
+  --verdict: var(--ok);
+  --verdict-text: var(--ok-text);
+}
+.verdict-worth_questioning,
+.verdict-unusually_low {
+  --verdict: var(--caution);
+  --verdict-text: var(--caution-text);
+}
+.verdict-cant_verify {
+  --verdict: var(--muted);
+  --verdict-text: var(--muted-text);
+}
+
+.dot {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--verdict);
+  margin-right: 8px;
+  flex-shrink: 0;
+}
+
+/* ③ Results: one card per screen */
+.position {
+  margin: 0 0 8px;
+  font-size: var(--text-meta);
+  color: var(--muted-text);
+}
+
+.overview {
+  margin: 0;
+  font-size: var(--text-verdict);
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.summary-counts {
+  list-style: none;
+  margin: 16px 0;
+  padding: 0;
+  display: grid;
+  gap: 4px;
+}
+
+.summary-counts li {
   display: flex;
   align-items: center;
-  font-size: 0.9375rem;
-  color: var(--verdict);
+}
+
+.result-card {
+  border-top: 6px solid var(--verdict);
+}
+
+.spec-label {
+  margin: 8px 0 0;
   font-weight: 600;
 }
 
-.verdict-cant_verify .verdict {
-  color: var(--muted);
+.verdict-phrase {
+  display: flex;
+  align-items: center;
+  margin: 16px 0 0;
+  font-size: var(--text-verdict);
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--verdict-text);
 }
 
-.chevron {
-  grid-area: chevron;
-  color: var(--muted);
+.verdict-phrase .dot {
+  width: 16px;
+  height: 16px;
 }
 
-.evidence {
-  padding: 0 16px 16px 16px;
-  border-top: 1px solid var(--border);
+.headline {
+  margin: 4px 0 0;
+  font-size: var(--text-number);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
 }
 
-.evidence p {
+.advice {
   margin: 12px 0 0;
+}
+
+.questions {
+  margin: 0;
+  padding-left: 28px;
+  display: grid;
+  gap: 12px;
+}
+
+/* Proof: context level, except reasons and warnings, which stay at reading size */
+.proof {
+  margin-top: 16px;
+  border-top: 1px solid var(--border);
+  font-size: var(--text-meta);
+  color: var(--muted-text);
+  overflow-wrap: anywhere;
+}
+
+.proof p {
+  margin: 12px 0 0;
+}
+
+.proof strong {
+  color: var(--text);
+}
+
+.proof .proof-reason,
+.proof .note {
+  font-size: var(--text-body);
+  color: var(--text);
+}
+
+.note {
+  background: #fff7e6;
+  border-radius: 8px;
+  padding: 10px 14px;
 }
 
 .listings {
   width: 100%;
   border-collapse: collapse;
   margin-top: 8px;
-  font-size: 0.9375rem;
   font-variant-numeric: tabular-nums;
 }
 
 .listings th {
   text-align: left;
   font-weight: 500;
-  color: var(--muted);
-  font-size: 0.8125rem;
+}
+
+.listings td {
+  color: var(--text);
 }
 
 .listings th,
 .listings td {
   padding: 6px 8px;
   border-bottom: 1px solid var(--border);
-}
-
-.note {
-  background: #fff7e6;
-  border-radius: 8px;
-  padding: 8px 12px;
-}
-
-.rule {
-  color: var(--muted);
-  font-size: 0.875rem;
-}
-
-.sample-label {
-  color: var(--muted);
-  font-size: 0.8125rem;
-  font-style: italic;
 }
 
 /* Price bar */
@@ -367,24 +547,18 @@ select {
 
 .price-bar-labels {
   position: relative;
-  height: 22px;
-  font-size: 0.8125rem;
+  height: 26px;
 }
 
 .price-label {
   position: absolute;
   white-space: nowrap;
-  color: var(--muted);
   font-variant-numeric: tabular-nums;
 }
 
 .price-label.quoted {
-  color: var(--verdict);
+  color: var(--verdict-text);
   font-weight: 700;
-}
-
-.verdict-cant_verify.price-label.quoted {
-  color: var(--text);
 }
 
 .anchor-middle {
@@ -453,10 +627,8 @@ select {
 .price-bar-legend {
   display: flex;
   flex-wrap: wrap;
-  gap: 16px;
-  margin-top: 6px;
-  font-size: 0.8125rem;
-  color: var(--muted);
+  gap: 4px 16px;
+  margin-top: 8px;
 }
 
 .price-bar-legend > span {
@@ -480,172 +652,4 @@ select {
   height: 6px;
   border-radius: 50%;
   background: var(--muted);
-}
-
-/* Overview and seller questions */
-.overview {
-  margin: 8px 0 0;
-  font-size: 1.0625rem;
-  font-weight: 500;
-}
-
-.ask-seller {
-  margin: 0 0 16px;
-  padding: 14px 16px;
-  border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
-  background: color-mix(in srgb, var(--accent) 6%, var(--surface));
-  border-radius: var(--radius);
-}
-
-.ask-seller h3 {
-  margin: 0 0 6px;
-  font-size: 1rem;
-}
-
-.ask-seller ol {
-  margin: 0;
-  padding-left: 20px;
-}
-
-.ask-seller li + li {
-  margin-top: 4px;
-}
-
-/* Step bar */
-.step-bar {
-  display: flex;
-  gap: 8px;
-  list-style: none;
-  margin: 0 0 16px;
-  padding: 0;
-}
-
-.step {
-  flex: 1;
-}
-
-.step button {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 12px;
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  background: var(--surface);
-  font-weight: 500;
-  color: var(--muted);
-}
-
-.step-number {
-  display: inline-grid;
-  place-items: center;
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  border: 1px solid currentColor;
-  font-size: 0.8125rem;
-  flex-shrink: 0;
-}
-
-.step-active button {
-  border-color: var(--accent);
-  background: var(--accent);
-  color: #fff;
-}
-
-.step-done button {
-  color: var(--accent);
-  cursor: pointer;
-}
-
-.step-done button:hover {
-  border-color: var(--accent);
-}
-
-.step-todo button {
-  cursor: default;
-}
-
-/* Upload */
-.quote-text {
-  width: 100%;
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 12px;
-  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-  font-size: 0.875rem;
-  resize: vertical;
-}
-
-.quote-text:focus {
-  outline: 2px solid var(--accent);
-  outline-offset: -1px;
-}
-
-@media (max-width: 560px) {
-  .step button {
-    flex-direction: column;
-    gap: 4px;
-    font-size: 0.8125rem;
-  }
-}
-
-/* Upload: screenshot picker */
-.visually-hidden {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-  clip-path: inset(50%);
-  white-space: nowrap;
-}
-
-.drop-area {
-  display: block;
-  margin-top: 16px;
-  padding: 28px 16px;
-  border: 2px dashed var(--border);
-  border-radius: 10px;
-  text-align: center;
-  cursor: pointer;
-  background: var(--bg);
-}
-
-.drop-area:hover,
-.drop-area.dragging,
-.drop-area:focus-within {
-  border-color: var(--accent);
-}
-
-.drop-area.has-file {
-  border-style: solid;
-  border-color: var(--accent);
-}
-
-.drop-area strong {
-  color: var(--accent);
-}
-
-.drop-area small {
-  display: block;
-  margin-top: 4px;
-  color: var(--muted);
-}
-
-.or {
-  color: var(--muted);
-  text-align: center;
-  margin: 16px 0 8px;
-}
-
-.quote-text:disabled {
-  background: var(--bg);
-}
-
-.unreadable {
-  padding: 16px;
-  border-radius: 10px;
-  background: var(--bg);
-  border: 1px solid var(--border);
 }

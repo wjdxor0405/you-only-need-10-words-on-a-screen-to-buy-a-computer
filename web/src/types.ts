@@ -3,6 +3,19 @@
 export const PART_TYPES = ['CPU', 'GPU', 'Motherboard', 'RAM', 'Storage', 'PSU', 'Case', 'Cooler', 'Other'] as const
 export type PartType = (typeof PART_TYPES)[number]
 
+// Part types in plain words. Mirrors PART_LABELS in server/app/verdict.py.
+export const PART_LABEL: Record<PartType, string> = {
+  CPU: 'Processor',
+  GPU: 'Graphics card',
+  Motherboard: 'Motherboard',
+  RAM: 'Memory',
+  Storage: 'Storage',
+  PSU: 'Power supply',
+  Case: 'Case',
+  Cooler: 'CPU cooler',
+  Other: 'Other part',
+}
+
 export type Verdict = 'reasonable' | 'worth_questioning' | 'unusually_low' | 'cant_verify'
 
 export interface PartLine {
@@ -26,6 +39,9 @@ export interface LineResult {
   listings: Listing[]
   swap_risk: boolean
   ask_seller: null | string
+  part_label: string // plain part name, e.g. "Graphics card"
+  display_name: string // spec label, or the name as read cut to 28 characters
+  advice: string // one fixed sentence for the card
 }
 
 export interface CheckResult {

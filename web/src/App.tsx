@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { PlainError, checkPrices, readQuote } from './api'
 import ConfirmStep, { type DraftLine, toDraft, toPartLine } from './components/ConfirmStep'
 import ResultsStep from './components/ResultsStep'
@@ -16,6 +16,9 @@ export default function App() {
   const [result, setResult] = useState<CheckResult | null>(null)
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)
+
+  // A new step starts at the top, which matters on a phone.
+  useEffect(() => window.scrollTo({ top: 0 }), [step])
 
   async function handleRead() {
     setBusy(true)
@@ -61,7 +64,7 @@ export default function App() {
     <main className="page">
       <header className="page-header">
         <h1>Quote Check</h1>
-        <p>Upload or paste the PC quote you were given and see, part by part, whether each price is reasonable — and why.</p>
+        <p>See if each price in a PC quote is fair, part by part, with the proof.</p>
       </header>
       <StepBar current={step} onGo={goTo} />
       {step === 'upload' && (

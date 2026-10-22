@@ -47,14 +47,9 @@ def test_headline(quoted, expected):
 
 
 def test_ask_seller_for_each_verdict():
-    assert ask_seller("PSU", "Corsair RM650e", "worth_questioning", 20, False) == (
-        "Why does the PSU (Corsair RM650e) cost $20 more than the typical price?"
-    )
-    assert ask_seller("GPU", "RTX 4060", "unusually_low", -104, False) == (
-        "Is the GPU (RTX 4060) the exact model, and brand new? It's $104 below the typical price."
-    )
-    assert ask_seller("Storage", "SSD 1TB", "cant_verify", None, True) == (
-        'Which exact maker and model is the "SSD 1TB" in the quote?'
-    )
-    assert ask_seller("CPU", "Ryzen 5 7600", "reasonable", 4, False) is None
-    assert ask_seller("Cooler", "Peerless Assassin", "cant_verify", None, False) is None
+    assert ask_seller("PSU", "worth_questioning", 20, False) == "Why is the power supply $20 above typical?"
+    assert ask_seller("GPU", "unusually_low", -104, False) == "Is the graphics card new and the exact model?"
+    assert ask_seller("Storage", "cant_verify", None, True) == "Which maker and model is the storage?"
+    assert ask_seller("Cooler", "worth_questioning", 1500, False) == "Why is the CPU cooler $1,500 above typical?"
+    assert ask_seller("CPU", "reasonable", 4, False) is None
+    assert ask_seller("Cooler", "cant_verify", None, False) is None

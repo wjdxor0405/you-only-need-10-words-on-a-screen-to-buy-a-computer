@@ -5,6 +5,7 @@
       "id": "cpu-ryzen5-7600",
       "part_type": "CPU",
       "name": "AMD Ryzen 5 7600",
+      "spec_label": "Ryzen 5 7600",
       "aliases": [
         "ryzen57600"
       ],
@@ -30,6 +31,7 @@
       "id": "cpu-ryzen7-7800x3d",
       "part_type": "CPU",
       "name": "AMD Ryzen 7 7800X3D",
+      "spec_label": "Ryzen 7 7800X3D",
       "aliases": [
         "ryzen77800x3d"
       ],
@@ -55,6 +57,7 @@
       "id": "cpu-i5-14400f",
       "part_type": "CPU",
       "name": "Intel Core i5-14400F",
+      "spec_label": "Core i5-14400F",
       "aliases": [
         "i514400f"
       ],
@@ -80,6 +83,7 @@
       "id": "gpu-rtx4060",
       "part_type": "GPU",
       "name": "NVIDIA GeForce RTX 4060 8GB",
+      "spec_label": "RTX 4060, 8GB",
       "aliases": [
         "rtx4060"
       ],
@@ -110,6 +114,7 @@
       "id": "gpu-rtx4070super",
       "part_type": "GPU",
       "name": "NVIDIA GeForce RTX 4070 SUPER 12GB",
+      "spec_label": "RTX 4070 Super, 12GB",
       "aliases": [
         "rtx4070super"
       ],
@@ -135,6 +140,7 @@
       "id": "gpu-rx7600",
       "part_type": "GPU",
       "name": "AMD Radeon RX 7600 8GB",
+      "spec_label": "RX 7600, 8GB",
       "aliases": [
         "rx7600"
       ],
@@ -160,6 +166,7 @@
       "id": "mb-msi-b650m-a",
       "part_type": "Motherboard",
       "name": "MSI PRO B650M-A WIFI",
+      "spec_label": "B650M, Wi-Fi",
       "aliases": [
         "prob650ma"
       ],
@@ -185,6 +192,7 @@
       "id": "mb-asus-tuf-b650-plus",
       "part_type": "Motherboard",
       "name": "ASUS TUF Gaming B650-PLUS WIFI",
+      "spec_label": "B650, Wi-Fi",
       "aliases": [
         "tufgamingb650plus"
       ],
@@ -210,6 +218,7 @@
       "id": "ram-vengeance-32-ddr5",
       "part_type": "RAM",
       "name": "Corsair Vengeance 32GB (2x16GB) DDR5-6000",
+      "spec_label": "32GB DDR5-6000",
       "aliases": [
         "vengeance32gbddr5",
         "vengeance32gb2x16gbddr5",
@@ -238,6 +247,7 @@
       "id": "ram-flare-x5-32",
       "part_type": "RAM",
       "name": "G.Skill Flare X5 32GB (2x16GB) DDR5-6000",
+      "spec_label": "32GB DDR5-6000",
       "aliases": [
         "flarex532gb",
         "flarex52x16gb"
@@ -264,6 +274,7 @@
       "id": "ssd-990-evo-plus-1tb",
       "part_type": "Storage",
       "name": "Samsung 990 EVO Plus 1TB",
+      "spec_label": "1TB NVMe SSD",
       "aliases": [
         "990evoplus1tb"
       ],
@@ -289,6 +300,7 @@
       "id": "ssd-sn850x-1tb",
       "part_type": "Storage",
       "name": "WD Black SN850X 1TB",
+      "spec_label": "1TB NVMe SSD",
       "aliases": [
         "sn850x1tb"
       ],
@@ -314,6 +326,7 @@
       "id": "psu-rm650e",
       "part_type": "PSU",
       "name": "Corsair RM650e 650W 80+ Gold",
+      "spec_label": "650W, 80+ Gold",
       "aliases": [
         "rm650e"
       ],
@@ -339,6 +352,7 @@
       "id": "psu-rm750e",
       "part_type": "PSU",
       "name": "Corsair RM750e 750W 80+ Gold",
+      "spec_label": "750W, 80+ Gold",
       "aliases": [
         "rm750e"
       ],
@@ -364,6 +378,7 @@
       "id": "case-h5-flow",
       "part_type": "Case",
       "name": "NZXT H5 Flow",
+      "spec_label": "NZXT H5 Flow",
       "aliases": [
         "nzxth5flow"
       ],
@@ -389,6 +404,7 @@
       "id": "case-north",
       "part_type": "Case",
       "name": "Fractal Design North",
+      "spec_label": "Fractal North",
       "aliases": [
         "fractaldesignnorth",
         "fractalnorth"
@@ -415,6 +431,7 @@
       "id": "cooler-ak400",
       "part_type": "Cooler",
       "name": "DeepCool AK400",
+      "spec_label": "AK400 air cooler",
       "aliases": [
         "ak400"
       ],
