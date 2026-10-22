@@ -19,7 +19,7 @@ Build mode: fast
   Learner check: Start both programs and open http://localhost:5173. Press "Check prices" and confirm there is at least one row of each verdict. Open the amber and gray rows and judge whether a beginner would understand *why*. Change one price so it goes from Reasonable to Worth questioning, then check again.
   Commit: `Add price verdicts with evidence for confirmed part lines`
 
-- [ ] **2. Paste a quote as text and the model reads it into part lines**
+- [x] **2. Paste a quote as text and the model reads it into part lines**
   Becomes usable: The app opens on ① Upload with the step bar. Paste a quote, or press "Try a sample quote", then press "Read quote". The model fills ② with the lines it read, which you confirm and check as in slice 1. Earlier steps can be clicked to go back.
   Why now: The model is the riskiest unknown (`gpt-6-luna`'s name, structured output, SDK version). Verifying it with text first separates "does the model call work" from "can it read images."
   PRD ref: `prd.md > Reading the Quote`, `prd.md > Screens and Layout`, `prd.md > States and Boundaries` (First use)
@@ -68,3 +68,4 @@ Activity mode:
 - Sample data has 17 products instead of 10–15 — a few extra so edits in step ② still find matches.
 - Added a one-sentence overview, "Questions to ask the seller", a price range bar, and part-type icons to Results — the learner's first hands-on check found the evidence screen text-only; the questions use fixed rules so the model never writes evidence.
 - Slice 2 verification checks that a RAM kit ("2x16GB") is read as one line at the kit price — a comparable quote reader was seen reading the kit as quantity 2.
+- The slice 2 probe confirmed the model name and structured output with text only; image input is checked in slice 3, where the sample screenshot is created.

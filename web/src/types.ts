@@ -34,3 +34,8 @@ export interface CheckResult {
   sample_data_note: string
   total_usd: number
 }
+
+export interface ReadResult {
+  lines: PartLine[]
+  problem: null | { kind: 'unreadable' | 'not_a_quote'; message: string }
+}

@@ -1,15 +1,19 @@
 """FastAPI app: the endpoints the screen calls."""
 
 import json
+import logging
 from pathlib import Path
 
-from fastapi import FastAPI
+from dotenv import load_dotenv
+from fastapi import FastAPI, Form, HTTPException
 
-from app import verdict
+from app import quote_reader, verdict
 from app.matcher import is_vague, match
-from app.models import CheckRequest, CheckResult, LineResult, PartLine, PriceData
+from app.models import CheckRequest, CheckResult, LineResult, PartLine, PriceData, ReadResult
 
 PRICES_PATH = Path(__file__).resolve().parent.parent / "data" / "prices.json"
+load_dotenv(Path(__file__).resolve().parents[2] / ".env")
+log = logging.getLogger("uvicorn.error")
 
 app = FastAPI(title="Quote Check")
 prices = PriceData.model_validate(json.loads(PRICES_PATH.read_text()))
@@ -52,3 +56,14 @@ def check(request: CheckRequest) -> CheckResult:
         sample_data_note=prices.note,
         total_usd=round(sum(line.price_usd for line in request.lines), 2),
     )
+
+
+@app.post("/api/read")
+def read(text: str = Form("")) -> ReadResult:
+    if not text.strip():
+        raise HTTPException(400, "Paste a quote first.")
+    try:
+        return quote_reader.read_quote(text=text)
+    except Exception:
+        log.exception("Reading the quote failed")
+        raise HTTPException(502, "Reading failed — check the server log.")

@@ -510,3 +510,83 @@ select {
 .ask-seller li + li {
   margin-top: 4px;
 }
+
+/* Step bar */
+.step-bar {
+  display: flex;
+  gap: 8px;
+  list-style: none;
+  margin: 0 0 16px;
+  padding: 0;
+}
+
+.step {
+  flex: 1;
+}
+
+.step button {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  font-weight: 500;
+  color: var(--muted);
+}
+
+.step-number {
+  display: inline-grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 1px solid currentColor;
+  font-size: 0.8125rem;
+  flex-shrink: 0;
+}
+
+.step-active button {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: #fff;
+}
+
+.step-done button {
+  color: var(--accent);
+  cursor: pointer;
+}
+
+.step-done button:hover {
+  border-color: var(--accent);
+}
+
+.step-todo button {
+  cursor: default;
+}
+
+/* Upload */
+.quote-text {
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 12px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.875rem;
+  resize: vertical;
+}
+
+.quote-text:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: -1px;
+}
+
+@media (max-width: 560px) {
+  .step button {
+    flex-direction: column;
+    gap: 4px;
+    font-size: 0.8125rem;
+  }
+}

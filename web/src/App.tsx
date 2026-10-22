@@ -1,22 +1,41 @@
 import { useState } from 'react'
-import { checkPrices } from './api'
+import { checkPrices, readQuote } from './api'
 import ConfirmStep, { type DraftLine, toDraft, toPartLine } from './components/ConfirmStep'
 import ResultsStep from './components/ResultsStep'
-import { SAMPLE_LINES } from './sampleQuote'
+import StepBar, { type Step } from './components/StepBar'
+import UploadStep from './components/UploadStep'
 import type { CheckResult } from './types'
-
-type Step = 'confirm' | 'results'
 
 // All state lives here; nothing is saved, so closing the tab clears it.
 export default function App() {
-  const [step, setStep] = useState<Step>('confirm')
-  const [lines, setLines] = useState<DraftLine[]>(() => SAMPLE_LINES.map(toDraft))
+  const [step, setStep] = useState<Step>('upload')
+  const [quoteText, setQuoteText] = useState('')
+  const [lines, setLines] = useState<DraftLine[]>([])
   const [result, setResult] = useState<CheckResult | null>(null)
-  const [checking, setChecking] = useState(false)
+  const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
+  async function handleRead() {
+    setBusy(true)
+    setError(null)
+    try {
+      const read = await readQuote(quoteText)
+      if (read.lines.length === 0) {
+        setError(read.problem?.message ?? "We couldn't find any PC parts in this quote.")
+        return
+      }
+      setLines(read.lines.map(toDraft))
+      setResult(null)
+      setStep('confirm')
+    } catch {
+      setError('Reading failed — check the server log. You can still try again.')
+    } finally {
+      setBusy(false)
+    }
+  }
+
   async function handleCheck() {
-    setChecking(true)
+    setBusy(true)
     setError(null)
     try {
       setResult(await checkPrices(lines.map(toPartLine)))
@@ -24,8 +43,13 @@ export default function App() {
     } catch {
       setError('Checking failed — is the server running? See the server log.')
     } finally {
-      setChecking(false)
+      setBusy(false)
     }
+  }
+
+  function goTo(next: Step) {
+    setError(null)
+    setStep(next)
   }
 
   return (
@@ -34,10 +58,14 @@ export default function App() {
         <h1>Quote Check</h1>
         <p>Paste the PC quote you were given and see, part by part, whether each price is reasonable — and why.</p>
       </header>
-      {step === 'confirm' && (
-        <ConfirmStep lines={lines} onChange={setLines} onCheck={handleCheck} checking={checking} error={error} />
+      <StepBar current={step} onGo={goTo} />
+      {step === 'upload' && (
+        <UploadStep text={quoteText} onTextChange={setQuoteText} onRead={handleRead} reading={busy} error={error} />
       )}
-      {step === 'results' && result && <ResultsStep result={result} onBack={() => setStep('confirm')} />}
+      {step === 'confirm' && (
+        <ConfirmStep lines={lines} onChange={setLines} onCheck={handleCheck} checking={busy} error={error} />
+      )}
+      {step === 'results' && result && <ResultsStep result={result} onBack={() => goTo('confirm')} />}
     </main>
   )
 }
