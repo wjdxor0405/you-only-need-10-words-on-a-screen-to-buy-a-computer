@@ -29,7 +29,11 @@ One page with a three-step bar: ① Upload → ② Confirm parts → ③ Results
 - Verdict colors: green for reasonable, amber for worth questioning, red reserved for real problems; gray for can't verify.
 - Clean sans-serif (Pretendard-like character), slightly rounded corners.
 - Calm, tidy shopping-helper tone. Plain words; no jargon in the short line.
-- **Large type by default**, not a setting: body text at least 20px, the verdict phrase at least 32px, buttons at least 56px tall and full width on a phone.
+- **Large type by default**, not a setting, with three levels so that one thing on each card stands out:
+  - **Decide** (largest): the verdict phrase (32px) and its one number (24px). On the overview card, the one sentence.
+  - **Read and act** (20px): product name, the advice sentence, the seller questions, the swap-risk note, and every button (at least 56px tall, full width on a phone).
+  - **Context** (16px, muted color): part type label, "Part 3 of 8", step bar, quote total, sample-data label, and everything in the proof (full name as read, rule, listings with store, price, and date, range bar legend).
+- **No fine print:** nothing is smaller than 16px — the sample-data label included. Can't-verify reasons and the swap-risk note are never put in the context level; honesty is part of the kernel.
 - Fits a 360px-wide phone screen with no zooming and no sideways scrolling.
 - All UI text in English.
 
@@ -71,12 +75,14 @@ Added during the build after the first hands-on check: turns verdicts into somet
   - [ ] The sample quote lists questions for the PSU, the GPU, and "SSD 1TB", and none for Reasonable lines.
 
 ### Large Type and Character Limit
-Added during the build: the demo persona is a parent who can't read small print, and reviewers watch the demo in a small video player.
+Added during the build: the quote arrives on a phone, the user should decide one thing at a time, and reviewers watch the demo in a small video player.
 - Every card shows at most **120 characters** of text before "Show proof" (step bar and buttons not counted). If text doesn't fit, it is shortened, never shrunk.
 - A product name longer than 28 characters shows a short name on the card (e.g., "Corsair 32GB DDR5 kit"); the full name as read stays in the proof.
   - [ ] Every card for the sample quote, and for each verdict path, stays within 120 characters.
   - [ ] On a 360px-wide screen, no step needs zooming or sideways scrolling.
   - [ ] Body text is at least 20px, the verdict phrase at least 32px, and buttons at least 56px tall.
+  - [ ] No text anywhere is smaller than 16px, including the sample-data label and the proof.
+  - [ ] On every part card, the verdict phrase is the largest text.
 
 ## States and Boundaries
 - **First use** — step ① with an empty input area and the one-line explanation. A "Try a sample quote" link fills in the sample so the demo never starts empty.
@@ -91,7 +97,7 @@ Added during the build: the demo persona is a parent who can't read small print,
 - All English, with US-dollar prices and US retailers — judges and the demo are in English.
 - Screenshot input included (scope decision), with a confirm step before verdicts.
 - Swap-risk flag included if quick; first to cut.
-- **Large type and one part per screen, by default** — chosen after reviewing the judging criteria: reviewers only watch the video, and the demo persona (a parent in their 50s) can't read small print. Considered and rejected: a text-size toggle (reads as a generic option, and the default screen stays small); a native phone app (rebuilds every screen and needs a hosted server). A post-delivery parts check would add the most novelty but cost most of the remaining time, so it stays under Possible Later Enhancements. Cost: long product names need hand-written short names, and the seller questions name only the part type.
+- **Large type and one part per screen, by default** — chosen after reviewing the judging criteria: reviewers only watch the video, in a small player, and the quote arrives on a phone. Large type is not pitched as an age feature: no data shows parents of teens prefer it, though about 1 in 5 iPhone users in one large app's data chose larger text ([source](https://fassko.medium.com/embracing-the-dynamic-type-d8df6701aa19)) and near vision typically starts to fade after 40. Only the verdict is big; context stays at 16px so the card has one focal point. Considered and rejected: a text-size toggle (reads as a generic option, and the default screen stays small); a native phone app (rebuilds every screen and needs a hosted server). A post-delivery parts check would add the most novelty but cost most of the remaining time, so it stays under Possible Later Enhancements. Cost: long product names need hand-written short names, and the seller questions name only the part type.
 - Verdicts are a percentage band around the median of sample listings: +10% / −30%, with a separate Unusually low verdict. Chosen after comparing price-labeling services (Google Shopping low/typical/high, CarGurus deal ratings — neither publishes cutoffs; an unofficial account puts CarGurus "Fair" within about ±5–10%) and GPU scam guidance ("50%+ below market is almost certainly a scam," for private used sales). 10% follows the CarGurus bands; 30% is a judgment call for shop quotes, lower than the private-sale 50%. Slightly cheap counts as reasonable so beginners don't distrust good quotes.
 
 ## What We're Building

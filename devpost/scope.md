@@ -13,7 +13,7 @@ A pre-purchase check for PC beginners, readable on a phone without zooming: past
 ## Who It's For
 Someone who doesn't know computers and has been handed a quote — by a shop, a friend, or an influencer's build list — and is hesitating before paying: "Can I trust this price, these parts?" Today they either trust the person who gave it to them or try reviews they can't fully trust (ads, fake reviews).
 
-**Demo persona** (revised during the build): a parent in their 50s buying a gaming PC for their teenager. The shop's quote arrives on their phone. They don't know the parts, and small print is hard to read without reading glasses. Designing for them keeps every screen short and large, which helps every beginner.
+**Demo persona** (revised during the build): a parent paying for their teenager's first gaming PC. The teen picked the parts from videos; the parent may play games but has never had a reason to learn parts or fair prices. The shop's quote arrives on their phone.
 
 ## The Core Loop
 They paste the quote they received → each line comes back with a simple verdict and its evidence → they read it without having to think hard, and decide whether to buy.
@@ -22,7 +22,8 @@ They come back each time someone hands them a new quote.
 ## Inspiration & Identity
 - Should feel like it takes the complexity off the user: "you don't need to think hard about this."
 - Tone is honest and plain, not salesy. Saying "can't verify" earns more trust than a confident guess.
-- Readable at arm's length: large type by default (not a setting), one part per screen, and a fixed character limit per screen. If something doesn't fit, it gets shorter, not smaller.
+- Readable at a glance on a phone: large type by default (not a setting), one part per screen, and a fixed character limit per screen. If something doesn't fit, it gets shorter, not smaller.
+- Only the verdict is big. Sources and context stay readable but quiet — and never fine print: a tool that points out what a quote leaves vague can't hide its own caveats.
 
 ## Why This Matters to the Learner
 Finish one project end to end, from an empty folder to submission, in a short time. The learner chose a focused version of a product idea they already know well: one core loop — a quote in, price evidence out — small enough to build, verify, and demo within the hackathon.

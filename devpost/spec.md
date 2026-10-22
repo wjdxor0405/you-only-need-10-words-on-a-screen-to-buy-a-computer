@@ -83,7 +83,8 @@ From `prd.md > Look and Feel`. Defined as CSS variables in `web/src/styles.css`:
 - `--ok` green, `--caution` amber, `--bad` red (reserved, not used by any verdict), `--muted` gray for Can't verify.
 - Font: `Pretendard, Inter, system-ui, sans-serif` — loaded from a CDN with system fallback.
 - Corners about 10px; generous spacing; one column, max width about 720px, centered.
-- Large type by default: `--text-body` 20px, `--text-verdict` 32px, `--tap` 56px (minimum button height); line height about 1.5. Buttons are full width under 560px.
+- Large type by default, three levels (`prd.md > Look and Feel`): `--text-verdict` 32px and `--text-number` 24px (decide), `--text-body` 20px (read and act), `--text-meta` 16px in `--muted-text` (context). `--tap` 56px minimum button height; line height about 1.5. Buttons are full width under 560px.
+- 16px is the floor for all text, including the sample-data label and the proof. Can't-verify reasons and the swap-risk note use `--text-body`, never `--text-meta`.
 - Fits 360px wide with a 16px side gutter; no sideways scrolling on any step.
 - Copy: short, plain English; no jargon in collapsed rows. Verdict text is never color-only — the phrase is always written.
 - Light theme only (dark mode is not in the PRD).
