@@ -31,8 +31,8 @@ One page with a three-step bar: ① Upload → ② Confirm parts → ③ Results
 - Calm, tidy shopping-helper tone. Plain words; no jargon in the short line.
 - **Large type by default**, not a setting, with three levels so that one thing on each card stands out:
   - **Decide** (largest): the verdict phrase (32px) and its one number (24px). On the overview card, the one sentence.
-  - **Read and act** (20px): product name, the advice sentence, the seller questions, the swap-risk note, and every button (at least 56px tall, full width on a phone).
-  - **Context** (16px, muted color): part type label, "Part 3 of 8", step bar, quote total, sample-data label, and everything in the proof (full name as read, rule, listings with store, price, and date, range bar legend).
+  - **Read and act** (20px): the spec label, the advice sentence, the seller questions, the swap-risk note, and every button (at least 56px tall, full width on a phone).
+  - **Context** (16px, muted color): the part in plain words with its quoted price, "Part 3 of 8", step bar, quote total, sample-data label, and everything in the proof (full name as read, rule, listings with store, price, and date, range bar legend).
 - **No fine print:** nothing is smaller than 16px — the sample-data label included. Can't-verify reasons and the swap-risk note are never put in the context level; honesty is part of the kernel.
 - Fits a 360px-wide phone screen with no zooming and no sideways scrolling.
 - All UI text in English.
@@ -54,7 +54,7 @@ The kernel (`scope.md > The Unique Kernel`). Each part's quoted price is compare
 - **Unusually low** (amber) — more than 30% below the typical price. Shown as a caution, not a win: "Check that it's the exact model and that it's new."
 - **Can't verify** (gray) — the product isn't in the sample data, or the name is too vague to match. The line says which.
 - The rule itself is shown in the evidence (e.g., "We call a price reasonable within +10% / −30% of the typical price"). Price-comparison services keep their cutoffs private; showing ours is part of the kernel.
-- Card: part type, product name, verdict phrase, one number (e.g., "Reasonable · $12 below typical"), and one fixed sentence of advice (e.g., "Ask the seller why it costs more.").
+- Card: the part in plain words with its quoted price (e.g., "Graphics card · $195"), the spec label (e.g., "RTX 4060, 8GB"), verdict phrase, one number (e.g., "$104 below typical"), and one fixed sentence of advice (e.g., "Check it's the exact model and new.").
 - Proof ("Show proof"): the full product name as read, the typical price, the listings it came from (retailer, price, date), the rule used, and the sample-data label.
   - [ ] The sample quote shows at least one card of each verdict: Reasonable, Worth questioning, Unusually low, Can't verify.
   - [ ] Each card shows exactly one verdict phrase and one number.
@@ -77,7 +77,12 @@ Added during the build after the first hands-on check: turns verdicts into somet
 ### Large Type and Character Limit
 Added during the build: the quote arrives on a phone, the user should decide one thing at a time, and reviewers watch the demo in a small video player.
 - Every card shows at most **120 characters** of text before "Show proof" (step bar and buttons not counted). If text doesn't fit, it is shortened, never shrunk.
-- A product name longer than 28 characters shows a short name on the card (e.g., "Corsair 32GB DDR5 kit"); the full name as read stays in the proof.
+- Cards name a part by **what it is and what it costs**, not by its full product name:
+  - the part in plain words (Processor, Graphics card, Memory, Power supply, …) with the quoted price, so the user can find the line on the quote in front of them;
+  - a hand-written spec label for each sample product — the specs that set the price (e.g., "RTX 4060, 8GB", "650W, 80+ Gold"). Brand and series names ("MSI … Ventus 2X") stay in the proof.
+- A line that isn't in the sample data shows its name as read, cut to 28 characters — no invented specs.
+- A line with no maker or model uses its advice sentence for the swap-risk warning ("No maker or model — a cheaper part could be swapped in."), since brands no longer appear on other cards to contrast with.
+  - [ ] The sample quote's graphics card shows "Graphics card · $195" and "RTX 4060, 8GB"; its full name as read appears only in the proof.
   - [ ] Every card for the sample quote, and for each verdict path, stays within 120 characters.
   - [ ] On a 360px-wide screen, no step needs zooming or sideways scrolling.
   - [ ] Body text is at least 20px, the verdict phrase at least 32px, and buttons at least 56px tall.
@@ -97,7 +102,7 @@ Added during the build: the quote arrives on a phone, the user should decide one
 - All English, with US-dollar prices and US retailers — judges and the demo are in English.
 - Screenshot input included (scope decision), with a confirm step before verdicts.
 - Swap-risk flag included if quick; first to cut.
-- **Large type and one part per screen, by default** — chosen after reviewing the judging criteria: reviewers only watch the video, in a small player, and the quote arrives on a phone. Large type is not pitched as an age feature: no data shows parents of teens prefer it, though about 1 in 5 iPhone users in one large app's data chose larger text ([source](https://fassko.medium.com/embracing-the-dynamic-type-d8df6701aa19)) and near vision typically starts to fade after 40. Only the verdict is big; context stays at 16px so the card has one focal point. Considered and rejected: a text-size toggle (reads as a generic option, and the default screen stays small); a native phone app (rebuilds every screen and needs a hosted server). A post-delivery parts check would add the most novelty but cost most of the remaining time, so it stays under Possible Later Enhancements. Cost: long product names need hand-written short names, and the seller questions name only the part type.
+- **Large type and one part per screen, by default** — chosen after reviewing the judging criteria: reviewers only watch the video, in a small player, and the quote arrives on a phone. Large type is not pitched as an age feature: no data shows parents of teens prefer it, though about 1 in 5 iPhone users in one large app's data chose larger text ([source](https://fassko.medium.com/embracing-the-dynamic-type-d8df6701aa19)) and near vision typically starts to fade after 40. Only the verdict is big; context stays at 16px so the card has one focal point. Considered and rejected: a text-size toggle (reads as a generic option, and the default screen stays small); a native phone app (rebuilds every screen and needs a hosted server). A post-delivery parts check would add the most novelty but cost most of the remaining time, so it stays under Possible Later Enhancements. Cost: every sample product needs a hand-written spec label; with brands off the cards, a vague name no longer stands out by contrast, so its card states the swap risk outright; the seller questions name only the part type.
 - Verdicts are a percentage band around the median of sample listings: +10% / −30%, with a separate Unusually low verdict. Chosen after comparing price-labeling services (Google Shopping low/typical/high, CarGurus deal ratings — neither publishes cutoffs; an unofficial account puts CarGurus "Fair" within about ±5–10%) and GPU scam guidance ("50%+ below market is almost certainly a scam," for private used sales). 10% follows the CarGurus bands; 30% is a judgment call for shop quotes, lower than the private-sale 50%. Slightly cheap counts as reasonable so beginners don't distrust good quotes.
 
 ## What We're Building

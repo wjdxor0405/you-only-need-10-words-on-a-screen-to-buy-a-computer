@@ -106,7 +106,7 @@ PRD ref: `prd.md > Reading the Quote`, `prd.md > States and Boundaries` (Couldn'
 ### Results Step
 `web/src/components/ResultsStep.tsx`, `ResultCard.tsx` (renamed from `ResultRow.tsx`), `PriceBar.tsx`, `PartIcon.tsx`. One card per screen; `ResultsStep` holds the card index and shows "Part N of M" with large Back and Next buttons.
 - Overview card: the one-sentence overview, count per verdict, quote total.
-- Part card: part type, `display_name`, verdict phrase, `headline`, `advice`. "Show proof" opens the full name as read, price range bar, typical price, the rule, each listing (store, price, date), sample-data label, and swap-risk note if any.
+- Part card: `part_label` · quoted price, `display_name`, verdict phrase, `headline`, `advice`. "Show proof" opens the full name as read, price range bar, typical price, the rule, each listing (store, price, date), and the sample-data label.
 - Questions card(s): the `ask_seller` questions, at most three per card.
 PRD ref: `prd.md > Price Verdicts`, `prd.md > Swap-Risk Flag`, `prd.md > Large Type and Character Limit`.
 
@@ -138,8 +138,10 @@ PRD ref: `prd.md > Price Verdicts` (Can't verify), `prd.md > Swap-Risk Flag`.
 - Collapsed number: the difference in dollars, e.g., "$12 below typical" / "$25 above typical" / "Matches typical."
 - `ask_seller(...)` = one fixed-template question per Worth questioning / Unusually low / too-vague line, naming the part type only (e.g., "Why is the PSU $20 above typical?"); `None` otherwise.
 - `advice(...)` = one fixed sentence per verdict and Can't verify reason (e.g., "Close to what stores charge.", "Ask the seller why it costs more.").
-- `display_name` = the product's `short_name` when matched and the read name is longer than 28 characters; otherwise the name as read, cut to 28 characters with "…".
-- `CARD_TEXT_LIMIT = 120`: part type + `display_name` + longest verdict phrase ("Worth questioning") + `headline` + `advice` must fit, for every verdict path. A test enforces it.
+- `part_label` = the part type in plain words: CPU → "Processor", GPU → "Graphics card", RAM → "Memory", PSU → "Power supply", Cooler → "CPU cooler"; Motherboard, Storage, Case, Other unchanged.
+- `display_name` = the matched product's `spec_label`; for an unmatched line, the name as read, cut to 28 characters with "…".
+- `advice` for a swap-risk line is the swap-risk warning: "No maker or model — a cheaper part could be swapped in."
+- `CARD_TEXT_LIMIT = 120`: `part_label` + " · $" + quoted price + `display_name` + longest verdict phrase ("Worth questioning") + `headline` + `advice` must fit, for every verdict path. A test enforces it.
 - `RULE_TEXT` = "We call a price reasonable from 30% below to 10% above the typical price (the middle of the listings we have)." Sent with every result so the screen shows the code's own rule.
 PRD ref: `prd.md > Price Verdicts`.
 
@@ -165,7 +167,8 @@ LineResult   { line: PartLine,
                listings: Listing[],
                swap_risk: boolean,
                ask_seller: null | string,      // fixed-rule question, see Verdict Engine
-               display_name: string,           // short name for the card, see Verdict Engine
+               part_label: string,             // plain part name, e.g. "Graphics card"
+               display_name: string,           // spec label, or the read name cut to 28 chars
                advice: string }                // one fixed sentence for the card
 CheckResult  { results: LineResult[], rule_text: string, sample_data_note: string, total_usd: number }
 ```
@@ -175,7 +178,7 @@ CheckResult  { results: LineResult[], rule_text: string, sample_data_note: strin
 { "note": "Sample prices for demonstration, not live data.",
   "products": [
     { "id": "gpu-rtx4060", "part_type": "GPU", "name": "NVIDIA GeForce RTX 4060 8GB",
-      "short_name": "RTX 4060 8GB", "aliases": ["rtx4060"], "listings": [ { "store": "Store A", "price_usd": 299, "date": "2026-10-01" }, ... ] },
+      "spec_label": "RTX 4060, 8GB", "aliases": ["rtx4060"], "listings": [ { "store": "Store A", "price_usd": 299, "date": "2026-10-01" }, ... ] },
     ...
 ] }
 ```
