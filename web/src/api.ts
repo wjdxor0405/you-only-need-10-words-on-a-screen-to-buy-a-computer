@@ -10,10 +10,18 @@ export async function checkPrices(lines: PartLine[]): Promise<CheckResult> {
   return response.json()
 }
 
-export async function readQuote(text: string): Promise<ReadResult> {
+// A message the server meant for the user (a rejected file, say), as opposed to a crash.
+export class PlainError extends Error {}
+
+export async function readQuote(input: { text: string } | { image: File }): Promise<ReadResult> {
   const form = new FormData()
-  form.append('text', text)
+  if ('image' in input) form.append('image', input.image)
+  else form.append('text', input.text)
   const response = await fetch('/api/read', { method: 'POST', body: form })
+  if (response.status >= 400 && response.status < 500) {
+    const body = await response.json().catch(() => null)
+    throw new PlainError(body?.detail ?? `Reading failed (${response.status})`)
+  }
   if (!response.ok) throw new Error(`Reading failed (${response.status})`)
   return response.json()
 }

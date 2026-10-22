@@ -590,3 +590,62 @@ select {
     font-size: 0.8125rem;
   }
 }
+
+/* Upload: screenshot picker */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.drop-area {
+  display: block;
+  margin-top: 16px;
+  padding: 28px 16px;
+  border: 2px dashed var(--border);
+  border-radius: 10px;
+  text-align: center;
+  cursor: pointer;
+  background: var(--bg);
+}
+
+.drop-area:hover,
+.drop-area.dragging,
+.drop-area:focus-within {
+  border-color: var(--accent);
+}
+
+.drop-area.has-file {
+  border-style: solid;
+  border-color: var(--accent);
+}
+
+.drop-area strong {
+  color: var(--accent);
+}
+
+.drop-area small {
+  display: block;
+  margin-top: 4px;
+  color: var(--muted);
+}
+
+.or {
+  color: var(--muted);
+  text-align: center;
+  margin: 16px 0 8px;
+}
+
+.quote-text:disabled {
+  background: var(--bg);
+}
+
+.unreadable {
+  padding: 16px;
+  border-radius: 10px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+}

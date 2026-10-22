@@ -29,7 +29,7 @@ Build mode: fast
   Learner check: Open the app, press "Try a sample quote" → "Read quote", and confirm the lines in ② match the quote. Then paste a quote of your own (any format) and see whether it reads correctly.
   Commit: `Read pasted quotes into part lines with the model`
 
-- [ ] **3. Upload a screenshot, with clear messages when reading fails**
+- [x] **3. Upload a screenshot, with clear messages when reading fails**
   Becomes usable: Drop a screenshot (PNG/JPEG/WebP, up to 5 MB) into ① and it is read just like text. If the image isn't a quote or is blurry, ② shows the couldn't-read message and a way back. If the server or model fails, ① shows "Reading failed" and the text box still works. `samples/sample-quote.png` exists for the demo. On a phone, the image picker opens the photo library.
   Why now: Image input reuses the model call verified in slice 2, so it's lower risk. With failure states added, the full demo path is complete.
   PRD ref: `prd.md > Reading the Quote`, `prd.md > States and Boundaries` (Couldn't read / Partly read)

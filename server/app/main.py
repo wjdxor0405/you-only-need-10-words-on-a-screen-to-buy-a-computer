@@ -5,13 +5,15 @@ import logging
 from pathlib import Path
 
 from dotenv import load_dotenv
-from fastapi import FastAPI, Form, HTTPException
+from fastapi import FastAPI, File, Form, HTTPException, UploadFile
 
 from app import quote_reader, verdict
 from app.matcher import is_vague, match
 from app.models import CheckRequest, CheckResult, LineResult, PartLine, PriceData, ReadResult
 
 PRICES_PATH = Path(__file__).resolve().parent.parent / "data" / "prices.json"
+IMAGE_TYPES = {"image/png", "image/jpeg", "image/webp"}
+MAX_IMAGE_BYTES = 5 * 1024 * 1024
 load_dotenv(Path(__file__).resolve().parents[2] / ".env")
 log = logging.getLogger("uvicorn.error")
 
@@ -59,10 +61,19 @@ def check(request: CheckRequest) -> CheckResult:
 
 
 @app.post("/api/read")
-def read(text: str = Form("")) -> ReadResult:
-    if not text.strip():
-        raise HTTPException(400, "Paste a quote first.")
+def read(text: str = Form(""), image: UploadFile | None = File(None)) -> ReadResult:
+    data = None
+    if image is not None:
+        if image.content_type not in IMAGE_TYPES:
+            raise HTTPException(415, "Use a PNG, JPEG, or WebP screenshot.")
+        data = image.file.read(MAX_IMAGE_BYTES + 1)
+        if len(data) > MAX_IMAGE_BYTES:
+            raise HTTPException(413, "That image is over 5 MB. Try a smaller screenshot.")
+    elif not text.strip():
+        raise HTTPException(400, "Paste a quote or choose a screenshot first.")
     try:
+        if data is not None:
+            return quote_reader.read_quote(image=data, mime=image.content_type)
         return quote_reader.read_quote(text=text)
     except Exception:
         log.exception("Reading the quote failed")

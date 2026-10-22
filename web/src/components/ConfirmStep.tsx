@@ -28,14 +28,37 @@ interface Props {
   onCheck: () => void
   checking: boolean
   error: string | null
+  // Set when the reader found no part lines; replaces the empty list with a way back.
+  unreadable: string | null
+  onTryAnother: () => void
 }
 
-export default function ConfirmStep({ lines, onChange, onCheck, checking, error }: Props) {
+export default function ConfirmStep({ lines, onChange, onCheck, checking, error, unreadable, onTryAnother }: Props) {
   function update(id: number, patch: Partial<DraftLine>) {
     onChange(lines.map((line) => (line.id === id ? { ...line, ...patch } : line)))
   }
 
   const canCheck = lines.length > 0 && lines.every(isValid) && !checking
+
+  if (unreadable) {
+    return (
+      <section className="card">
+        <h2>Confirm parts</h2>
+        <p className="unreadable">{unreadable}</p>
+        <div className="actions">
+          <button
+            className="link-button"
+            onClick={() => onChange([toDraft({ part_type: 'Other', name: '', price_usd: 0 })])}
+          >
+            + Add lines by hand
+          </button>
+          <button className="primary" onClick={onTryAnother}>
+            Try another screenshot or paste text
+          </button>
+        </div>
+      </section>
+    )
+  }
 
   return (
     <section className="card">

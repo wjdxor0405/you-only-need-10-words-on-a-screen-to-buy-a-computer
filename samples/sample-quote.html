@@ -1,0 +1,50 @@
+<!doctype html>
+<!-- Source for sample-quote.png: the same quote as web/src/sampleQuote.ts, laid out like a shop's emailed quote.
+     Regenerate: google-chrome --headless=new --hide-scrollbars --window-size=760,740 --screenshot=samples/sample-quote.png samples/sample-quote.html -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Quote #1042</title>
+<style>
+  body { margin: 0; background: #fff; font: 15px/1.45 Arial, Helvetica, sans-serif; color: #222; }
+  .sheet { padding: 36px 40px; }
+  header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 3px solid #1d3557; padding-bottom: 14px; }
+  .shop { font-size: 22px; font-weight: bold; color: #1d3557; }
+  .shop small { display: block; font-size: 12px; font-weight: normal; color: #666; }
+  .meta { text-align: right; font-size: 13px; color: #444; }
+  .meta strong { display: block; font-size: 18px; color: #222; }
+  h2 { font-size: 15px; margin: 22px 0 8px; }
+  table { width: 100%; border-collapse: collapse; }
+  th { text-align: left; font-size: 12px; text-transform: uppercase; letter-spacing: .04em; color: #555; background: #f1f3f6; padding: 8px 10px; }
+  td { padding: 8px 10px; border-bottom: 1px solid #e3e6ea; vertical-align: top; }
+  td.price, th.price { text-align: right; white-space: nowrap; }
+  td.type { color: #555; white-space: nowrap; width: 110px; }
+  tr.fee td { color: #555; }
+  tr.total td { border-bottom: none; border-top: 2px solid #222; font-weight: bold; font-size: 16px; }
+  .note { margin-top: 18px; font-size: 12px; color: #777; }
+</style>
+</head>
+<body>
+<div class="sheet">
+  <header>
+    <div class="shop">Sample PC Shop<small>Custom builds · Repairs · Upgrades</small></div>
+    <div class="meta"><strong>Quote #1042</strong>Custom PC build<br>Valid for 7 days</div>
+  </header>
+  <h2>Your build</h2>
+  <table>
+    <tr><th>Part</th><th>Item</th><th class="price">Price</th></tr>
+    <tr><td class="type">CPU</td><td>AMD Ryzen 5 7600 6-Core Processor</td><td class="price">$199.00</td></tr>
+    <tr><td class="type">Motherboard</td><td>MSI PRO B650M-A WIFI</td><td class="price">$159.00</td></tr>
+    <tr><td class="type">Memory</td><td>Corsair Vengeance 32GB (2x16GB) DDR5-6000 CL30</td><td class="price">$105.00</td></tr>
+    <tr><td class="type">Graphics</td><td>MSI GeForce RTX 4060 Ventus 2X 8GB</td><td class="price">$195.00</td></tr>
+    <tr><td class="type">Storage</td><td>SSD 1TB</td><td class="price">$79.00</td></tr>
+    <tr><td class="type">Power supply</td><td>Corsair RM650e 650W 80+ Gold</td><td class="price">$109.00</td></tr>
+    <tr><td class="type">Case</td><td>NZXT H5 Flow</td><td class="price">$95.00</td></tr>
+    <tr><td class="type">CPU cooler</td><td>Thermalright Peerless Assassin 120 SE</td><td class="price">$38.00</td></tr>
+    <tr class="fee"><td class="type"></td><td>Assembly and testing</td><td class="price">$60.00</td></tr>
+    <tr class="total"><td></td><td>Total</td><td class="price">$1,039.00</td></tr>
+  </table>
+  <p class="note">Prices in USD. Sample quote for demonstration — not a real shop.</p>
+</div>
+</body>
+</html>
