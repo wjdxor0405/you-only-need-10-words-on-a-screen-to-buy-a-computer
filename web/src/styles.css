@@ -547,10 +547,6 @@ button.part-icon-button {
   font-variant-numeric: tabular-nums;
 }
 
-.advice {
-  margin: 12px 0 0;
-}
-
 .overview-sub {
   margin: 0 0 16px;
   font-size: var(--text-number);
@@ -562,6 +558,27 @@ button.part-icon-button {
   font-size: var(--text-number);
   font-weight: 600;
   line-height: 1.35;
+}
+
+/* A question for the seller reads as a message the user sends: a bubble on the right with its tail
+   at the bottom right, not a card the app asks from. */
+.bubble {
+  position: relative;
+  margin: 0 14px 0 32px;
+  padding: 20px;
+  background: color-mix(in srgb, var(--accent) 12%, var(--surface));
+  border-radius: 20px 20px 4px 20px;
+}
+
+.bubble::after {
+  content: '';
+  position: absolute;
+  right: -14px;
+  bottom: 0;
+  width: 20px;
+  height: 20px;
+  background: inherit;
+  clip-path: polygon(0 0, 0 100%, 100% 100%);
 }
 
 /* The card's buttons sit below whichever side is showing. */

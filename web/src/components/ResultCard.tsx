@@ -45,11 +45,12 @@ interface Props {
   result: LineResult
   ruleText: string
   sampleNote: string
+  onAsk?: () => void // opens this part's question for the seller; absent when there is none
 }
 
 // One part per card: a beginner can stop at the verdict; "Show proof" turns the card into its
 // evidence, so the card and its proof are separate screens of at most ten words each.
-export default function ResultCard({ result, ruleText, sampleNote }: Props) {
+export default function ResultCard({ result, ruleText, sampleNote, onAsk }: Props) {
   const [open, setOpen] = useState(false)
   const { line, verdict } = result
 
@@ -110,7 +111,11 @@ export default function ResultCard({ result, ruleText, sampleNote }: Props) {
             {VERDICT_LABEL[verdict]}
           </p>
           <p className="headline">{result.headline}</p>
-          {result.advice && <p className="advice">{result.advice}</p>}
+          {onAsk && (
+            <button className="secondary wide" onClick={onAsk}>
+              Ask the seller
+            </button>
+          )}
         </>
       )}
       <button className="secondary wide" aria-expanded={open} onClick={() => setOpen(!open)}>

@@ -1,4 +1,5 @@
 import { type ReactNode, useEffect, useState } from 'react'
+import { copyText } from '../clipboard'
 import type { CheckResult } from '../types'
 import PartIcons from './PartIcons'
 import ResultCard, { VERDICT_LABEL } from './ResultCard'
@@ -11,6 +12,12 @@ function overview(result: CheckResult) {
   return `${ok} of ${total} ${total === 1 ? 'part looks' : 'parts look'} reasonable.`
 }
 
+// What "Copy" puts on the clipboard: one message to paste to the seller, every question in it.
+function sellerMessage(questions: string[]) {
+  if (questions.length === 1) return questions[0]
+  return ['Questions about the quote:', ...questions.map((q, i) => `${i + 1}. ${q}`)].join('\n')
+}
+
 interface Props {
   result: CheckResult
   onBack: () => void
@@ -20,8 +27,9 @@ interface Props {
 // The part cards show where the user is with the row of part icons instead of "Part 4 of 8".
 export default function ResultsStep({ result, onBack }: Props) {
   const [index, setIndex] = useState(0)
+  const [copy, setCopy] = useState<'idle' | 'copied' | 'failed'>('idle')
   const parts = result.results
-  const questions = parts.flatMap((r) => (r.ask_seller ? [r.ask_seller] : []))
+  const questions = parts.flatMap((r, part) => (r.ask_seller ? [{ text: r.ask_seller, part }] : []))
   const last = parts.length + questions.length
 
   // Each card starts at the top of the screen, like turning a page.
@@ -35,6 +43,12 @@ export default function ResultsStep({ result, onBack }: Props) {
     label: `${r.part_label}: ${VERDICT_LABEL[r.verdict]}`,
     verdict: r.verdict,
   }))
+  const openPart = (part: number) => setIndex(part + 1)
+  const openQuestion = (n: number) => setIndex(parts.length + n + 1)
+
+  async function copyAll() {
+    setCopy((await copyText(sellerMessage(questions.map((q) => q.text)))) ? 'copied' : 'failed')
+  }
 
   let position: ReactNode = null
   let card: ReactNode
@@ -47,26 +61,48 @@ export default function ResultsStep({ result, onBack }: Props) {
             {questions.length} {questions.length === 1 ? 'question' : 'questions'} to ask.
           </p>
         )}
-        <PartIcons items={icons} onSelect={(i) => setIndex(i + 1)} />
+        <PartIcons items={icons} onSelect={openPart} />
       </article>
     )
   } else if (index <= parts.length) {
-    position = <PartIcons items={icons} current={index - 1} onSelect={(i) => setIndex(i + 1)} small />
+    const part = index - 1
+    const question = questions.findIndex((q) => q.part === part)
+    position = <PartIcons items={icons} current={part} onSelect={openPart} small />
     card = (
       <ResultCard
         key={index}
-        result={parts[index - 1]}
+        result={parts[part]}
         ruleText={result.rule_text}
         sampleNote={result.sample_data_note}
+        onAsk={question === -1 ? undefined : () => openQuestion(question)}
       />
     )
   } else {
+    // A question is something the user sends, so it sits in a sent-message bubble with a way to send
+    // it; the icon row marks the part it is about.
     const n = index - parts.length
-    position = <p className="position">{questions.length > 1 ? `Ask the seller · ${n}/${questions.length}` : 'Ask the seller'}</p>
+    const { text, part } = questions[n - 1]
+    position = (
+      <>
+        <PartIcons items={icons} current={part} onSelect={openPart} small />
+        <p className="position">{questions.length > 1 ? `Ask the seller · ${n}/${questions.length}` : 'Ask the seller'}</p>
+      </>
+    )
     card = (
-      <article className="card">
-        <p className="question">{questions[n - 1]}</p>
-      </article>
+      <>
+        <article className="bubble">
+          <p className="question">{text}</p>
+        </article>
+        <button className="primary wide" onClick={copyAll}>
+          {copy === 'copied'
+            ? 'Copied ✓'
+            : copy === 'failed'
+              ? "Couldn't copy"
+              : questions.length > 1
+                ? `Copy all ${questions.length}`
+                : 'Copy'}
+        </button>
+      </>
     )
   }
 
@@ -84,8 +120,9 @@ export default function ResultsStep({ result, onBack }: Props) {
             Back
           </button>
         )}
+        {/* On a question, copying is the main action, so Next steps back to an outline. */}
         {index < last && (
-          <button className="primary" onClick={() => setIndex(index + 1)}>
+          <button className={index > parts.length ? 'secondary' : 'primary'} onClick={() => setIndex(index + 1)}>
             Next
           </button>
         )}

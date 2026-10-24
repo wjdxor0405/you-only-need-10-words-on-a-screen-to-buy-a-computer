@@ -18,7 +18,7 @@ Not counted:
 
 Not counted is not free. The step bar is one word, the position is icons, your quote is kept whole but shown folded (a line count for text, a thumbnail for a screenshot), and the proof names a part by the words of your line that matched a product ("…RTX 4060…"; tap for the whole name).
 
-"Show proof" replaces the card with its proof, so each is its own screen. `server/tests/test_card_text.py` checks every card for every verdict with prices up to $9,999.99.
+"Show proof" replaces the card with its proof, so each is its own screen. A question for the seller is shown as a message bubble; "Copy all 3" copies every question as one message to paste into your chat with the seller. `server/tests/test_card_text.py` checks every card for every verdict with prices up to $9,999.99.
 
 ## Run it locally
 

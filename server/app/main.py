@@ -32,7 +32,7 @@ def check_line(line: PartLine, data: PriceData) -> LineResult:
                           cant_verify_reason=reason, typical_price_usd=None,
                           listings=[], swap_risk=swap_risk,
                           ask_seller=verdict.ask_seller(line.part_type, "cant_verify", None, found.kind == "vague"),
-                          part_label=label, advice=verdict.advice("cant_verify", reason))
+                          part_label=label)
     listings = found.product.listings
     typical = verdict.typical_price_cents(listings)
     judged = verdict.judge(line.price_usd, typical)
@@ -48,7 +48,6 @@ def check_line(line: PartLine, data: PriceData) -> LineResult:
         swap_risk=swap_risk,
         ask_seller=verdict.ask_seller(line.part_type, judged, diff, swap_risk),
         part_label=label,
-        advice=verdict.advice(judged, None),
     )
 
 

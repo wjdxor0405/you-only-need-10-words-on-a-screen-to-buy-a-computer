@@ -76,22 +76,9 @@ PART_LABELS = {
     "Other": "Other part",
 }
 
-# Two words fit the worst-case card: "Graphics card · $9,999.99 / Worth questioning / $9,401 above typical".
-ASK_WHY = "Ask why."
-ASK_WHICH = "Ask which."
-
 
 def part_label(part_type: str) -> str:
     return PART_LABELS.get(part_type, part_type)
-
-
-def advice(verdict: Verdict, reason: CantVerifyReason | None) -> str | None:
-    """A two-word action, or None when there is nothing to do."""
-    if verdict in ("worth_questioning", "unusually_low"):
-        return ASK_WHY
-    if reason == "name_too_vague":
-        return ASK_WHICH
-    return None
 
 
 def _in_sentence(part_type: str) -> str:
@@ -101,7 +88,10 @@ def _in_sentence(part_type: str) -> str:
 
 
 def ask_seller(part_type: str, verdict: Verdict, diff_dollars: int | None, vague: bool) -> str | None:
-    """One short question a beginner can send the seller, or None when there is nothing to ask."""
+    """One short question a beginner can send the seller, or None when there is nothing to ask.
+
+    The part card shows its "Ask the seller" button exactly when this is not None.
+    """
     part = _in_sentence(part_type)
     if verdict == "worth_questioning":
         return f"Why is the {part} ${diff_dollars:,} above typical?"

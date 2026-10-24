@@ -54,7 +54,6 @@ class LineResult(BaseModel):
     swap_risk: bool
     ask_seller: str | None
     part_label: str  # plain part name: "Graphics card"
-    advice: str | None  # two-word action for the card: "Ask why."
 
 
 class CheckRequest(BaseModel):

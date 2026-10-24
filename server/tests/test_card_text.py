@@ -1,8 +1,8 @@
 """Every card fits WORD_LIMIT words (prd.md > Large Type and Ten Words a Screen).
 
-A part card is counted the way it shows: part label · quoted price, verdict phrase, headline,
-and advice. The step bar, the row of part icons, and buttons don't count. The rest of each screen is
-counted in the browser (README > Ten words a screen).
+A part card is counted the way it shows: part label · quoted price, verdict phrase, and headline.
+The step bar, the row of part icons, and buttons ("Ask the seller", "Show proof") don't count. The
+rest of each screen is counted in the browser (README > Ten words a screen).
 """
 
 import pytest
@@ -33,7 +33,7 @@ def usd(value: float) -> str:
 
 def card_text(line: PartLine) -> str:
     r = check_line(line, prices)
-    return f"{r.part_label} · {usd(r.line.price_usd)} {VERDICT_PHRASE[r.verdict]} {r.headline} {r.advice or ''}"
+    return f"{r.part_label} · {usd(r.line.price_usd)} {VERDICT_PHRASE[r.verdict]} {r.headline}"
 
 
 def matched_lines():
@@ -72,9 +72,11 @@ def test_part_card_fits(line):
     assert count_words(text) <= WORD_LIMIT, f"{count_words(text)} words: {text}"
 
 
-def test_worst_case_card_is_exactly_ten_words():
+def test_worst_case_card_is_nine_words():
+    # "Graphics card · $9,999.99 / Can't verify / Not in sample data", which has no question.
+    # The old worst case lost its two-word action ("Ask why.") to the "Ask the seller" button: 8.
     worst = max(count_words(card_text(line)) for line in ALL_LINES)
-    assert worst == WORD_LIMIT
+    assert worst == 9
 
 
 def test_each_question_fits_its_own_card():
@@ -103,18 +105,25 @@ def test_count_words(text, words):
 
 def test_sample_graphics_card_shows_part_and_price_not_the_name():
     r = check_line(PartLine(part_type="GPU", name="MSI GeForce RTX 4060 Ventus 2X 8GB", price_usd=195), prices)
-    assert (r.part_label, r.verdict, r.advice) == ("Graphics card", "unusually_low", "Ask why.")
+    assert (r.part_label, r.verdict) == ("Graphics card", "unusually_low")
     assert r.ask_seller == "Is the graphics card new and the exact model?"
 
 
 def test_no_maker_card_asks_which_model():
     r = check_line(PartLine(part_type="Storage", name="SSD 1TB", price_usd=79), prices)
-    assert (r.headline, r.advice, r.swap_risk) == ("No model named", "Ask which.", True)
+    assert (r.headline, r.swap_risk) == ("No model named", True)
     assert r.ask_seller == "Which maker and model is the storage?"
 
 
-def test_reasonable_and_not_in_sample_cards_have_no_action():
+def test_reasonable_and_not_in_sample_cards_have_no_question():
     reasonable = check_line(PartLine(part_type="CPU", name="AMD Ryzen 5 7600 6-Core Processor", price_usd=199), prices)
     unknown = check_line(PartLine(part_type="Cooler", name=NOT_IN_SAMPLE, price_usd=38), prices)
-    assert (reasonable.verdict, reasonable.advice) == ("reasonable", None)
-    assert (unknown.headline, unknown.advice) == ("Not in sample data", None)
+    assert (reasonable.verdict, reasonable.ask_seller) == ("reasonable", None)
+    assert (unknown.headline, unknown.ask_seller) == ("Not in sample data", None)
+
+
+def test_every_doubtful_card_has_a_question():
+    # The card's only action is "Ask the seller", so each verdict that needs one must have a question.
+    for r in (check_line(line, prices) for line in ALL_LINES):
+        doubtful = r.verdict in ("worth_questioning", "unusually_low") or r.cant_verify_reason == "name_too_vague"
+        assert (r.ask_seller is not None) == doubtful, (r.verdict, r.cant_verify_reason, r.line.name)

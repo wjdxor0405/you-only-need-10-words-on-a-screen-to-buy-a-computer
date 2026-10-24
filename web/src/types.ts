@@ -41,7 +41,6 @@ export interface LineResult {
   swap_risk: boolean
   ask_seller: null | string
   part_label: string // plain part name, e.g. "Graphics card"
-  advice: null | string // two-word action for the card, e.g. "Ask why."
 }
 
 export interface CheckResult {

@@ -25,7 +25,7 @@ PRD ref: `prd.md > The Core Journey`.
 1. **Upload.** The user drops a screenshot or pastes text in step ① and presses "Read quote" → the screen sends it to the server's `/api/read` → the server asks the OpenAI model to return part lines in a fixed JSON shape → the screen shows them in step ②.
    - "Try sample" fills in the sample quote; the rest is the same.
 2. **Confirm parts.** The user edits, deletes, or adds lines. This happens only in the screen's memory — no server call.
-3. **Results.** "Check prices" sends the confirmed lines to `/api/check` → the server matches each name to the sample price file, computes the typical price and the verdict, and adds the swap-risk note → the screen shows an overview card, one card per part, and a questions card; "Show proof" opens the evidence.
+3. **Results.** "Check prices" sends the confirmed lines to `/api/check` → the server matches each name to the sample price file, computes the typical price and the verdict, and adds the swap-risk note → the screen shows an overview card, one card per part, and one card per question for the seller; "Show proof" opens the evidence, and "Ask the seller" opens that part's question.
 4. **Done.** The user reads and decides. Going back to step ② and pressing "Check prices" again re-runs step 3 with the edited lines.
 
 ```
@@ -106,8 +106,8 @@ PRD ref: `prd.md > Reading the Quote`, `prd.md > States and Boundaries` (Couldn'
 ### Results Step
 `web/src/components/ResultsStep.tsx`, `ResultCard.tsx` (renamed from `ResultRow.tsx`), `PriceBar.tsx`, `PartIcons.tsx`, `PartIcon.tsx`; money formatting and the reasonable range in `web/src/money.ts`. One card per screen; `ResultsStep` holds the card index, with large Back and Next buttons.
 - Overview card: the one-sentence overview ("4 of 8 parts look reasonable."), "3 questions to ask." when there are any, and the `PartIcons` grid in verdict colors (labeled for screen readers); tapping an icon opens that part.
-- Part card: above it, the `PartIcons` row in verdict colors with the part on screen filled, in place of "Part N of M"; tapping an icon jumps to that part. The card: `part_label` · quoted price, verdict phrase, `headline`, `advice` (when not null). "Show proof" replaces the card body with the proof, and "Hide proof" brings it back: the name as written, cut to `key_words` with "…" where words were left out ("…RTX 4060…"; tap for the whole name; unmatched names whole), price range bar ("Typical (middle) $299", legend "A store listing"), each listing (store, price, date; the header row is for screen readers only), one range sentence with the band's swatch ("Reasonable: $210–$328, 70–110% of typical.", from `money.reasonableRange` and `rule_text`), and `sample_data_note`; a Can't verify proof shows one reason sentence instead.
-- Question cards: one `ask_seller` question per card; the position line reads "Ask the seller · 1/3".
+- Part card: above it, the `PartIcons` row in verdict colors with the part on screen filled, in place of "Part N of M"; tapping an icon jumps to that part. The card: `part_label` · quoted price, verdict phrase, `headline`, and an "Ask the seller" button when `ask_seller` is not null, which opens that part's question card. "Show proof" replaces the card body with the proof, and "Hide proof" brings it back: the name as written, cut to `key_words` with "…" where words were left out ("…RTX 4060…"; tap for the whole name; unmatched names whole), price range bar ("Typical (middle) $299", legend "A store listing"), each listing (store, price, date; the header row is for screen readers only), one range sentence with the band's swatch ("Reasonable: $210–$328, 70–110% of typical.", from `money.reasonableRange` and `rule_text`), and `sample_data_note`; a Can't verify proof shows one reason sentence instead.
+- Question cards: one `ask_seller` question per card, in a `.bubble` (sent-message shape, tail at the bottom right). Above it, the `PartIcons` row with the asked-about part filled, and the position line "Ask the seller · 1/3". Below it, "Copy all 3" ("Copy" for one question; the screen's only solid button, so Next is an outline here) copies every question as one message — "Questions about the quote:" and a numbered line each — via `clipboard.copyText`, then reads "Copied ✓" (or "Couldn't copy").
 - Not-counted elements carry `data-words="skip"` (buttons, step bar, and position are skipped by tag or class), so a browser check can count every screen the same way the README describes.
 PRD ref: `prd.md > Price Verdicts`, `prd.md > Swap-Risk Flag`, `prd.md > Large Type and Ten Words a Screen`.
 
@@ -139,10 +139,9 @@ PRD ref: `prd.md > Price Verdicts` (Can't verify), `prd.md > Swap-Risk Flag`.
   - otherwise → **Reasonable**
 - Collapsed number: the difference in dollars, e.g., "$12 below typical" / "$25 above typical" / "Matches typical."
 - `ask_seller(...)` = one fixed-template question per Worth questioning / Unusually low / too-vague line, naming the part only, in plain words (e.g., "Why is the power supply $20 above typical?", "Is the graphics card new and the exact model?", "Which maker and model is the storage?"); `None` otherwise.
-- `advice(...)` = a fixed two-word action or `None`: "Ask why." (Worth questioning, Unusually low), "Ask which." (too vague, with or without swap risk), `None` (Reasonable, not in sample).
 - `part_label` = the part type in plain words: CPU → "Processor", GPU → "Graphics card", RAM → "Memory", PSU → "Power supply", Cooler → "CPU cooler", Other → "Other part"; Motherboard, Storage, Case unchanged.
 - Can't verify headlines: "No model named" (swap risk), "Name too vague" (fits several products), "Not in sample data".
-- `WORD_LIMIT = 10` and `count_words(text)` (space-separated runs holding a letter or digit): `part_label` + quoted price + verdict phrase + `headline` + `advice` must fit, for every verdict path, with prices up to $9,999.99; so must each question, the overview sentences, and the proof's range sentence + `sample_data_note`. A test enforces it; a headless-browser check counts the rendered screens.
+- `WORD_LIMIT = 10` and `count_words(text)` (space-separated runs holding a letter or digit): `part_label` + quoted price + verdict phrase + `headline` must fit (worst case nine), for every verdict path, with prices up to $9,999.99; so must each question, the overview sentences, and the proof's range sentence + `sample_data_note`. A test enforces it; a headless-browser check counts the rendered screens.
 - `RULE_TEXT` = "70–110% of typical" (the same band as −30% to +10%). Sent with every result so the screen shows the code's own rule; the proof puts the range in dollars before it: "Reasonable: $210–$328, 70–110% of typical."
 PRD ref: `prd.md > Price Verdicts`.
 
@@ -168,9 +167,8 @@ LineResult   { line: PartLine,
                typical_price_usd: null | number,
                listings: Listing[],
                swap_risk: boolean,
-               ask_seller: null | string,      // fixed-rule question, see Verdict Engine
-               part_label: string,             // plain part name, e.g. "Graphics card"
-               advice: null | string }         // two-word action, e.g. "Ask why."
+               ask_seller: null | string,      // fixed-rule question, see Verdict Engine; the card's button shows when set
+               part_label: string }            // plain part name, e.g. "Graphics card"
 CheckResult  { results: LineResult[], rule_text: string, sample_data_note: string }
 ```
 
@@ -223,6 +221,7 @@ devpost-basics/
 │       ├── types.ts            # mirrors server/app/models.py
 │       ├── sampleQuote.ts      # text for "Try sample"
 │       ├── money.ts            # usd(), the reasonable range in whole dollars
+│       ├── clipboard.ts        # copyText(): navigator.clipboard, or a selected textarea over plain http
 │       ├── styles.css          # CSS variables from Look and Feel
 │       └── components/
 │           ├── StepBar.tsx
