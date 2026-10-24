@@ -31,12 +31,11 @@ def check_line(line: PartLine, data: PriceData) -> LineResult:
                           headline=verdict.cant_verify_headline(reason, swap_risk),
                           cant_verify_reason=reason, typical_price_usd=None,
                           listings=[], swap_risk=swap_risk,
-                          ask_seller=verdict.ask_seller(line.part_type, "cant_verify", None, found.kind == "vague"),
+                          ask_seller=verdict.ask_seller(line.part_type, "cant_verify", found.kind == "vague"),
                           part_label=label)
     listings = found.product.listings
     typical = verdict.typical_price_cents(listings)
     judged = verdict.judge(line.price_usd, typical)
-    diff = verdict.difference_dollars(line.price_usd, typical)
     return LineResult(
         line=line,
         key_words=found.key_words,
@@ -46,7 +45,7 @@ def check_line(line: PartLine, data: PriceData) -> LineResult:
         typical_price_usd=round(float(typical) / 100, 2),
         listings=listings,
         swap_risk=swap_risk,
-        ask_seller=verdict.ask_seller(line.part_type, judged, diff, swap_risk),
+        ask_seller=verdict.ask_seller(line.part_type, judged, swap_risk),
         part_label=label,
     )
 

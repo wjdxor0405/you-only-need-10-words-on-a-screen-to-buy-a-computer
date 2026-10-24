@@ -47,9 +47,18 @@ def test_headline(quoted, expected):
 
 
 def test_ask_seller_for_each_verdict():
-    assert ask_seller("PSU", "worth_questioning", 20, False) == "Why is the power supply $20 above typical?"
-    assert ask_seller("GPU", "unusually_low", -104, False) == "Is the graphics card new and the exact model?"
-    assert ask_seller("Storage", "cant_verify", None, True) == "Which maker and model is the storage?"
-    assert ask_seller("Cooler", "worth_questioning", 1500, False) == "Why is the CPU cooler $1,500 above typical?"
-    assert ask_seller("CPU", "reasonable", 4, False) is None
-    assert ask_seller("Cooler", "cant_verify", None, False) is None
+    assert ask_seller("PSU", "worth_questioning", False) == "Could you check the power supply price for me?"
+    assert ask_seller("GPU", "unusually_low", False) == "Could you confirm the graphics card's model and condition?"
+    assert ask_seller("Storage", "cant_verify", True) == "Could you tell me the storage's maker and model?"
+    assert ask_seller("Cooler", "cant_verify", True) == "Could you tell me the CPU cooler's maker and model?"
+    assert ask_seller("CPU", "reasonable", False) is None
+    assert ask_seller("Cooler", "cant_verify", False) is None
+
+
+def test_questions_ask_rather_than_accuse():
+    # A question goes to a real seller: no "why", and no number from the sample data.
+    for part in ("CPU", "GPU", "PSU", "Cooler", "Other"):
+        for verdict, vague in (("worth_questioning", False), ("unusually_low", False), ("cant_verify", True)):
+            question = ask_seller(part, verdict, vague)
+            assert question.startswith("Could you "), question
+            assert "$" not in question and "why" not in question.lower(), question

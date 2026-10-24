@@ -12,10 +12,12 @@ function overview(result: CheckResult) {
   return `${ok} of ${total} ${total === 1 ? 'part looks' : 'parts look'} reasonable.`
 }
 
-// What "Copy" puts on the clipboard: one message to paste to the seller, every question in it.
+// What "Copy" puts on the clipboard: one message to paste to the seller, every question in it,
+// opened and closed like a customer asking before buying rather than a list of charges.
 function sellerMessage(questions: string[]) {
-  if (questions.length === 1) return questions[0]
-  return ['Questions about the quote:', ...questions.map((q, i) => `${i + 1}. ${q}`)].join('\n')
+  const body = questions.length === 1 ? questions : questions.map((q, i) => `${i + 1}. ${q}`)
+  const opener = questions.length === 1 ? 'Hi! A quick question before I decide:' : 'Hi! A few quick questions before I decide:'
+  return [opener, ...body, 'Thanks!'].join('\n')
 }
 
 interface Props {

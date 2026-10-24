@@ -106,13 +106,13 @@ def test_count_words(text, words):
 def test_sample_graphics_card_shows_part_and_price_not_the_name():
     r = check_line(PartLine(part_type="GPU", name="MSI GeForce RTX 4060 Ventus 2X 8GB", price_usd=195), prices)
     assert (r.part_label, r.verdict) == ("Graphics card", "unusually_low")
-    assert r.ask_seller == "Is the graphics card new and the exact model?"
+    assert r.ask_seller == "Could you confirm the graphics card's model and condition?"
 
 
 def test_no_maker_card_asks_which_model():
     r = check_line(PartLine(part_type="Storage", name="SSD 1TB", price_usd=79), prices)
     assert (r.headline, r.swap_risk) == ("No model named", True)
-    assert r.ask_seller == "Which maker and model is the storage?"
+    assert r.ask_seller == "Could you tell me the storage's maker and model?"
 
 
 def test_reasonable_and_not_in_sample_cards_have_no_question():

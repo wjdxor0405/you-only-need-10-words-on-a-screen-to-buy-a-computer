@@ -87,16 +87,18 @@ def _in_sentence(part_type: str) -> str:
     return label if label[1:2].isupper() else label[0].lower() + label[1:]
 
 
-def ask_seller(part_type: str, verdict: Verdict, diff_dollars: int | None, vague: bool) -> str | None:
+def ask_seller(part_type: str, verdict: Verdict, vague: bool) -> str | None:
     """One short question a beginner can send the seller, or None when there is nothing to ask.
 
-    The part card shows its "Ask the seller" button exactly when this is not None.
+    The part card shows its "Ask the seller" button exactly when this is not None. Each asks the
+    seller to check rather than to justify, and carries no number: the typical price comes from
+    sample data, which the seller can't see.
     """
     part = _in_sentence(part_type)
     if verdict == "worth_questioning":
-        return f"Why is the {part} ${diff_dollars:,} above typical?"
+        return f"Could you check the {part} price for me?"
     if verdict == "unusually_low":
-        return f"Is the {part} new and the exact model?"
+        return f"Could you confirm the {part}'s model and condition?"
     if vague:
-        return f"Which maker and model is the {part}?"
+        return f"Could you tell me the {part}'s maker and model?"
     return None
