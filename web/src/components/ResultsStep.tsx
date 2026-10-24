@@ -24,7 +24,9 @@ export default function ResultsStep({ result, onBack }: Props) {
   const last = parts.length + questions.length
 
   // Each card starts at the top of the screen, like turning a page.
-  useEffect(() => window.scrollTo({ top: 0 }), [index])
+  useEffect(() => {
+    window.scrollTo({ top: 0 })
+  }, [index])
 
   let position: string
   let card: ReactNode

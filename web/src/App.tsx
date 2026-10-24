@@ -18,7 +18,9 @@ export default function App() {
   const [error, setError] = useState<string | null>(null)
 
   // A new step starts at the top, which matters on a phone.
-  useEffect(() => window.scrollTo({ top: 0 }), [step])
+  useEffect(() => {
+    window.scrollTo({ top: 0 })
+  }, [step])
 
   async function handleRead() {
     setBusy(true)
