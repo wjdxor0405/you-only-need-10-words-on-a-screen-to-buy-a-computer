@@ -86,7 +86,7 @@ From `prd.md > Look and Feel`. Defined as CSS variables in `web/src/styles.css`:
 - Large type by default, three levels (`prd.md > Look and Feel`): `--text-verdict` 32px and `--text-number` 24px (decide), `--text-body` 20px (read and act), `--text-meta` 16px in `--muted-text` (context). `--tap` 56px minimum button height; line height about 1.5. Buttons are full width under 560px, except two-button pairs (Back / Next, Delete / Done), which sit side by side, and Fix, which sits beside its price.
 - 16px is the floor for all text, including the sample-data label and the proof. Can't-verify reasons and the swap-risk note use `--text-body`, never `--text-meta`.
 - Fits 360px wide with a 16px side gutter; no sideways scrolling on any step.
-- Copy: short, plain English; no jargon in collapsed rows. Verdict text is never color-only — the phrase is always written.
+- Copy: short, plain English; at most ten counted words a screen (`prd.md > Large Type and Ten Words a Screen`); no jargon on cards. Verdict text is never color-only — the phrase is always written.
 - Light theme only (dark mode is not in the PRD).
 
 ## Components
@@ -96,19 +96,20 @@ From `prd.md > Look and Feel`. Defined as CSS variables in `web/src/styles.css`:
 PRD ref: `prd.md > Screens and Layout`.
 
 ### Upload Step
-`web/src/components/UploadStep.tsx`. Title, one-line explanation, image drop area (PNG/JPEG/WebP, up to 5 MB), text box, "Read quote" button, "Try a sample quote" link. Shows a loading state while reading.
+`web/src/components/UploadStep.tsx`. Title (`App.tsx`, on this step only) and one lead line, which also carries the state: the explanation, "Screenshot ready.", "Paste the quote text.", the loading message, or an error. "Choose a screenshot" is the image drop area styled as a button (PNG/JPEG/WebP, up to 5 MB; the format hint only appears as an error). "Paste text" opens the text box; "Try a sample quote" opens it filled in. "Read quote" appears once there is an image or text.
 PRD ref: `prd.md > Reading the Quote`, `prd.md > States and Boundaries` (First use).
 
 ### Confirm Parts Step
-`web/src/components/ConfirmStep.tsx`. One large card per line (part type, product name, price in USD); "Fix" turns a card into edit fields with Delete and Done. "Add a line", "Check prices". If the server returned no lines, shows the couldn't-read message with a way back to step ①.
+`web/src/components/ConfirmStep.tsx`. Opens on a summary: "We read 8 parts. Look right?", one `PartIcon` per line, "Fix parts" and "Check prices". "Fix parts" (or any line missing a name or price) shows the editor: one large card per line (part type, product name, price in USD); "Fix" turns a card into edit fields with Delete and Done; "Add a line", "Check prices". The editor's cards are the user's lines, marked as not counted. If the server returned no lines, shows the couldn't-read message with a way back to step ①.
 PRD ref: `prd.md > Reading the Quote`, `prd.md > States and Boundaries` (Couldn't read / Partly read).
 
 ### Results Step
 `web/src/components/ResultsStep.tsx`, `ResultCard.tsx` (renamed from `ResultRow.tsx`), `PriceBar.tsx`, `PartIcon.tsx`. One card per screen; `ResultsStep` holds the card index and shows "Part N of M" with large Back and Next buttons.
-- Overview card: the one-sentence overview ("4 of 8 parts look reasonable."), count per verdict, parts total.
-- Part card: `part_label` · quoted price, `display_name`, verdict phrase, `headline`, `advice`. "Show proof" opens the full name as read, price range bar, typical price, the rule, each listing (store, price, date), and the sample-data label.
-- Questions card(s): the `ask_seller` questions, at most two per card (three would pass the character limit).
-PRD ref: `prd.md > Price Verdicts`, `prd.md > Swap-Risk Flag`, `prd.md > Large Type and Character Limit`.
+- Overview card: the one-sentence overview ("4 of 8 parts look reasonable."), "3 questions to ask." when there are any, and one `PartIcon` per part in its verdict color (labeled for screen readers).
+- Part card: `part_label` · quoted price, verdict phrase, `headline`, `advice` (when not null). "Show proof" replaces the card body with the proof: the full name as read, price range bar ("Typical (middle) $299"), each listing (store, price, date), `rule_text`, and `sample_data_note`; a Can't verify proof shows one reason sentence instead.
+- Question cards: one `ask_seller` question per card; the position line reads "Ask the seller · 1 of 3".
+- Not-counted elements carry `data-words="skip"` (buttons, step bar, and position are skipped by tag or class), so a browser check can count every screen the same way the README describes.
+PRD ref: `prd.md > Price Verdicts`, `prd.md > Swap-Risk Flag`, `prd.md > Large Type and Ten Words a Screen`.
 
 ### Quote Reader (server)
 `server/app/quote_reader.py`. Turns an image or text into part lines with one OpenAI call.
@@ -137,12 +138,11 @@ PRD ref: `prd.md > Price Verdicts` (Can't verify), `prd.md > Swap-Risk Flag`.
   - otherwise → **Reasonable**
 - Collapsed number: the difference in dollars, e.g., "$12 below typical" / "$25 above typical" / "Matches typical."
 - `ask_seller(...)` = one fixed-template question per Worth questioning / Unusually low / too-vague line, naming the part only, in plain words (e.g., "Why is the power supply $20 above typical?", "Is the graphics card new and the exact model?", "Which maker and model is the storage?"); `None` otherwise.
-- `advice(...)` = one fixed sentence per verdict and Can't verify reason (e.g., "Close to what stores charge.", "Ask the seller why it costs more.").
+- `advice(...)` = a fixed two-word action or `None`: "Ask why." (Worth questioning, Unusually low), "Ask which." (too vague, with or without swap risk), `None` (Reasonable, not in sample).
 - `part_label` = the part type in plain words: CPU → "Processor", GPU → "Graphics card", RAM → "Memory", PSU → "Power supply", Cooler → "CPU cooler", Other → "Other part"; Motherboard, Storage, Case unchanged.
-- `display_name` = the matched product's `spec_label`; for an unmatched line, the name as read, cut to at most 28 characters with "…", at a word break when that keeps at least half.
-- A swap-risk line's `headline` is "No maker or model" and its `advice` is the swap-risk warning: "A cheaper part could be swapped in." A name that fits several products keeps "Name too vague to match" / "It could be several products." Not in sample: "Not in our sample data" / "We have no prices for this part."
-- `CARD_TEXT_LIMIT = 120`: `part_label` + " · $" + quoted price + `display_name` + longest verdict phrase ("Worth questioning") + `headline` + `advice` must fit, for every verdict path, with prices up to $9,999.99; so must the questions card heading plus two of the longest questions. A test enforces both.
-- `RULE_TEXT` = "We call a price reasonable from 30% below to 10% above the typical price (the middle of the listings we have)." Sent with every result so the screen shows the code's own rule.
+- Can't verify headlines: "No model named" (swap risk), "Name too vague" (fits several products), "Not in our sample data".
+- `WORD_LIMIT = 10` and `count_words(text)` (space-separated runs holding a letter or digit): `part_label` + quoted price + verdict phrase + `headline` + `advice` must fit, for every verdict path, with prices up to $9,999.99; so must each question, the overview sentences, and `RULE_TEXT` + `sample_data_note`. A test enforces it; a headless-browser check counts the rendered screens.
+- `RULE_TEXT` = "Reasonable: −30% to +10% of typical." Sent with every result so the screen shows the code's own rule.
 PRD ref: `prd.md > Price Verdicts`.
 
 ### API (server)
@@ -168,17 +168,16 @@ LineResult   { line: PartLine,
                swap_risk: boolean,
                ask_seller: null | string,      // fixed-rule question, see Verdict Engine
                part_label: string,             // plain part name, e.g. "Graphics card"
-               display_name: string,           // spec label, or the read name cut to ≤ 28 chars
-               advice: string }                // one fixed sentence for the card
-CheckResult  { results: LineResult[], rule_text: string, sample_data_note: string, total_usd: number }
+               advice: null | string }         // two-word action, e.g. "Ask why."
+CheckResult  { results: LineResult[], rule_text: string, sample_data_note: string }
 ```
 
 **Sample price file** — `server/data/prices.json`, hand-made, labeled sample:
 ```
-{ "note": "Sample prices for demonstration, not live data.",
+{ "note": "Sample data, not live.",
   "products": [
     { "id": "gpu-rtx4060", "part_type": "GPU", "name": "NVIDIA GeForce RTX 4060 8GB",
-      "spec_label": "RTX 4060, 8GB", "aliases": ["rtx4060"], "listings": [ { "store": "Store A", "price_usd": 299, "date": "2026-10-01" }, ... ] },
+      "aliases": ["rtx4060"], "listings": [ { "store": "Store A", "price_usd": 299, "date": "2026-10-01" }, ... ] },
     ...
 ] }
 ```

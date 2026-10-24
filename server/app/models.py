@@ -34,7 +34,6 @@ class Product(BaseModel):
     id: str
     part_type: PartType
     name: str
-    spec_label: str  # the specs that set the price, shown on cards: "RTX 4060, 8GB"
     aliases: list[str]
     listings: list[Listing]
 
@@ -54,8 +53,7 @@ class LineResult(BaseModel):
     swap_risk: bool
     ask_seller: str | None
     part_label: str  # plain part name: "Graphics card"
-    display_name: str  # spec label, or the name as read cut to 28 characters
-    advice: str  # one fixed sentence for the card
+    advice: str | None  # two-word action for the card: "Ask why."
 
 
 class CheckRequest(BaseModel):
@@ -66,4 +64,3 @@ class CheckResult(BaseModel):
     results: list[LineResult]
     rule_text: str
     sample_data_note: str
-    total_usd: float

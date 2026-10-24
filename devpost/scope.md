@@ -22,7 +22,7 @@ They come back each time someone hands them a new quote.
 ## Inspiration & Identity
 - Should feel like it takes the complexity off the user: "you don't need to think hard about this."
 - Tone is honest and plain, not salesy. Saying "can't verify" earns more trust than a confident guess.
-- Readable at a glance on a phone: large type by default (not a setting), one part per screen, and a fixed character limit per screen. If something doesn't fit, it gets shorter, not smaller.
+- Readable at a glance on a phone: large type by default (not a setting), one part per screen, and at most ten words a screen. If something doesn't fit, it gets shorter, not smaller.
 - Only the verdict is big. Sources and context stay readable but quiet — and never fine print: a tool that points out what a quote leaves vague can't hide its own caveats.
 
 ## Why This Matters to the Learner
@@ -34,7 +34,7 @@ For the demo: paste a sample quote → a per-part result appears, with price evi
 
 ## The POC Boundary
 - One screen: quote in, per-part verdicts with evidence out.
-- Large type by default. Results show one part per screen within a character limit; the full evidence is one tap away. Works in a phone browser and still runs locally — no deployment, no native app.
+- Large type by default. Results show one part per screen, at most ten words a screen; the full evidence is one tap away. Works in a phone browser and still runs locally — no deployment, no native app.
 - Input is a quote the user already has — pasted text or a screenshot. The tool does not build quotes.
 - Screenshots are read into part lines the user can see before verdicts, so a misread brand shows up as a reading problem, not as a false "worth questioning." Pasted text stays as the fallback.
 - Price evidence comes from a small hand-made sample dataset, labeled as sample data.

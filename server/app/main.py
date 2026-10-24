@@ -32,8 +32,7 @@ def check_line(line: PartLine, data: PriceData) -> LineResult:
                           cant_verify_reason=reason, typical_price_usd=None,
                           listings=[], swap_risk=swap_risk,
                           ask_seller=verdict.ask_seller(line.part_type, "cant_verify", None, found.kind == "vague"),
-                          part_label=label, display_name=verdict.display_name(line.name, None),
-                          advice=verdict.advice("cant_verify", reason, swap_risk))
+                          part_label=label, advice=verdict.advice("cant_verify", reason))
     listings = found.product.listings
     typical = verdict.typical_price_cents(listings)
     judged = verdict.judge(line.price_usd, typical)
@@ -48,8 +47,7 @@ def check_line(line: PartLine, data: PriceData) -> LineResult:
         swap_risk=swap_risk,
         ask_seller=verdict.ask_seller(line.part_type, judged, diff, swap_risk),
         part_label=label,
-        display_name=verdict.display_name(line.name, found.product.spec_label),
-        advice=verdict.advice(judged, None, swap_risk),
+        advice=verdict.advice(judged, None),
     )
 
 
@@ -59,7 +57,6 @@ def check(request: CheckRequest) -> CheckResult:
         results=[check_line(line, prices) for line in request.lines],
         rule_text=verdict.RULE_TEXT,
         sample_data_note=prices.note,
-        total_usd=round(sum(line.price_usd for line in request.lines), 2),
     )
 
 
@@ -71,7 +68,7 @@ def read(text: str = Form(""), image: UploadFile | None = File(None)) -> ReadRes
             raise HTTPException(415, "Use a PNG, JPEG, or WebP screenshot.")
         data = image.file.read(MAX_IMAGE_BYTES + 1)
         if len(data) > MAX_IMAGE_BYTES:
-            raise HTTPException(413, "That image is over 5 MB. Try a smaller screenshot.")
+            raise HTTPException(413, "Over 5 MB. Try a smaller screenshot.")
     elif not text.strip():
         raise HTTPException(400, "Paste a quote or choose a screenshot first.")
     try:

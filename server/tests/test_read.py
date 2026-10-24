@@ -41,7 +41,7 @@ def test_image_over_5_mb_is_rejected():
     big = b"0" * (main.MAX_IMAGE_BYTES + 1)
     response = client.post("/api/read", files={"image": ("quote.png", big, "image/png")})
     assert response.status_code == 413
-    assert "over 5 MB" in response.json()["detail"]
+    assert "Over 5 MB" in response.json()["detail"]
 
 
 def test_empty_request_asks_for_input():

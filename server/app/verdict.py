@@ -12,10 +12,7 @@ from app.models import Listing, Verdict
 
 CantVerifyReason = Literal["not_in_sample", "name_too_vague"]
 
-RULE_TEXT = (
-    "We call a price reasonable from 30% below to 10% above the typical price "
-    "(the middle of the listings we have)."
-)
+RULE_TEXT = "Reasonable: −30% to +10% of typical."
 
 
 def to_cents(price_usd: float) -> int:
@@ -55,14 +52,18 @@ def cant_verify_headline(reason: CantVerifyReason, swap_risk: bool) -> str:
     if reason == "not_in_sample":
         return "Not in our sample data"
     # Too vague: either no maker or model at all, or a name that fits several products.
-    return "No maker or model" if swap_risk else "Name too vague to match"
+    return "No model named" if swap_risk else "Name too vague"
 
 
-# --- Card text (prd.md > Large Type and Character Limit) ---
+# --- Card text (prd.md > Large Type and Ten Words a Screen) ---
 
-# Characters a part card shows before "Show proof"; tests/test_card_text.py enforces it.
-CARD_TEXT_LIMIT = 120
-NAME_CUT = 28
+# Words a screen may show; tests/test_card_text.py enforces it for every card.
+WORD_LIMIT = 10
+
+
+def count_words(text: str) -> int:
+    """Space-separated runs holding a letter or digit: "$1,039" is one word, "·" none."""
+    return sum(1 for token in text.split() if any(c.isalnum() for c in token))
 
 # Part types in plain words; Motherboard, Storage, and Case are already plain.
 PART_LABELS = {
@@ -74,38 +75,22 @@ PART_LABELS = {
     "Other": "Other part",
 }
 
-ADVICE = {
-    "reasonable": "Close to what stores charge.",
-    "worth_questioning": "Ask the seller why it costs more.",
-    "unusually_low": "Check it's the exact model and new.",
-}
-SWAP_RISK_ADVICE = "A cheaper part could be swapped in."
+# Two words fit the worst-case card: "Graphics card · $9,999.99 / Worth questioning / $9,401 above typical".
+ASK_WHY = "Ask why."
+ASK_WHICH = "Ask which."
 
 
 def part_label(part_type: str) -> str:
     return PART_LABELS.get(part_type, part_type)
 
 
-def display_name(name: str, spec_label: str | None) -> str:
-    """The matched product's spec label; otherwise the name as read, cut so it fits a card."""
-    if spec_label is not None:
-        return spec_label
-    if len(name) <= NAME_CUT:
-        return name
-    # Cut at a word break when that keeps at least half; one extra character lets a word
-    # that ends exactly at the limit survive.
-    head = name[: NAME_CUT + 1].rpartition(" ")[0]
-    return (head if len(head) >= NAME_CUT // 2 else name[:NAME_CUT]).rstrip() + "…"
-
-
-def advice(verdict: Verdict, reason: CantVerifyReason | None, swap_risk: bool) -> str:
-    if swap_risk:
-        return SWAP_RISK_ADVICE
-    if verdict != "cant_verify":
-        return ADVICE[verdict]
-    if reason == "not_in_sample":
-        return "We have no prices for this part."
-    return "It could be several products."
+def advice(verdict: Verdict, reason: CantVerifyReason | None) -> str | None:
+    """A two-word action, or None when there is nothing to do."""
+    if verdict in ("worth_questioning", "unusually_low"):
+        return ASK_WHY
+    if reason == "name_too_vague":
+        return ASK_WHICH
+    return None
 
 
 def _in_sentence(part_type: str) -> str:

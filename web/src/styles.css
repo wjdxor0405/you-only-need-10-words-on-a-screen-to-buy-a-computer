@@ -19,7 +19,7 @@
   /* Three type levels (prd.md > Look and Feel). Nothing is smaller than 16px. */
   --text-verdict: 32px; /* decide: the verdict phrase, the overview sentence */
   --text-number: 24px; /* decide: the one number */
-  --text-body: 20px; /* read and act: spec label, advice, questions, buttons */
+  --text-body: 20px; /* read and act: lead lines, actions, questions, buttons */
   --text-meta: 16px; /* context, in --muted-text */
   --tap: 56px; /* minimum button height */
   font-family: Pretendard, Inter, system-ui, sans-serif;
@@ -52,16 +52,11 @@ textarea {
 }
 
 .page-header h1 {
-  margin: 0;
+  margin: 0 0 16px;
   font-size: 28px;
   line-height: 1.25;
 }
 
-.page-header p {
-  margin: 4px 0 16px;
-  font-size: var(--text-meta);
-  color: var(--muted-text);
-}
 
 .card {
   background: var(--surface);
@@ -72,15 +67,7 @@ textarea {
 }
 
 .card h2,
-.step-title {
-  margin: 0 0 8px;
-  font-size: var(--text-number);
-  line-height: 1.25;
-}
 
-.step-intro {
-  margin: 0 0 16px;
-}
 
 /* Buttons: every one at least --tap tall, full width on a phone */
 .primary,
@@ -244,45 +231,65 @@ textarea {
   white-space: nowrap;
 }
 
+/* ① The screenshot picker is the main button; dropping a file on it works too. */
 .drop-area {
-  display: block;
-  padding: 24px 16px;
-  border: 2px dashed var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 96px;
+  padding: 16px;
+  border: 2px dashed var(--accent);
   border-radius: var(--radius);
   text-align: center;
   cursor: pointer;
   background: var(--bg);
+  color: var(--accent);
+  font-weight: 600;
   overflow-wrap: anywhere;
 }
 
 .drop-area:hover,
 .drop-area.dragging,
 .drop-area:focus-within {
-  border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 8%, var(--bg));
 }
 
 .drop-area.has-file {
   border-style: solid;
-  border-color: var(--accent);
+  color: var(--text);
 }
 
-.drop-area strong {
-  color: var(--accent);
+/* The one line each screen leads with; errors take its place. */
+.lead {
+  margin: 0 0 16px;
 }
 
-.drop-area small {
-  display: block;
-  margin-top: 4px;
-  font-size: var(--text-meta);
-  color: var(--muted-text);
+/* ② and the overview: one icon per part, colored by verdict on the overview */
+.part-icons {
+  list-style: none;
+  margin: 0 0 16px;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
 }
 
-.or {
-  margin: 16px 0 8px;
-  text-align: center;
-  font-size: var(--text-meta);
-  color: var(--muted-text);
+.part-icons li {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--bg);
+  border: 2px solid var(--verdict, var(--border));
 }
+
+.part-icons li[class^='verdict-'] .part-icon {
+  stroke: var(--verdict-text);
+}
+
+
+
 
 .quote-text {
   width: 100%;
@@ -428,33 +435,18 @@ textarea {
 }
 
 .overview {
-  margin: 0;
+  margin: 0 0 8px;
   font-size: var(--text-verdict);
   font-weight: 700;
   line-height: 1.25;
 }
 
-.summary-counts {
-  list-style: none;
-  margin: 16px 0;
-  padding: 0;
-  display: grid;
-  gap: 4px;
-}
 
-.summary-counts li {
-  display: flex;
-  align-items: center;
-}
 
 .result-card {
   border-top: 6px solid var(--verdict);
 }
 
-.spec-label {
-  margin: 8px 0 0;
-  font-weight: 600;
-}
 
 .verdict-phrase {
   display: flex;
@@ -482,17 +474,27 @@ textarea {
   margin: 12px 0 0;
 }
 
-.questions {
-  margin: 0;
-  padding-left: 28px;
-  display: grid;
-  gap: 12px;
+.overview-sub {
+  margin: 0 0 16px;
+  font-size: var(--text-number);
+  font-weight: 600;
 }
+
+.question {
+  margin: 0;
+  font-size: var(--text-number);
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+/* The card's buttons sit below whichever side is showing. */
+.result-card > .wide {
+  margin-top: 20px;
+}
+
 
 /* Proof: context level, except reasons and warnings, which stay at reading size */
 .proof {
-  margin-top: 16px;
-  border-top: 1px solid var(--border);
   font-size: var(--text-meta);
   color: var(--muted-text);
   overflow-wrap: anywhere;
@@ -502,9 +504,19 @@ textarea {
   margin: 12px 0 0;
 }
 
-.proof strong {
+.proof .proof-name {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
   color: var(--text);
 }
+
+.proof .proof-rule {
+  font-size: var(--text-body);
+  color: var(--text);
+}
+
 
 .proof .proof-reason,
 .proof .note {

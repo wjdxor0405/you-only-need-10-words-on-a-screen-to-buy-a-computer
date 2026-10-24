@@ -40,15 +40,13 @@ export interface LineResult {
   swap_risk: boolean
   ask_seller: null | string
   part_label: string // plain part name, e.g. "Graphics card"
-  display_name: string // spec label, or the name as read cut to 28 characters
-  advice: string // one fixed sentence for the card
+  advice: null | string // two-word action for the card, e.g. "Ask why."
 }
 
 export interface CheckResult {
   results: LineResult[]
   rule_text: string
   sample_data_note: string
-  total_usd: number
 }
 
 export interface ReadResult {

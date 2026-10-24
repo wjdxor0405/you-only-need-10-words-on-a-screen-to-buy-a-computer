@@ -10,14 +10,11 @@ export const VERDICT_LABEL: Record<Verdict, string> = {
   cant_verify: "Can't verify",
 }
 
+// One sentence each, so a Can't verify proof stays within ten words.
 function cantVerifyText(result: LineResult) {
-  if (result.cant_verify_reason === 'not_in_sample') {
-    return "This product isn't in our sample data, so we have no prices to compare it with. We won't guess."
-  }
-  if (result.swap_risk) {
-    return "The name doesn't say which maker or model this is, so we can't tell which prices to compare it with. We won't guess."
-  }
-  return "This name could be more than one product in our sample data, so we can't tell which prices to compare it with. We won't guess."
+  if (result.cant_verify_reason === 'not_in_sample') return 'No prices for this in our sample data.'
+  if (result.swap_risk) return 'Without a model, a cheaper part could be swapped in.'
+  return 'This name fits several products in our data.'
 }
 
 export function usd(value: number) {
@@ -30,74 +27,72 @@ interface Props {
   sampleNote: string
 }
 
-// One part per card: a beginner can stop at the verdict; "Show proof" opens the evidence.
+// One part per card: a beginner can stop at the verdict; "Show proof" turns the card into its
+// evidence, so the card and its proof are separate screens of at most ten words each.
 export default function ResultCard({ result, ruleText, sampleNote }: Props) {
   const [open, setOpen] = useState(false)
   const { line, verdict } = result
 
   return (
     <article className={`card result-card verdict-${verdict}`}>
-      <p className="card-context">
-        <PartIcon type={line.part_type} />
-        {result.part_label} · {usd(line.price_usd)}
-      </p>
-      <p className="spec-label">{result.display_name}</p>
-      <p className="verdict-phrase">
-        <span className="dot" aria-hidden="true" />
-        {VERDICT_LABEL[verdict]}
-      </p>
-      <p className="headline">{result.headline}</p>
-      <p className="advice">{result.advice}</p>
-      <button className="secondary wide" aria-expanded={open} onClick={() => setOpen(!open)}>
-        {open ? 'Hide proof' : 'Show proof'}
-      </button>
-      {open && (
+      {open ? (
         <div className="proof">
-          <p>As written on the quote: {line.name}</p>
+          {/* The user's own quote text: shown as written, not counted. */}
+          <p className="proof-name" data-words="skip">
+            <PartIcon type={line.part_type} />“{line.name}”
+          </p>
           {result.typical_price_usd !== null ? (
             <>
-              <PriceBar
-                quoted={line.price_usd}
-                typical={result.typical_price_usd}
-                listings={result.listings}
-                verdict={verdict}
-              />
-              <p>
-                Quoted <strong>{usd(line.price_usd)}</strong> · typical price{' '}
-                <strong>{usd(result.typical_price_usd)}</strong>, the middle of these {result.listings.length} listings:
-              </p>
-              <table className="listings">
-                <thead>
-                  <tr>
-                    <th>Store</th>
-                    <th>Price</th>
-                    <th>Date</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {result.listings.map((listing, i) => (
-                    <tr key={i}>
-                      <td>{listing.store}</td>
-                      <td>{usd(listing.price_usd)}</td>
-                      <td>{listing.date}</td>
+              <div data-words="skip">
+                <PriceBar
+                  quoted={line.price_usd}
+                  typical={result.typical_price_usd}
+                  listings={result.listings}
+                  verdict={verdict}
+                />
+                <table className="listings">
+                  <thead>
+                    <tr>
+                      <th>Store</th>
+                      <th>Price</th>
+                      <th>Date</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-              <p>{ruleText}</p>
+                  </thead>
+                  <tbody>
+                    {result.listings.map((listing, i) => (
+                      <tr key={i}>
+                        <td>{listing.store}</td>
+                        <td>{usd(listing.price_usd)}</td>
+                        <td>{listing.date}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              <p className="proof-rule">{ruleText}</p>
+              <p>{sampleNote}</p>
             </>
           ) : (
-            <p className="proof-reason">{cantVerifyText(result)}</p>
+            <p className={result.swap_risk ? 'proof-reason note' : 'proof-reason'}>{cantVerifyText(result)}</p>
           )}
-          {result.swap_risk && (
-            <p className="note">
-              Without a maker and model name, a cheaper part could be put in and you'd have nothing to point to. Ask the
-              seller for the exact model.
-            </p>
-          )}
-          <p>{sampleNote}</p>
         </div>
+      ) : (
+        <>
+          <p className="card-context">
+            <PartIcon type={line.part_type} />
+            {result.part_label} · {usd(line.price_usd)}
+          </p>
+          <p className="verdict-phrase">
+            <span className="dot" aria-hidden="true" />
+            {VERDICT_LABEL[verdict]}
+          </p>
+          <p className="headline">{result.headline}</p>
+          {result.advice && <p className="advice">{result.advice}</p>}
+        </>
       )}
+      <button className="secondary wide" aria-expanded={open} onClick={() => setOpen(!open)}>
+        {open ? 'Back to card' : 'Show proof'}
+      </button>
     </article>
   )
 }

@@ -11,17 +11,17 @@ Source: `scope.md > The Unique Kernel`, `scope.md > Who It's For`.
 ## The Core Journey
 Develops `scope.md > The Core Loop`. Three steps, shown as a step bar at the top of the screen.
 
-1. **Upload.** The user opens the app — usually on their phone, where the quote arrived — and sees a title, one line explaining what it does, and an input area. They upload a screenshot of the quote or paste the quote as text.
-2. **Confirm parts.** The app shows the part lines it read from the quote, one large card per line: part type, product name as read, and quoted price. The user taps "Fix" to correct a misread name or price, or to delete a line that isn't a part, then continues.
-3. **Results.** An overview card comes first, then one card per part: a verdict phrase, one number, and one sentence of advice. Large Next and Back buttons move between cards. "Show proof" opens the full evidence. A beginner can stop at the card; a doubtful user opens the proof. The last card lists questions to ask the seller.
+1. **Upload.** The user opens the app — usually on their phone, where the quote arrived — and sees a title, one line explaining what it does, and two ways in: choose a screenshot, or paste the quote as text.
+2. **Confirm parts.** The app says how many parts it read, with one icon per part, and asks "Look right?". The user compares that with the quote in front of them (the quote's own total may include fees, so the count is the check) and checks prices, or taps "Fix parts" to see every line as read and correct a name or price, or delete a line that isn't a part.
+3. **Results.** An overview card comes first, then one card per part: a verdict phrase, one number, and at most a two-word action. Large Next and Back buttons move between cards. "Show proof" turns the card into its evidence. A beginner can stop at the card; a doubtful user opens the proof. The last cards hold the questions to ask the seller, one per card.
 4. **Done.** The user has read the results and decides whether to buy. Success is the learner's own definition: the user sees the evidence and is convinced (`scope.md > What "Working" Looks Like`).
 
 ## Screens and Layout
 One page with a three-step bar: ① Upload → ② Confirm parts → ③ Results. The user moves forward with a button and can go back to an earlier step.
 
-- **① Upload:** title, one-line explanation, screenshot drop area, text paste box, "Read quote" button.
-- **② Confirm parts:** one large card per part line (part type, product name, quoted price), each with "Fix" to edit or delete; "Add a line"; a "Check prices" button.
-- **③ Results:** one card per screen — the overview (one sentence, counts per verdict, parts total), then one card per part, then the questions to ask the seller. "Part 3 of 8" shows where the user is.
+- **① Upload:** title, one-line explanation, "Choose a screenshot" (dropping a file also works), "Paste text" (opens the text box), "Try a sample quote", and "Read quote" once there is something to read.
+- **② Confirm parts:** the count of parts read, one icon per part, "Fix parts", and "Check prices". "Fix parts" opens one card per line as read (part type, product name, quoted price), each with "Fix" to edit or delete, and "Add a line".
+- **③ Results:** one card per screen — the overview (one or two sentences and one colored dot per part), then one card per part, then one card per question to ask the seller. "Part 3 of 8" or "Ask the seller · 1 of 3" shows where the user is.
 
 ## Look and Feel
 - Light blue-gray page background, white cards with soft shadows.
@@ -31,8 +31,8 @@ One page with a three-step bar: ① Upload → ② Confirm parts → ③ Results
 - Calm, tidy shopping-helper tone. Plain words; no jargon in the short line.
 - **Large type by default**, not a setting, with three levels so that one thing on each card stands out:
   - **Decide** (largest): the verdict phrase (32px) and its one number (24px). On the overview card, the one sentence.
-  - **Read and act** (20px): the spec label, the advice sentence, the seller questions, the swap-risk note, and every button (at least 56px tall, full width on a phone; pairs such as Back and Next sit side by side, and Fix sits beside its price).
-  - **Context** (16px, muted color): the part in plain words with its quoted price, "Part 3 of 8", step bar, parts total, sample-data label, and everything in the proof (full name as read, rule, listings with store, price, and date, range bar legend).
+  - **Read and act** (20px): the action, the seller questions, the can't-verify and swap-risk reasons in the proof, and every button (at least 56px tall, full width on a phone; pairs such as Back and Next sit side by side, and Fix sits beside its price).
+  - **Context** (16px, muted color): the part in plain words with its quoted price, "Part 3 of 8", step bar, sample-data label, and the rest of the proof (full name as read, rule, listings with store, price, and date, range bar legend).
 - **No fine print:** nothing is smaller than 16px — the sample-data label included. Can't-verify reasons and the swap-risk note are never put in the context level; honesty is part of the kernel.
 - Fits a 360px-wide phone screen with no zooming and no sideways scrolling.
 - All UI text in English.
@@ -53,9 +53,9 @@ The kernel (`scope.md > The Unique Kernel`). Each part's quoted price is compare
 - **Worth questioning** (amber) — more than 10% above the typical price.
 - **Unusually low** (amber) — more than 30% below the typical price. Shown as a caution, not a win: "Check that it's the exact model and that it's new."
 - **Can't verify** (gray) — the product isn't in the sample data, or the name is too vague to match. The line says which.
-- The rule itself is shown in the evidence (e.g., "We call a price reasonable within +10% / −30% of the typical price"). Price-comparison services keep their cutoffs private; showing ours is part of the kernel.
-- Card: the part in plain words with its quoted price (e.g., "Graphics card · $195"), the spec label (e.g., "RTX 4060, 8GB"), verdict phrase, one number (e.g., "$104 below typical"), and one fixed sentence of advice (e.g., "Check it's the exact model and new.").
-- Proof ("Show proof"): the full product name as read, the typical price, the listings it came from (retailer, price, date), the rule used, and the sample-data label.
+- The rule itself is shown in the evidence ("Reasonable: −30% to +10% of typical."). Price-comparison services keep their cutoffs private; showing ours is part of the kernel.
+- Card: the part in plain words with its quoted price (e.g., "Graphics card · $195"), verdict phrase, one number (e.g., "$104 below typical"), and a fixed two-word action where there is something to do ("Ask why." for Worth questioning and Unusually low, "Ask which." for a too-vague name).
+- Proof ("Show proof", in place of the card): the full product name as read, a price range bar with the typical price (the middle listing), the listings it came from (retailer, price, date), the rule used, and the sample-data label. A Can't verify proof gives its reason in one sentence instead.
   - [ ] The sample quote shows at least one card of each verdict: Reasonable, Worth questioning, Unusually low, Can't verify.
   - [ ] Each card shows exactly one verdict phrase and one number.
   - [ ] Opening the proof shows the typical price, the rule, and retailer, price, and date for each listing used.
@@ -64,45 +64,47 @@ The kernel (`scope.md > The Unique Kernel`). Each part's quoted price is compare
 
 ### Swap-Risk Flag
 Develops `scope.md > The POC Boundary`. First to cut if time runs short.
-- A line with no maker or model (e.g., "SSD 1TB", "PSU 650W") gets a note: without a model name, a cheaper part could be put in and there is nothing to point to.
+- A line with no maker or model (e.g., "SSD 1TB", "PSU 650W") says "No model named" on its card, and its proof says why that matters: "Without a model, a cheaper part could be swapped in."
   - [ ] "SSD 1TB" in the sample quote shows the swap-risk note.
 
 ### Overview and Questions to Ask the Seller
 Added during the build after the first hands-on check: turns verdicts into something a beginner can act on.
-- The first results card is the overview: one plain sentence (e.g., "4 of 8 parts look reasonable."), the count per verdict, and the parts total.
-- The last card, "Questions to ask the seller", gives one short question per Worth questioning, Unusually low, or too-vague line (e.g., "Why is the power supply $20 above typical?"), naming the part in plain words, written by fixed rules from the verdict — never by the model. At most two questions per card, so each card stays within the character limit.
+- The first results card is the overview: one plain sentence (e.g., "4 of 8 parts look reasonable."), how many questions there are for the seller ("3 questions to ask."), and one dot per part in its verdict color. The parts total is no longer shown: a quote's own total often includes fees, so it would look like a mismatch.
+- The last cards, "Ask the seller · 1 of 3", give one short question per Worth questioning, Unusually low, or too-vague line (e.g., "Why is the power supply $20 above typical?"), naming the part in plain words, written by fixed rules from the verdict — never by the model. One question per card, so each card stays within ten words.
 - The proof of each part with a typical price also shows a price range bar: the quoted price against the reasonable range, the typical price, and each listing.
   - [ ] The sample quote lists questions for the PSU, the GPU, and "SSD 1TB", and none for Reasonable lines.
 
-### Large Type and Character Limit
+### Large Type and Ten Words a Screen
 Added during the build: the quote arrives on a phone, the user should decide one thing at a time, and reviewers watch the demo in a small video player.
-- Every card shows at most **120 characters** of text before "Show proof" (step bar and buttons not counted). If text doesn't fit, it is shortened, never shrunk.
-- Cards name a part by **what it is and what it costs**, not by its full product name:
-  - the part in plain words (Processor, Graphics card, Memory, Power supply, …) with the quoted price, so the user can find the line on the quote in front of them;
-  - a hand-written spec label for each sample product — the specs that set the price (e.g., "RTX 4060, 8GB", "650W, 80+ Gold"). Brand and series names ("MSI … Ventus 2X") stay in the proof.
-- A line that isn't in the sample data shows its name as read, cut to at most 28 characters at a word break — no invented specs.
-- A line with no maker or model says so in place of the number ("No maker or model") and uses its advice sentence for the swap-risk warning ("A cheaper part could be swapped in."), since brands no longer appear on other cards to contrast with.
-  - [ ] The sample quote's graphics card shows "Graphics card · $195" and "RTX 4060, 8GB"; its full name as read appears only in the proof.
-  - [ ] Every card for the sample quote, and for each verdict path, stays within 120 characters.
+- **No screen shows more than ten words** that the app wrote. If text doesn't fit, it is shortened, never shrunk. Errors and loading messages take the place of the screen's lead line, so they count too.
+- A word is any run of characters between spaces that holds a letter or digit: "$1,039" is one word, "·" and "—" are none.
+- Not counted, and said so in the README: buttons, the step bar, the position ("Part 3 of 8", "Ask the seller · 1 of 3"), what the user gave the app (the quote text, a file name, the lines as read and the fields that edit them, the name as written in the proof), and data displays in the proof (the price range bar and its legend, the listings table).
+- "Show proof" replaces the card with its proof, so the card and its proof are separate screens and each stays within ten words.
+- Cards name a part by **what it is and what it costs**: the part in plain words (Processor, Graphics card, Memory, Power supply, …) with the quoted price, so the user can find the line on the quote in front of them. Product names, brands, and specs stay in the proof.
+- Worst case on a part card is exactly ten: "Graphics card · $9,999.99 / Worth questioning / $9,401 above typical / Ask why."
+  - [ ] The sample quote's graphics card shows "Graphics card · $195"; its full name as read appears only in the proof.
+  - [ ] Every screen of the sample run — upload, confirm, overview, each part card and its proof, each question — shows at most ten counted words.
+  - [ ] Every part card and question, for each verdict path with prices up to $9,999.99, stays within ten words.
   - [ ] On a 360px-wide screen, no step needs zooming or sideways scrolling.
   - [ ] Body text is at least 20px, the verdict phrase at least 32px, and buttons at least 56px tall.
   - [ ] No text anywhere is smaller than 16px, including the sample-data label and the proof.
   - [ ] On every part card, the verdict phrase is the largest text.
 
 ## States and Boundaries
-- **First use** — step ① with an empty input area and the one-line explanation. A "Try a sample quote" link fills in the sample so the demo never starts empty.
-- **Couldn't read the image** — if no part lines can be read, step ② shows a plain message instead of an empty list (e.g., "We couldn't read this image. It may be blurry, or it may not be a PC quote."), plus a way to try another image or paste text. Distinguishing "blurry" from "not a quote" is best-effort, not required.
+- **First use** — step ① with the one-line explanation and the two ways in. "Try a sample quote" fills in the sample so the demo never starts empty.
+- **Couldn't read the image** — if no part lines can be read, step ② shows a plain message instead of an empty list ("We couldn't read this image. Try a clearer one."), plus a way to try another image or paste text. Distinguishing "blurry" from "not a quote" is best-effort, not required.
 - **Partly read** — lines that were read are shown; the user can add a missing line by hand in step ②.
 - **Nothing persists** — closing the page clears everything. No accounts, no history.
 - **Sample data** — every evidence panel states that prices come from a sample dataset, not live prices.
 
 ## Product Decisions
 - Three steps (Upload → Confirm parts → Results) — a beginner handles one thing at a time; no step to replace parts or finalize a quote, because this tool neither builds nor changes quotes.
-- Short line by default, full evidence on expand — the learner worried beginners would be overwhelmed by too much on one screen but felt all evidence fields (comparison, number, source, date, verdict) help convince.
+- Short card by default, full evidence on its own screen — the learner worried beginners would be overwhelmed by too much on one screen but felt all evidence fields (comparison, number, source, date, verdict) help convince.
 - All English, with US-dollar prices and US retailers — judges and the demo are in English.
 - Screenshot input included (scope decision), with a confirm step before verdicts.
 - Swap-risk flag included if quick; first to cut.
 - **Large type and one part per screen, by default** — chosen after reviewing the judging criteria: reviewers only watch the video, in a small player, and the quote arrives on a phone. Large type is not pitched as an age feature: no data shows parents of teens prefer it, though about 1 in 5 iPhone users in one large app's data chose larger text ([source](https://fassko.medium.com/embracing-the-dynamic-type-d8df6701aa19)) and near vision typically starts to fade after 40. Only the verdict is big; context stays at 16px so the card has one focal point. Considered and rejected: a text-size toggle (reads as a generic option, and the default screen stays small); a native phone app (rebuilds every screen and needs a hosted server). A post-delivery parts check would add the most novelty but cost most of the remaining time, so it stays under Possible Later Enhancements. Cost: every sample product needs a hand-written spec label; with brands off the cards, a vague name no longer stands out by contrast, so its card states the swap risk outright; the seller questions name only the part type.
+- **Ten words a screen** (replaces the 120-character card limit) — the learner's concept, to try in the app before deciding whether it stays. It is a limit a reviewer can count in the video, and it pushes the large-type decision one step further: one decision per screen, read in the shop with the seller waiting. Ten is a design rule, not a researched threshold; it is the smallest count that still fits part, price, verdict, number, and an action. Considered: keeping 120 characters (about 20 words — not a claim anyone can check by eye) and seven words (drops the number or the action). Cost: spec labels and the swap-risk sentence leave the card for the proof; step ② checks the count and the part icons instead of listing every line, so a misread name or price is only caught under "Fix parts"; questions go one per card; the seller questions' heading moves into the position line; and the exemptions have to be stated, or the count looks gamed.
 - Verdicts are a percentage band around the median of sample listings: +10% / −30%, with a separate Unusually low verdict. Chosen after comparing price-labeling services (Google Shopping low/typical/high, CarGurus deal ratings — neither publishes cutoffs; an unofficial account puts CarGurus "Fair" within about ±5–10%) and GPU scam guidance ("50%+ below market is almost certainly a scam," for private used sales). 10% follows the CarGurus bands; 30% is a judgment call for shop quotes, lower than the private-sale 50%. Slightly cheap counts as reasonable so beginners don't distrust good quotes.
 
 ## What We're Building
@@ -110,7 +112,7 @@ Added during the build: the quote arrives on a phone, the user should decide one
 - Reading a quote from a screenshot or pasted text into editable part lines.
 - A hand-made sample price dataset (several listings per product) and one sample quote that exercises every verdict.
 - Price verdicts as one card per part, with the proof one tap away.
-- Large type and a 120-character limit per card; readable on a phone.
+- Large type and at most ten words a screen; readable on a phone.
 - Couldn't-read message and the "Try a sample quote" shortcut.
 - Swap-risk note (if time allows).
 

@@ -1,14 +1,15 @@
-"""Every card fits CARD_TEXT_LIMIT characters before "Show proof" (prd.md > Large Type and Character Limit).
+"""Every card fits WORD_LIMIT words (prd.md > Large Type and Ten Words a Screen).
 
-A part card is counted the way it shows: part label · quoted price, display name, verdict
-phrase, headline, and advice. The step bar, "Part N of M", and buttons don't count.
+A part card is counted the way it shows: part label · quoted price, verdict phrase, headline,
+and advice. The step bar, "Part N of M", and buttons don't count. The rest of each screen is
+counted in the browser (README > Ten words a screen).
 """
 
 import pytest
 
 from app.main import check_line, prices
 from app.models import PartLine
-from app.verdict import CARD_TEXT_LIMIT, SWAP_RISK_ADVICE
+from app.verdict import RULE_TEXT, WORD_LIMIT, count_words
 
 # Mirrors VERDICT_LABEL in web/src/components/ResultCard.tsx.
 VERDICT_PHRASE = {
@@ -17,9 +18,6 @@ VERDICT_PHRASE = {
     "unusually_low": "Unusually low",
     "cant_verify": "Can't verify",
 }
-# Mirrors the questions card in web/src/components/ResultsStep.tsx.
-QUESTIONS_HEADING = "Questions to ask the seller"
-QUESTIONS_PER_CARD = 2
 # No single PC part costs more, and "$9,999.99" is as long as a card's price gets.
 TOP_PRICE = 9999.99
 PART_TYPES = ["CPU", "GPU", "Motherboard", "RAM", "Storage", "PSU", "Case", "Cooler", "Other"]
@@ -35,7 +33,7 @@ def usd(value: float) -> str:
 
 def card_text(line: PartLine) -> str:
     r = check_line(line, prices)
-    return f"{r.part_label} · {usd(r.line.price_usd)}{r.display_name}{VERDICT_PHRASE[r.verdict]}{r.headline}{r.advice}"
+    return f"{r.part_label} · {usd(r.line.price_usd)} {VERDICT_PHRASE[r.verdict]} {r.headline} {r.advice or ''}"
 
 
 def matched_lines():
@@ -71,41 +69,49 @@ def test_lines_cover_every_verdict_path():
 @pytest.mark.parametrize("line", ALL_LINES, ids=lambda line: f"{line.part_type}-{line.name}-{line.price_usd}")
 def test_part_card_fits(line):
     text = card_text(line)
-    assert len(text) <= CARD_TEXT_LIMIT, f"{len(text)} characters: {text}"
+    assert count_words(text) <= WORD_LIMIT, f"{count_words(text)} words: {text}"
 
 
-def test_questions_card_fits():
+def test_worst_case_card_is_exactly_ten_words():
+    worst = max(count_words(card_text(line)) for line in ALL_LINES)
+    assert worst == WORD_LIMIT
+
+
+def test_each_question_fits_its_own_card():
     questions = [r.ask_seller for r in (check_line(line, prices) for line in ALL_LINES) if r.ask_seller]
-    longest = max(len(q) for q in questions)
-    assert len(QUESTIONS_HEADING) + QUESTIONS_PER_CARD * longest <= CARD_TEXT_LIMIT
+    assert questions
+    assert max(count_words(q) for q in questions) <= WORD_LIMIT
 
 
-def test_sample_graphics_card_shows_specs_not_the_full_name():
+def test_proof_sentences_fit():
+    # The name as written, the range bar, and the listings table are data and don't count.
+    assert count_words(f"{RULE_TEXT} {prices.note}") <= WORD_LIMIT
+
+
+@pytest.mark.parametrize("text, words", [
+    ("Graphics card · $9,999.99", 3),
+    ("$9,401 above typical", 3),
+    ("Reasonable: −30% to +10% of typical.", 6),
+    ("We read 8 parts, $979 in total. — Look right?", 9),
+])
+def test_count_words(text, words):
+    assert count_words(text) == words
+
+
+def test_sample_graphics_card_shows_part_and_price_not_the_name():
     r = check_line(PartLine(part_type="GPU", name="MSI GeForce RTX 4060 Ventus 2X 8GB", price_usd=195), prices)
-    assert (r.part_label, r.display_name, r.verdict) == ("Graphics card", "RTX 4060, 8GB", "unusually_low")
-    assert r.advice == "Check it's the exact model and new."
+    assert (r.part_label, r.verdict, r.advice) == ("Graphics card", "unusually_low", "Ask why.")
     assert r.ask_seller == "Is the graphics card new and the exact model?"
 
 
-def test_no_maker_card_warns_about_swaps():
+def test_no_maker_card_asks_which_model():
     r = check_line(PartLine(part_type="Storage", name="SSD 1TB", price_usd=79), prices)
-    assert (r.display_name, r.headline, r.advice) == ("SSD 1TB", "No maker or model", SWAP_RISK_ADVICE)
+    assert (r.headline, r.advice, r.swap_risk) == ("No model named", "Ask which.", True)
     assert r.ask_seller == "Which maker and model is the storage?"
 
 
-def test_unmatched_name_is_cut_not_invented():
-    r = check_line(PartLine(part_type="Cooler", name=NOT_IN_SAMPLE, price_usd=38), prices)
-    assert r.display_name == "Thermalright Peerless…"
-    assert r.headline == "Not in our sample data"
-
-
-@pytest.mark.parametrize("name, shown", [
-    ("Thermalright Peerless Assassin 120 SE", "Thermalright Peerless…"),
-    ("Arctic Liquid Freezer III 360 A-RGB", "Arctic Liquid Freezer III…"),
-    ("Cooler Master Hyper 212 Halo White", "Cooler Master Hyper 212 Halo…"),  # "Halo" ends exactly at 28
-    ("X ThermalrightPeerlessAssassin120SE", "X ThermalrightPeerlessAssass…"),  # break too early: hard cut
-])
-def test_long_names_are_cut_at_a_word_break(name, shown):
-    r = check_line(PartLine(part_type="Cooler", name=name, price_usd=38), prices)
-    assert r.display_name == shown
-    assert len(shown) <= 29
+def test_reasonable_and_not_in_sample_cards_have_no_action():
+    reasonable = check_line(PartLine(part_type="CPU", name="AMD Ryzen 5 7600 6-Core Processor", price_usd=199), prices)
+    unknown = check_line(PartLine(part_type="Cooler", name=NOT_IN_SAMPLE, price_usd=38), prices)
+    assert (reasonable.verdict, reasonable.advice) == ("reasonable", None)
+    assert (unknown.headline, unknown.advice) == ("Not in our sample data", None)

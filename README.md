@@ -6,6 +6,18 @@ A language model only *reads* the quote into part lines, which you confirm. The 
 
 Prices come from a small hand-made sample dataset (`server/data/prices.json`), not live data.
 
+## Ten words a screen
+
+No screen shows more than ten words that the app wrote, so a result can be read at a glance on a phone. A word is any run of characters between spaces that holds a letter or digit: "$1,039" is one word, "·" is none. Loading and error messages replace the screen's lead line, so they count too.
+
+Not counted:
+
+- buttons, the step bar, and the position line ("Part 3 of 8", "Ask the seller · 1 of 3");
+- what you gave the app: the quote text, the file name, the lines as read and the fields that edit them, and the product name as written in the proof;
+- data displays in the proof: the price range bar with its legend, and the listings table.
+
+"Show proof" replaces the card with its proof, so each is its own screen. `server/tests/test_card_text.py` checks every card for every verdict with prices up to $9,999.99.
+
 ## Run it locally
 
 Requirements: Python 3.12, [uv](https://docs.astral.sh/uv/), Node 22, and an OpenAI API key.

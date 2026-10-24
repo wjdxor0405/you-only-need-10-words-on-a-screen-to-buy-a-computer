@@ -48,7 +48,7 @@ export default function PriceBar({ quoted, typical, listings, verdict }: Props) 
       </div>
       <div className="price-bar-labels bottom">
         <span className={`price-label anchor-${anchor(at(typical))}`} style={{ left: `${at(typical)}%` }}>
-          Typical {usd(typical)}
+          Typical (middle) {usd(typical)}
         </span>
       </div>
       <figcaption className="price-bar-legend">

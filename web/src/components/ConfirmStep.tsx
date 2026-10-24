@@ -38,6 +38,8 @@ interface Props {
 export default function ConfirmStep({ lines, onChange, onCheck, checking, error, unreadable, onTryAnother }: Props) {
   // Ids of the cards showing edit fields instead of the line as read.
   const [editing, setEditing] = useState<number[]>([])
+  // The summary comes first; the line list opens under "Fix parts", or at once if a line needs fixing.
+  const [fixing, setFixing] = useState(() => !lines.every(isValid))
 
   function update(id: number, patch: Partial<DraftLine>) {
     onChange(lines.map((line) => (line.id === id ? { ...line, ...patch } : line)))
@@ -48,6 +50,7 @@ export default function ConfirmStep({ lines, onChange, onCheck, checking, error,
     draft.price = ''
     onChange([...lines, draft])
     setEditing([...editing, draft.id])
+    setFixing(true)
   }
 
   const canCheck = lines.length > 0 && lines.every(isValid) && !checking
@@ -55,8 +58,7 @@ export default function ConfirmStep({ lines, onChange, onCheck, checking, error,
   if (unreadable) {
     return (
       <section className="card">
-        <h2>Confirm parts</h2>
-        <p className="unreadable">{unreadable}</p>
+        <p className="lead unreadable">{unreadable}</p>
         <div className="actions">
           <button className="secondary" onClick={addLine}>
             + Add lines by hand
@@ -69,11 +71,48 @@ export default function ConfirmStep({ lines, onChange, onCheck, checking, error,
     )
   }
 
+  const checkButton = (
+    <button className="primary" disabled={!canCheck} onClick={onCheck}>
+      {checking ? 'Checking…' : 'Check prices'}
+    </button>
+  )
+
+  if (!fixing) {
+    return (
+      <section className="card">
+        {error ? (
+          <p className="lead error">{error}</p>
+        ) : (
+          <p className="lead">
+            We read {lines.length} {lines.length === 1 ? 'part' : 'parts'}. Look right?
+          </p>
+        )}
+        <ul className="part-icons">
+          {lines.map((line) => (
+            <li key={line.id} aria-label={PART_LABEL[line.part_type]}>
+              <PartIcon type={line.part_type} />
+            </li>
+          ))}
+        </ul>
+        <div className="actions">
+          <button className="secondary" onClick={() => setFixing(true)}>
+            Fix parts
+          </button>
+          {checkButton}
+        </div>
+      </section>
+    )
+  }
+
   return (
     <section>
-      <h2 className="step-title">Confirm parts</h2>
-      <p className="step-intro">Check each line against your quote. Tap Fix if something is wrong.</p>
-      <ul className="part-cards">
+      {error ? (
+        <p className="lead error">{error}</p>
+      ) : (
+        <p className="lead">Check each line against your quote.</p>
+      )}
+      {/* The user's lines as read: their quote, not the app's words, so not counted. */}
+      <ul className="part-cards" data-words="skip">
         {lines.map((line) =>
           editing.includes(line.id) ? (
             <li className="card part-card" key={line.id}>
@@ -148,11 +187,8 @@ export default function ConfirmStep({ lines, onChange, onCheck, checking, error,
         <button className="secondary" onClick={addLine}>
           + Add a line
         </button>
-        <button className="primary" disabled={!canCheck} onClick={onCheck}>
-          {checking ? 'Checking…' : 'Check prices'}
-        </button>
+        {checkButton}
       </div>
-      {error && <p className="error">{error}</p>}
     </section>
   )
 }

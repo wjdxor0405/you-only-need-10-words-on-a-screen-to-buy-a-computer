@@ -30,13 +30,13 @@ export default function App() {
         read.lines.length > 0
           ? null
           : quoteImage
-            ? "We couldn't read this image. It may be blurry, or it may not be a PC quote."
-            : "We couldn't find any PC parts in this text. It may not be a PC quote.",
+            ? "We couldn't read this image. Try a clearer one."
+            : "We couldn't find PC parts in this text.",
       )
       setResult(null)
       setStep('confirm')
     } catch (e) {
-      setError(e instanceof PlainError ? e.message : 'Reading failed — check the server log. You can still paste the text and try again.')
+      setError(e instanceof PlainError ? e.message : 'Reading failed. Try again, or paste the text.')
     } finally {
       setBusy(false)
     }
@@ -49,7 +49,7 @@ export default function App() {
       setResult(await checkPrices(lines.map(toPartLine)))
       setStep('results')
     } catch {
-      setError('Checking failed — is the server running? See the server log.')
+      setError('Checking failed. Is the server running?')
     } finally {
       setBusy(false)
     }
@@ -62,10 +62,12 @@ export default function App() {
 
   return (
     <main className="page">
-      <header className="page-header">
-        <h1>Quote Check</h1>
-        <p>See if each price in a PC quote is fair, part by part, with the proof.</p>
-      </header>
+      {/* The title only on ①: each later screen keeps its ten words for the quote. */}
+      {step === 'upload' && (
+        <header className="page-header">
+          <h1>Quote Check</h1>
+        </header>
+      )}
       <StepBar current={step} onGo={goTo} />
       {step === 'upload' && (
         <UploadStep
