@@ -1,6 +1,14 @@
 import type { PartType, Verdict } from '../types'
 import PartIcon from './PartIcon'
 
+// The verdict as a mark as well as a color, so the row reads without telling colors apart.
+const MARK: Record<Verdict, string> = {
+  reasonable: '✓',
+  worth_questioning: '!',
+  unusually_low: '!',
+  cant_verify: '?',
+}
+
 export interface PartIconItem {
   type: PartType
   label: string // read by screen readers: "Graphics card: Unusually low"
@@ -28,7 +36,16 @@ export default function PartIcons({ items, current, onSelect, onAdd, small }: Pr
           item.problem ? 'problem' : '',
           i === current ? 'current' : '',
         ].join(' ')
-        const icon = <PartIcon type={item.type} />
+        const icon = (
+          <>
+            <PartIcon type={item.type} />
+            {item.verdict && (
+              <span className="verdict-mark" aria-hidden="true">
+                {MARK[item.verdict]}
+              </span>
+            )}
+          </>
+        )
         return (
           <li key={i} className={className}>
             {onSelect ? (

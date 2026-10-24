@@ -14,7 +14,7 @@ export const VERDICT_LABEL: Record<Verdict, string> = {
 // One sentence each, so a Can't verify proof stays within ten words.
 function cantVerifyText(result: LineResult) {
   if (result.cant_verify_reason === 'not_in_sample') return 'No prices for this in our sample data.'
-  if (result.swap_risk) return 'Without a model, a cheaper part could be swapped in.'
+  if (result.swap_risk) return 'Without a model, any cheaper part would match the quote.'
   return 'This name fits several products in our data.'
 }
 

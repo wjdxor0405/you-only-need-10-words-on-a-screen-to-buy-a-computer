@@ -294,6 +294,29 @@ button.part-icon-button {
   cursor: pointer;
 }
 
+.part-icons li[class*='verdict-'] .part-icon-button {
+  position: relative;
+}
+
+/* ✓ ! ? on the icon's lower right, in the verdict color, ringed so it stands off a filled icon */
+.verdict-mark {
+  position: absolute;
+  right: -5px;
+  bottom: -5px;
+  display: grid;
+  place-items: center;
+  box-sizing: border-box;
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--surface);
+  border-radius: 50%;
+  background: var(--verdict);
+  color: #fff;
+  font-size: var(--text-meta);
+  font-weight: 800;
+  line-height: 1;
+}
+
 .part-icons li[class*='verdict-'] .part-icon {
   stroke: var(--verdict-text);
 }
@@ -330,6 +353,12 @@ button.part-icon-button {
 .part-icons.small .part-icon {
   width: 20px;
   height: 20px;
+}
+
+/* Inside the 4px gap, so a mark doesn't touch the next icon */
+.part-icons.small .verdict-mark {
+  right: -3px;
+  bottom: -3px;
 }
 
 .part-icons li.current .part-icon-button {
@@ -545,12 +574,6 @@ button.part-icon-button {
   font-size: var(--text-number);
   font-weight: 600;
   font-variant-numeric: tabular-nums;
-}
-
-.overview-sub {
-  margin: 0 0 16px;
-  font-size: var(--text-number);
-  font-weight: 600;
 }
 
 .question {

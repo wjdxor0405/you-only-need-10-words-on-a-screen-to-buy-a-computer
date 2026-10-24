@@ -51,7 +51,7 @@ export default function App() {
       setResult(await checkPrices(lines.map(toPartLine)))
       setStep('results')
     } catch {
-      setError('Checking failed. Is the server running?')
+      setError("Couldn't check prices. Try again.")
     } finally {
       setBusy(false)
     }
