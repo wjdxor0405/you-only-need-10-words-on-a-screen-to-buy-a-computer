@@ -12,7 +12,8 @@ from app.models import Listing, Verdict
 
 CantVerifyReason = Literal["not_in_sample", "name_too_vague"]
 
-RULE_TEXT = "Reasonable: −30% to +10% of typical."
+# Shown in the proof after the range in dollars: "Reasonable: $210–$328, 70–110% of typical."
+RULE_TEXT = "70–110% of typical"
 
 
 def to_cents(price_usd: float) -> int:
@@ -50,7 +51,7 @@ def headline(quoted_usd: float, typical_cents: Fraction) -> str:
 
 def cant_verify_headline(reason: CantVerifyReason, swap_risk: bool) -> str:
     if reason == "not_in_sample":
-        return "Not in our sample data"
+        return "Not in sample data"
     # Too vague: either no maker or model at all, or a name that fits several products.
     return "No model named" if swap_risk else "Name too vague"
 

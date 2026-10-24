@@ -27,7 +27,7 @@ def check_line(line: PartLine, data: PriceData) -> LineResult:
     label = verdict.part_label(line.part_type)
     if found.kind != "matched":
         reason = "name_too_vague" if found.kind == "vague" else "not_in_sample"
-        return LineResult(line=line, verdict="cant_verify",
+        return LineResult(line=line, key_words=None, verdict="cant_verify",
                           headline=verdict.cant_verify_headline(reason, swap_risk),
                           cant_verify_reason=reason, typical_price_usd=None,
                           listings=[], swap_risk=swap_risk,
@@ -39,6 +39,7 @@ def check_line(line: PartLine, data: PriceData) -> LineResult:
     diff = verdict.difference_dollars(line.price_usd, typical)
     return LineResult(
         line=line,
+        key_words=found.key_words,
         verdict=judged,
         headline=verdict.headline(line.price_usd, typical),
         cant_verify_reason=None,

@@ -1,6 +1,7 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { PART_LABEL, PART_TYPES, type PartLine, type PartType } from '../types'
 import PartIcon from './PartIcon'
+import PartIcons from './PartIcons'
 
 // A part line while it is being edited: the price stays text so the box can be empty.
 export interface DraftLine {
@@ -24,6 +25,10 @@ function isValid(draft: DraftLine) {
   return draft.name.trim() !== '' && draft.price.trim() !== '' && Number(draft.price) >= 0
 }
 
+function price(draft: DraftLine) {
+  return draft.price.trim() ? `$${draft.price.trim()}` : 'No price'
+}
+
 interface Props {
   lines: DraftLine[]
   onChange: (lines: DraftLine[]) => void
@@ -35,11 +40,21 @@ interface Props {
   onTryAnother: () => void
 }
 
+// The summary first: the count, and each part's icon with its price to hold against the quote.
+// "Fix parts" or an icon opens the lines one per screen, like the results.
 export default function ConfirmStep({ lines, onChange, onCheck, checking, error, unreadable, onTryAnother }: Props) {
-  // Ids of the cards showing edit fields instead of the line as read.
+  // 'summary', or the index of the line on screen; a line that needs fixing opens at once.
+  const [view, setView] = useState<'summary' | number>(() => {
+    const bad = lines.findIndex((line) => !isValid(line))
+    return bad === -1 ? 'summary' : bad
+  })
+  // Ids of the lines showing edit fields instead of the line as read.
   const [editing, setEditing] = useState<number[]>([])
-  // The summary comes first; the line list opens under "Fix parts", or at once if a line needs fixing.
-  const [fixing, setFixing] = useState(() => !lines.every(isValid))
+
+  // Each line starts at the top of the screen, like turning a page.
+  useEffect(() => {
+    window.scrollTo({ top: 0 })
+  }, [view])
 
   function update(id: number, patch: Partial<DraftLine>) {
     onChange(lines.map((line) => (line.id === id ? { ...line, ...patch } : line)))
@@ -50,10 +65,15 @@ export default function ConfirmStep({ lines, onChange, onCheck, checking, error,
     draft.price = ''
     onChange([...lines, draft])
     setEditing([...editing, draft.id])
-    setFixing(true)
+    setView(lines.length)
   }
 
-  const canCheck = lines.length > 0 && lines.every(isValid) && !checking
+  function remove(index: number) {
+    const id = lines[index].id
+    onChange(lines.filter((line) => line.id !== id))
+    setEditing(editing.filter((e) => e !== id))
+    setView(lines.length === 1 ? 'summary' : Math.min(index, lines.length - 2))
+  }
 
   if (unreadable) {
     return (
@@ -61,134 +81,140 @@ export default function ConfirmStep({ lines, onChange, onCheck, checking, error,
         <p className="lead unreadable">{unreadable}</p>
         <div className="actions">
           <button className="secondary" onClick={addLine}>
-            + Add lines by hand
+            + Add by hand
           </button>
           <button className="primary" onClick={onTryAnother}>
-            Try another screenshot or paste text
+            Try again
           </button>
         </div>
       </section>
     )
   }
 
-  const checkButton = (
-    <button className="primary" disabled={!canCheck} onClick={onCheck}>
-      {checking ? 'Checking…' : 'Check prices'}
-    </button>
-  )
+  const icons = lines.map((line) => ({
+    type: line.part_type,
+    label: `${PART_LABEL[line.part_type]}, ${line.name || 'no name'}, ${price(line)}`,
+    problem: !isValid(line),
+  }))
 
-  if (!fixing) {
+  if (view === 'summary' || view >= lines.length) {
+    const needFixing = lines.filter((line) => !isValid(line)).length
+    const lead =
+      lines.length === 0
+        ? 'No parts yet. Add one.'
+        : needFixing > 0
+          ? `${needFixing} ${needFixing === 1 ? 'part needs' : 'parts need'} a name or price.`
+          : `We read ${lines.length} ${lines.length === 1 ? 'part' : 'parts'}. Look right?`
     return (
       <section className="card">
-        {error ? (
-          <p className="lead error">{error}</p>
-        ) : (
-          <p className="lead">
-            We read {lines.length} {lines.length === 1 ? 'part' : 'parts'}. Look right?
-          </p>
-        )}
-        <ul className="part-icons">
-          {lines.map((line) => (
-            <li key={line.id} aria-label={PART_LABEL[line.part_type]}>
-              <PartIcon type={line.part_type} />
-            </li>
-          ))}
-        </ul>
+        <p className={error ? 'lead error' : 'lead'}>{error ?? lead}</p>
+        <PartIcons
+          items={icons.map((icon, i) => ({ ...icon, caption: price(lines[i]) }))}
+          onSelect={setView}
+          onAdd={addLine}
+        />
         <div className="actions">
-          <button className="secondary" onClick={() => setFixing(true)}>
-            Fix parts
+          {lines.length > 0 && (
+            <button className="secondary" onClick={() => setView(0)}>
+              Fix parts
+            </button>
+          )}
+          <button
+            className="primary"
+            disabled={lines.length === 0 || needFixing > 0 || checking}
+            onClick={onCheck}
+          >
+            {checking ? 'Checking…' : 'Check prices'}
           </button>
-          {checkButton}
         </div>
       </section>
     )
   }
 
+  const index = view
+  const line = lines[index]
+  const isEditing = editing.includes(line.id)
+  const last = index === lines.length - 1
+
   return (
-    <section>
-      {error ? (
-        <p className="lead error">{error}</p>
+    <section aria-label={`Line ${index + 1} of ${lines.length}`}>
+      <PartIcons items={icons} current={index} onSelect={setView} small />
+      {isEditing ? (
+        <article className="card part-card">
+          <label className="field">
+            Part
+            <select value={line.part_type} onChange={(e) => update(line.id, { part_type: e.target.value as PartType })}>
+              {PART_TYPES.map((type) => (
+                <option key={type} value={type}>
+                  {PART_LABEL[type]}
+                </option>
+              ))}
+            </select>
+          </label>
+          <label className="field">
+            Name
+            <textarea
+              rows={2}
+              value={line.name}
+              placeholder="e.g. Corsair RM650e"
+              onChange={(e) => update(line.id, { name: e.target.value.replace(/\n/g, ' ') })}
+            />
+          </label>
+          <label className="field">
+            Price ($)
+            <input
+              type="number"
+              inputMode="decimal"
+              min="0"
+              step="0.01"
+              value={line.price}
+              onChange={(e) => update(line.id, { price: e.target.value })}
+            />
+          </label>
+          <div className="pager">
+            <button className="secondary danger" onClick={() => remove(index)}>
+              Delete
+            </button>
+            <button
+              className="primary"
+              disabled={!isValid(line)}
+              onClick={() => setEditing(editing.filter((id) => id !== line.id))}
+            >
+              Done
+            </button>
+          </div>
+        </article>
       ) : (
-        <p className="lead">Check each line against your quote.</p>
+        <>
+          <article className="card part-card">
+            <p className="card-context">
+              <PartIcon type={line.part_type} />
+              {PART_LABEL[line.part_type]}
+            </p>
+            {/* The user's line as read: their quote, not the app's words, so not counted. */}
+            <p className="part-name" data-words="skip">
+              {line.name || 'No name'}
+            </p>
+            <div className="part-price-row">
+              <span className="part-price" data-words="skip">
+                {price(line)}
+              </span>
+              <button className="secondary" onClick={() => setEditing([...editing, line.id])}>
+                Fix
+              </button>
+            </div>
+            {!isValid(line) && <p className="hint">Needs fixing.</p>}
+          </article>
+          <div className="pager">
+            <button className="secondary" onClick={() => setView(index === 0 ? 'summary' : index - 1)}>
+              Back
+            </button>
+            <button className="primary" onClick={() => setView(last ? 'summary' : index + 1)}>
+              {last ? 'Done' : 'Next'}
+            </button>
+          </div>
+        </>
       )}
-      {/* The user's lines as read: their quote, not the app's words, so not counted. */}
-      <ul className="part-cards" data-words="skip">
-        {lines.map((line) =>
-          editing.includes(line.id) ? (
-            <li className="card part-card" key={line.id}>
-              <label className="field">
-                Part
-                <select value={line.part_type} onChange={(e) => update(line.id, { part_type: e.target.value as PartType })}>
-                  {PART_TYPES.map((type) => (
-                    <option key={type} value={type}>
-                      {PART_LABEL[type]}
-                    </option>
-                  ))}
-                </select>
-              </label>
-              <label className="field">
-                Product name
-                <textarea
-                  rows={2}
-                  value={line.name}
-                  placeholder="e.g. Corsair RM650e"
-                  onChange={(e) => update(line.id, { name: e.target.value.replace(/\n/g, ' ') })}
-                />
-              </label>
-              <label className="field">
-                Price (USD)
-                <input
-                  type="number"
-                  inputMode="decimal"
-                  min="0"
-                  step="0.01"
-                  value={line.price}
-                  onChange={(e) => update(line.id, { price: e.target.value })}
-                />
-              </label>
-              <div className="pager">
-                <button
-                  className="secondary danger"
-                  onClick={() => {
-                    onChange(lines.filter((l) => l.id !== line.id))
-                    setEditing(editing.filter((id) => id !== line.id))
-                  }}
-                >
-                  Delete
-                </button>
-                <button
-                  className="primary"
-                  disabled={!isValid(line)}
-                  onClick={() => setEditing(editing.filter((id) => id !== line.id))}
-                >
-                  Done
-                </button>
-              </div>
-            </li>
-          ) : (
-            <li className="card part-card" key={line.id}>
-              <p className="card-context">
-                <PartIcon type={line.part_type} />
-                {PART_LABEL[line.part_type]}
-              </p>
-              <p className="part-name">{line.name || 'No name'}</p>
-              <div className="part-price-row">
-                <span className="part-price">{line.price.trim() ? `$${line.price}` : 'No price'}</span>
-                <button className="secondary" onClick={() => setEditing([...editing, line.id])}>
-                  Fix
-                </button>
-              </div>
-              {!isValid(line) && <p className="hint">This line needs a product name and a price.</p>}
-            </li>
-          ),
-        )}
-      </ul>
-      <div className="actions">
-        <button className="secondary" onClick={addLine}>
-          + Add a line
-        </button>
-        {checkButton}
-      </div>
     </section>
   )
 }

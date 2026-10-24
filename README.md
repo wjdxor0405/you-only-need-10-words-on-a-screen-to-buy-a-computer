@@ -12,9 +12,11 @@ No screen shows more than ten words that the app wrote, so a result can be read 
 
 Not counted:
 
-- buttons, the step bar, and the position line ("Part 3 of 8", "Ask the seller · 1 of 3");
-- what you gave the app: the quote text, the file name, the lines as read and the fields that edit them, and the product name as written in the proof;
+- buttons, the step dots and step name, and the position (the row of part icons above a card, "Ask the seller · 1/3");
+- what you gave the app: the quote text, the screenshot, the lines and prices as read and the fields that edit them, and the product name as written in the proof;
 - data displays in the proof: the price range bar with its legend, and the listings table.
+
+Not counted is not free. The step bar is one word, the position is icons, your quote is kept whole but shown folded (a line count for text, a thumbnail for a screenshot), and the proof names a part by the words of your line that matched a product ("…RTX 4060…"; tap for the whole name).
 
 "Show proof" replaces the card with its proof, so each is its own screen. `server/tests/test_card_text.py` checks every card for every verdict with prices up to $9,999.99.
 
@@ -37,7 +39,7 @@ The web dev server forwards `/api/*` to the server on port 8010.
 
 ## Try it
 
-- Press **Try a sample quote**, then **Read quote**, or choose `samples/sample-quote.png` as the screenshot. The sample produces every verdict.
+- Press **Try sample**, then **Read quote**, or choose `samples/sample-quote.png` as the screenshot. The sample produces every verdict.
 - On a phone: start the web server with `npm run dev -- --host` and open the Network URL it prints, from a phone on the same Wi-Fi.
 - The model is set by `OPENAI_MODEL` in `.env` (default `gpt-6-luna`). To check it reads a quote: `cd server && uv run python scripts/probe_model.py`.
 - `samples/sample-quote.png` is rendered from `samples/sample-quote.html`; the command to regenerate it is at the top of that file.

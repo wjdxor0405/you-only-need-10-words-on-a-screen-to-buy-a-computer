@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { SAMPLE_QUOTE_TEXT } from '../sampleQuote'
 
 export const IMAGE_TYPES = ['image/png', 'image/jpeg', 'image/webp']
@@ -9,6 +9,22 @@ export function imageProblem(file: File): string | null {
   if (!IMAGE_TYPES.includes(file.type)) return 'Use a PNG, JPEG, or WebP screenshot.'
   if (file.size > MAX_IMAGE_BYTES) return 'Over 5 MB. Try a smaller screenshot.'
   return null
+}
+
+// The chosen screenshot itself instead of its file name: no words, and easier to recognize.
+function Thumbnail({ file }: { file: File }) {
+  const [url, setUrl] = useState<string | null>(null)
+  useEffect(() => {
+    const objectUrl = URL.createObjectURL(file)
+    setUrl(objectUrl)
+    return () => URL.revokeObjectURL(objectUrl)
+  }, [file])
+  return url ? <img className="thumbnail" src={url} alt={file.name} /> : null
+}
+
+function lineCount(text: string) {
+  const n = text.split('\n').filter((line) => line.trim()).length
+  return `${n} ${n === 1 ? 'line' : 'lines'}`
 }
 
 interface Props {
@@ -22,11 +38,14 @@ interface Props {
 }
 
 // One lead line carries the state (explanation, ready, reading, or error), so the screen stays
-// within ten words; everything else is a button or the user's own quote.
+// within ten words. The user's quote is kept whole but shown folded: a line count for text,
+// a thumbnail for a screenshot.
 export default function UploadStep({ text, onTextChange, image, onImageChange, onRead, reading, error }: Props) {
   const [dragging, setDragging] = useState(false)
   const [fileError, setFileError] = useState<string | null>(null)
   const [pasting, setPasting] = useState(text.trim() !== '')
+  // A pasted quote folds into "11 lines"; "Edit" opens it again.
+  const [folded, setFolded] = useState(text.trim() !== '')
 
   function pick(file: File | undefined) {
     if (!file) return
@@ -40,11 +59,13 @@ export default function UploadStep({ text, onTextChange, image, onImageChange, o
   const lead = problem
     ? problem
     : reading
-      ? 'Reading… this takes a few seconds.'
+      ? 'Reading… a few seconds.'
       : image
         ? 'Screenshot ready.'
         : pasting
-          ? 'Paste the quote text.'
+          ? folded
+            ? 'Quote ready.'
+            : 'Paste the quote text.'
           : 'Is each price fair? See the proof.'
   const canRead = (image !== null || (pasting && text.trim() !== '')) && !reading
 
@@ -54,16 +75,35 @@ export default function UploadStep({ text, onTextChange, image, onImageChange, o
         {lead}
       </p>
       {pasting && !image ? (
-        <textarea
-          className="quote-text"
-          aria-label="Quote text"
-          data-words="skip"
-          rows={8}
-          value={text}
-          onChange={(e) => onTextChange(e.target.value)}
-        />
+        folded ? (
+          <div className="quote-chip">
+            <svg className="part-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M6 3h9l4 4v14H6z M15 3v4h4 M9 11h7 M9 14h7 M9 17h5" />
+            </svg>
+            <span className="quote-chip-count">{lineCount(text)}</span>
+            <button className="secondary" disabled={reading} onClick={() => setFolded(false)}>
+              Edit
+            </button>
+          </div>
+        ) : (
+          <textarea
+            className="quote-text"
+            aria-label="Quote text"
+            data-words="skip"
+            rows={8}
+            autoFocus
+            value={text}
+            onChange={(e) => {
+              onTextChange(e.target.value)
+              // Fold once a paste lands; typing by hand keeps the box open.
+              if ((e.nativeEvent as InputEvent).inputType === 'insertFromPaste' && e.target.value.trim()) {
+                setFolded(true)
+              }
+            }}
+          />
+        )
       ) : (
-        // Styled as the main button; dropping a file on it works too.
+        // Styled as the main button, so not counted; dropping a file on it works too.
         <label
           className={`drop-area${dragging ? ' dragging' : ''}${image ? ' has-file' : ''}`}
           data-words="skip"
@@ -87,7 +127,7 @@ export default function UploadStep({ text, onTextChange, image, onImageChange, o
               e.target.value = ''
             }}
           />
-          {image ? image.name : 'Choose a screenshot'}
+          {image ? <Thumbnail file={image} /> : 'Add screenshot'}
         </label>
       )}
       <div className="actions">
@@ -101,7 +141,13 @@ export default function UploadStep({ text, onTextChange, image, onImageChange, o
           </button>
         ) : (
           <>
-            <button className="secondary" onClick={() => setPasting(true)}>
+            <button
+              className="secondary"
+              onClick={() => {
+                setPasting(true)
+                setFolded(false)
+              }}
+            >
               Paste text
             </button>
             <button
@@ -110,9 +156,10 @@ export default function UploadStep({ text, onTextChange, image, onImageChange, o
                 setFileError(null)
                 onTextChange(SAMPLE_QUOTE_TEXT)
                 setPasting(true)
+                setFolded(true)
               }}
             >
-              Try a sample quote
+              Try sample
             </button>
           </>
         )}

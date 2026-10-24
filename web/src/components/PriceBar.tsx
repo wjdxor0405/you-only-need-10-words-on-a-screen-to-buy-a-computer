@@ -1,3 +1,4 @@
+import { reasonableRange, wholeUsd as usd } from '../money'
 import type { Listing, Verdict } from '../types'
 
 // Where the quoted price sits against the reasonable range (-30% to +10% of typical),
@@ -9,17 +10,9 @@ interface Props {
   verdict: Verdict
 }
 
-function usd(value: number) {
-  return `$${Math.round(value).toLocaleString('en-US')}`
-}
-
 export default function PriceBar({ quoted, typical, listings, verdict }: Props) {
   const low = typical * 0.7
   const high = typical * 1.1
-  // Shown in whole dollars rounded inward, so every dollar shown is really inside the range.
-  // Worked out from whole cents like the server, so float error can't move it by a dollar.
-  const typicalCents = Math.round(typical * 100)
-  const rangeText = `${usd(Math.ceil((typicalCents * 70) / 10000))}–${usd(Math.floor((typicalCents * 110) / 10000))}`
   const prices = listings.map((l) => l.price_usd)
   const min = Math.min(quoted, low, ...prices)
   const max = Math.max(quoted, high, ...prices)
@@ -32,7 +25,7 @@ export default function PriceBar({ quoted, typical, listings, verdict }: Props) 
   const anchor = (pos: number) => (pos < 12 ? 'start' : pos > 88 ? 'end' : 'middle')
 
   return (
-    <figure className="price-bar" aria-label={`Quoted ${usd(quoted)}, typical ${usd(typical)}, reasonable range ${rangeText}`}>
+    <figure className="price-bar" aria-label={`Quoted ${usd(quoted)}, typical ${usd(typical)}, reasonable range ${reasonableRange(typical)}`}>
       <div className="price-bar-labels top">
         <span className={`price-label quoted verdict-${verdict} anchor-${anchor(at(quoted))}`} style={{ left: `${at(quoted)}%` }}>
           Quoted {usd(quoted)}
@@ -51,8 +44,8 @@ export default function PriceBar({ quoted, typical, listings, verdict }: Props) 
           Typical (middle) {usd(typical)}
         </span>
       </div>
+      {/* The band is keyed by the range sentence under the table. */}
       <figcaption className="price-bar-legend">
-        <span><span className="legend-band" /> Reasonable range {rangeText}</span>
         <span><span className="legend-dot" /> A store listing</span>
       </figcaption>
     </figure>

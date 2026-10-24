@@ -33,6 +33,29 @@ def test_not_in_sample(part_type, name):
     assert match(line(part_type, name), prices.products).kind == "not_found"
 
 
+# The proof names the part by these words: the user's own, cut to what matched, widened to whole words.
+@pytest.mark.parametrize("part_type, name, words", [
+    ("CPU", "AMD Ryzen 5 7600 6-Core Processor", "Ryzen 5 7600"),
+    ("Motherboard", "MSI PRO B650M-A WIFI", "PRO B650M-A"),
+    ("RAM", "Corsair Vengeance 32GB (2x16GB) DDR5-6000 CL30", "Vengeance 32GB (2x16GB) DDR5-6000"),
+    ("GPU", "MSI GeForce RTX 4060 Ventus 2X 8GB", "RTX 4060"),
+    ("GPU", "rtx-4060", "rtx-4060"),
+    ("PSU", "Corsair RM650e 650W 80+ Gold", "RM650e"),
+    ("Case", "NZXT H5 Flow (Black)", "NZXT H5 Flow"),
+    ("Cooler", "DeepCool AK400 Black", "AK400"),
+    # The alias sits past a first, variant mention ("RTX 4060 Ti") that doesn't name the product.
+    ("GPU", "RTX 4060 Ti or RTX 4060 8GB", "RTX 4060"),
+])
+def test_key_words(part_type, name, words):
+    found = match(line(part_type, name), prices.products)
+    assert (found.kind, found.key_words) == ("matched", words)
+
+
+def test_unmatched_lines_have_no_key_words():
+    assert match(line("Storage", "SSD 1TB"), prices.products).key_words is None
+    assert match(line("Cooler", "Thermalright Peerless Assassin 120 SE"), prices.products).key_words is None
+
+
 def test_part_type_must_agree():
     assert match(line("CPU", "RTX 4060"), prices.products).kind == "not_found"
 

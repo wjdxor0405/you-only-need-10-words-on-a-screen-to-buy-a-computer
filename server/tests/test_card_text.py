@@ -1,7 +1,7 @@
 """Every card fits WORD_LIMIT words (prd.md > Large Type and Ten Words a Screen).
 
 A part card is counted the way it shows: part label · quoted price, verdict phrase, headline,
-and advice. The step bar, "Part N of M", and buttons don't count. The rest of each screen is
+and advice. The step bar, the row of part icons, and buttons don't count. The rest of each screen is
 counted in the browser (README > Ten words a screen).
 """
 
@@ -84,14 +84,17 @@ def test_each_question_fits_its_own_card():
 
 
 def test_proof_sentences_fit():
+    # As ResultCard.tsx writes them; a range with no spaces is one word however wide.
     # The name as written, the range bar, and the listings table are data and don't count.
-    assert count_words(f"{RULE_TEXT} {prices.note}") <= WORD_LIMIT
+    sentence = f"Reasonable: $7,000–$10,999, {RULE_TEXT}. {prices.note}"
+    assert count_words(sentence) <= WORD_LIMIT
 
 
 @pytest.mark.parametrize("text, words", [
     ("Graphics card · $9,999.99", 3),
     ("$9,401 above typical", 3),
     ("Reasonable: −30% to +10% of typical.", 6),
+    ("Reasonable: $210–$328, 70–110% of typical.", 5),
     ("We read 8 parts, $979 in total. — Look right?", 9),
 ])
 def test_count_words(text, words):
@@ -114,4 +117,4 @@ def test_reasonable_and_not_in_sample_cards_have_no_action():
     reasonable = check_line(PartLine(part_type="CPU", name="AMD Ryzen 5 7600 6-Core Processor", price_usd=199), prices)
     unknown = check_line(PartLine(part_type="Cooler", name=NOT_IN_SAMPLE, price_usd=38), prices)
     assert (reasonable.verdict, reasonable.advice) == ("reasonable", None)
-    assert (unknown.headline, unknown.advice) == ("Not in our sample data", None)
+    assert (unknown.headline, unknown.advice) == ("Not in sample data", None)

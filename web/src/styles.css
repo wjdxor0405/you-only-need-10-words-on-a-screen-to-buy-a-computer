@@ -66,9 +66,6 @@ textarea {
   padding: 20px;
 }
 
-.card h2,
-
-
 /* Buttons: every one at least --tap tall, full width on a phone */
 .primary,
 .secondary {
@@ -151,74 +148,75 @@ textarea {
   color: var(--bad-text);
 }
 
-/* Step bar */
+/* Step bar: three dots and the current step's name */
 .step-bar {
-  display: flex;
-  gap: 8px;
-  list-style: none;
-  margin: 0 0 16px;
-  padding: 0;
-}
-
-.step {
-  flex: 1;
-  display: flex;
-}
-
-.step button {
-  width: 100%;
-  min-height: var(--tap);
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 8px 12px;
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  background: var(--surface);
-  font-size: var(--text-meta);
-  font-weight: 500;
-  line-height: 1.25;
-  text-align: left;
-  color: var(--muted-text);
+  margin: 0 0 12px;
 }
 
-.step-number {
-  display: inline-grid;
-  place-items: center;
-  width: 28px;
-  height: 28px;
+.step-bar ol {
+  display: flex;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* The tap area is 44px; the dot inside is drawn by ::after. */
+.step button {
+  position: relative;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 0;
+  background: none;
+}
+
+.step button::after {
+  content: '';
+  position: absolute;
+  inset: 13px;
   border-radius: 50%;
-  border: 1px solid currentColor;
-  flex-shrink: 0;
-}
-
-.step-active button {
-  border-color: var(--accent);
-  background: var(--accent);
-  color: #fff;
+  border: 2px solid var(--muted);
+  background: var(--surface);
 }
 
 .step-done button {
-  color: var(--accent);
   cursor: pointer;
 }
 
-.step-done button:hover {
+.step-done button::after {
   border-color: var(--accent);
+  background: var(--accent);
 }
 
-.step-todo button {
-  cursor: default;
+.step-active button::after {
+  inset: 10px;
+  border-color: var(--accent);
+  background: var(--accent);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 20%, transparent);
 }
 
-@media (max-width: 560px) {
-  .step-bar {
-    gap: 6px;
-  }
-  .step button {
-    gap: 6px;
-    padding: 6px 8px;
-  }
+/* A short line joins each dot to the one before. */
+.step + .step {
+  position: relative;
+}
+
+.step + .step::before {
+  content: '';
+  position: absolute;
+  top: 21px;
+  left: -8px;
+  width: 16px;
+  height: 2px;
+  background: var(--border);
+}
+
+.step-name {
+  font-size: var(--text-meta);
+  font-weight: 600;
+  color: var(--accent);
 }
 
 /* ① Upload */
@@ -264,7 +262,7 @@ textarea {
   margin: 0 0 16px;
 }
 
-/* ② and the overview: one icon per part, colored by verdict on the overview */
+/* One icon per part: a grid on ② and the overview, a row above each card (.small) */
 .part-icons {
   list-style: none;
   margin: 0 0 16px;
@@ -275,21 +273,100 @@ textarea {
 }
 
 .part-icons li {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.part-icon-button {
   display: grid;
   place-items: center;
   width: 44px;
   height: 44px;
+  padding: 0;
   border-radius: 50%;
   background: var(--bg);
   border: 2px solid var(--verdict, var(--border));
 }
 
-.part-icons li[class^='verdict-'] .part-icon {
+button.part-icon-button {
+  cursor: pointer;
+}
+
+.part-icons li[class*='verdict-'] .part-icon {
   stroke: var(--verdict-text);
 }
 
+.part-icons li.problem .part-icon-button {
+  border-color: var(--bad);
+}
 
+.part-icon-button.add {
+  border-style: dashed;
+  border-color: var(--accent);
+  color: var(--accent);
+  font-size: 24px;
+  line-height: 1;
+}
 
+.part-icon-caption {
+  font-size: var(--text-meta);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Above a card: smaller, one row for eight parts at 360px, the one on screen filled. */
+.part-icons.small {
+  gap: 4px;
+  margin-bottom: 12px;
+}
+
+.part-icons.small .part-icon-button {
+  width: 36px;
+  height: 36px;
+}
+
+.part-icons.small .part-icon {
+  width: 20px;
+  height: 20px;
+}
+
+.part-icons li.current .part-icon-button {
+  background: var(--verdict, var(--accent));
+  border-color: var(--verdict, var(--accent));
+}
+
+.part-icons li.current .part-icon {
+  stroke: #fff;
+}
+
+/* ① A pasted quote, folded: icon, line count, Edit */
+.quote-chip {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 12px 12px 16px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg);
+}
+
+.quote-chip-count {
+  flex: 1;
+  font-weight: 600;
+}
+
+.quote-chip .secondary {
+  min-width: 96px;
+}
+
+.thumbnail {
+  display: block;
+  max-width: 100%;
+  max-height: 240px;
+  border-radius: 6px;
+}
 
 .quote-text {
   width: 100%;
@@ -512,9 +589,33 @@ textarea {
   color: var(--text);
 }
 
+/* A shortened name can be tapped for the whole one. */
+button.proof-name {
+  width: 100%;
+  min-height: 44px;
+  padding: 0;
+  border: 0;
+  background: none;
+  font-size: var(--text-meta);
+  text-align: left;
+  text-decoration: underline dotted var(--muted);
+  text-underline-offset: 4px;
+  cursor: pointer;
+}
+
 .proof .proof-rule {
   font-size: var(--text-body);
   color: var(--text);
+}
+
+/* "$210–$328" and "70–110%" break only at their spaces. */
+.nowrap {
+  white-space: nowrap;
+}
+
+.proof-rule .legend-band {
+  margin-right: 8px;
+  vertical-align: 2px;
 }
 
 

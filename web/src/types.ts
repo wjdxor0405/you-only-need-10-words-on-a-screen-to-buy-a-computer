@@ -32,6 +32,7 @@ export interface Listing {
 
 export interface LineResult {
   line: PartLine
+  key_words: null | string // the words of the name that matched, as written: "RTX 4060"
   verdict: Verdict
   headline: string
   cant_verify_reason: null | 'not_in_sample' | 'name_too_vague'

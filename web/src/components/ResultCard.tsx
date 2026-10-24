@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { reasonableRange, usd } from '../money'
 import type { LineResult, Verdict } from '../types'
 import PartIcon from './PartIcon'
 import PriceBar from './PriceBar'
@@ -17,8 +18,27 @@ function cantVerifyText(result: LineResult) {
   return 'This name fits several products in our data.'
 }
 
-export function usd(value: number) {
-  return `$${value.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 2 })}`
+// The name as the user wrote it, cut to the words that matched a product ("…RTX 4060…");
+// a tap shows it whole. Unmatched names are shown whole: those are the ones to read.
+function ProofName({ result }: { result: LineResult }) {
+  const [whole, setWhole] = useState(false)
+  const { name, part_type } = result.line
+  const words = result.key_words
+  const at = words ? name.indexOf(words) : -1
+  if (!words || at === -1 || words === name) {
+    return (
+      <p className="proof-name" data-words="skip">
+        <PartIcon type={part_type} />“{name}”
+      </p>
+    )
+  }
+  const short = `“${at > 0 ? '…' : ''}${words}${at + words.length < name.length ? '…' : ''}”`
+  return (
+    <button className="proof-name" data-words="skip" aria-expanded={whole} onClick={() => setWhole(!whole)}>
+      <PartIcon type={part_type} />
+      {whole ? `“${name}”` : short}
+    </button>
+  )
 }
 
 interface Props {
@@ -37,10 +57,7 @@ export default function ResultCard({ result, ruleText, sampleNote }: Props) {
     <article className={`card result-card verdict-${verdict}`}>
       {open ? (
         <div className="proof">
-          {/* The user's own quote text: shown as written, not counted. */}
-          <p className="proof-name" data-words="skip">
-            <PartIcon type={line.part_type} />“{line.name}”
-          </p>
+          <ProofName result={result} />
           {result.typical_price_usd !== null ? (
             <>
               <div data-words="skip">
@@ -50,8 +67,9 @@ export default function ResultCard({ result, ruleText, sampleNote }: Props) {
                   listings={result.listings}
                   verdict={verdict}
                 />
+                {/* Store, price, and date explain themselves; the header row is for screen readers. */}
                 <table className="listings">
-                  <thead>
+                  <thead className="visually-hidden">
                     <tr>
                       <th>Store</th>
                       <th>Price</th>
@@ -69,7 +87,12 @@ export default function ResultCard({ result, ruleText, sampleNote }: Props) {
                   </tbody>
                 </table>
               </div>
-              <p className="proof-rule">{ruleText}</p>
+              {/* The range in dollars and the rule behind it, in one sentence; the swatch keys the bar's band. */}
+              <p className="proof-rule">
+                <span className="legend-band" aria-hidden="true" />
+                Reasonable: <span className="nowrap">{reasonableRange(result.typical_price_usd)},</span>{' '}
+                <span className="nowrap">{ruleText}.</span>
+              </p>
               <p>{sampleNote}</p>
             </>
           ) : (
@@ -91,7 +114,7 @@ export default function ResultCard({ result, ruleText, sampleNote }: Props) {
         </>
       )}
       <button className="secondary wide" aria-expanded={open} onClick={() => setOpen(!open)}>
-        {open ? 'Back to card' : 'Show proof'}
+        {open ? 'Hide proof' : 'Show proof'}
       </button>
     </article>
   )

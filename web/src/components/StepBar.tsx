@@ -2,7 +2,7 @@ export type Step = 'upload' | 'confirm' | 'results'
 
 const STEPS: { id: Step; label: string }[] = [
   { id: 'upload', label: 'Upload' },
-  { id: 'confirm', label: 'Confirm parts' },
+  { id: 'confirm', label: 'Confirm' },
   { id: 'results', label: 'Results' },
 ]
 
@@ -11,22 +11,28 @@ interface Props {
   onGo: (step: Step) => void
 }
 
-// Earlier steps can be clicked to go back; later ones cannot.
+// Three dots and the current step's name: one word on every screen instead of seven.
+// Earlier steps' dots can be tapped to go back; later ones cannot.
 export default function StepBar({ current, onGo }: Props) {
   const currentIndex = STEPS.findIndex((s) => s.id === current)
   return (
-    <ol className="step-bar">
-      {STEPS.map((step, i) => {
-        const state = i < currentIndex ? 'done' : i === currentIndex ? 'active' : 'todo'
-        return (
-          <li key={step.id} className={`step step-${state}`}>
-            <button disabled={state !== 'done'} onClick={() => onGo(step.id)} aria-current={state === 'active' ? 'step' : undefined}>
-              <span className="step-number">{i + 1}</span>
-              {step.label}
-            </button>
-          </li>
-        )
-      })}
-    </ol>
+    <nav className="step-bar" aria-label="Steps">
+      <ol>
+        {STEPS.map((step, i) => {
+          const state = i < currentIndex ? 'done' : i === currentIndex ? 'active' : 'todo'
+          return (
+            <li key={step.id} className={`step step-${state}`}>
+              <button
+                disabled={state !== 'done'}
+                onClick={() => onGo(step.id)}
+                aria-label={`Step ${i + 1}, ${step.label}`}
+                aria-current={state === 'active' ? 'step' : undefined}
+              />
+            </li>
+          )
+        })}
+      </ol>
+      <span className="step-name">{STEPS[currentIndex].label}</span>
+    </nav>
   )
 }

@@ -23,7 +23,7 @@ Nothing is saved. Close the tab and it's gone.
 PRD ref: `prd.md > The Core Journey`.
 
 1. **Upload.** The user drops a screenshot or pastes text in step ① and presses "Read quote" → the screen sends it to the server's `/api/read` → the server asks the OpenAI model to return part lines in a fixed JSON shape → the screen shows them in step ②.
-   - "Try a sample quote" fills the text box with the sample quote; the rest is the same.
+   - "Try sample" fills in the sample quote; the rest is the same.
 2. **Confirm parts.** The user edits, deletes, or adds lines. This happens only in the screen's memory — no server call.
 3. **Results.** "Check prices" sends the confirmed lines to `/api/check` → the server matches each name to the sample price file, computes the typical price and the verdict, and adds the swap-risk note → the screen shows an overview card, one card per part, and a questions card; "Show proof" opens the evidence.
 4. **Done.** The user reads and decides. Going back to step ② and pressing "Check prices" again re-runs step 3 with the edited lines.
@@ -79,7 +79,7 @@ The Vite dev server forwards `/api/*` to port 8010, so the browser talks to one 
 From `prd.md > Look and Feel`. Defined as CSS variables in `web/src/styles.css`:
 
 - `--bg` light blue-gray (around `#f4f7fc`); `--surface` white; `--border` pale gray-blue; soft card shadow.
-- `--accent` vivid cobalt blue (around `#2f5bff`) for primary buttons and the active step; white text on it.
+- `--accent` vivid cobalt blue (around `#2f5bff`) for primary buttons and the step dots; white text on it.
 - `--ok` green, `--caution` amber, `--bad` red (reserved, not used by any verdict), `--muted` gray for Can't verify.
 - Font: `Pretendard, Inter, system-ui, sans-serif` — loaded from a CDN with system fallback.
 - Corners about 10px; generous spacing; one column, max width about 720px, centered.
@@ -92,22 +92,22 @@ From `prd.md > Look and Feel`. Defined as CSS variables in `web/src/styles.css`:
 ## Components
 
 ### Step Bar
-`web/src/components/StepBar.tsx`. Shows ① Upload → ② Confirm parts → ③ Results; highlights the current step; earlier steps are clickable to go back, later ones are not.
+`web/src/components/StepBar.tsx`. Three dots for Upload → Confirm → Results and the current step's name beside them (one word, not seven); earlier steps' dots are tappable to go back (44px tap area, labeled for screen readers), later ones are not.
 PRD ref: `prd.md > Screens and Layout`.
 
 ### Upload Step
-`web/src/components/UploadStep.tsx`. Title (`App.tsx`, on this step only) and one lead line, which also carries the state: the explanation, "Screenshot ready.", "Paste the quote text.", the loading message, or an error. "Choose a screenshot" is the image drop area styled as a button (PNG/JPEG/WebP, up to 5 MB; the format hint only appears as an error). "Paste text" opens the text box; "Try a sample quote" opens it filled in. "Read quote" appears once there is an image or text.
+`web/src/components/UploadStep.tsx`. Title (`App.tsx`, on this step only) and one lead line, which also carries the state: the explanation, "Screenshot ready.", "Quote ready.", "Paste the quote text.", "Reading… a few seconds.", or an error. "Add screenshot" is the image drop area styled as a button (PNG/JPEG/WebP, up to 5 MB; the format hint only appears as an error); once chosen, it shows the screenshot as a thumbnail instead of the file name. "Paste text" opens the text box. A paste folds the box into a chip ("11 lines", with "Edit" to open it again); typing by hand keeps it open. "Try sample" fills in the sample quote, folded. "Read quote" appears once there is an image or text. The full text is kept and sent; only its display is folded.
 PRD ref: `prd.md > Reading the Quote`, `prd.md > States and Boundaries` (First use).
 
 ### Confirm Parts Step
-`web/src/components/ConfirmStep.tsx`. Opens on a summary: "We read 8 parts. Look right?", one `PartIcon` per line, "Fix parts" and "Check prices". "Fix parts" (or any line missing a name or price) shows the editor: one large card per line (part type, product name, price in USD); "Fix" turns a card into edit fields with Delete and Done; "Add a line", "Check prices". The editor's cards are the user's lines, marked as not counted. If the server returned no lines, shows the couldn't-read message with a way back to step ①.
+`web/src/components/ConfirmStep.tsx`. Opens on a summary: "We read 8 parts. Look right?", the `PartIcons` grid with each line's price under its icon (to hold against the quote) and a "+" to add a line, "Fix parts" and "Check prices". "Fix parts" or an icon opens the lines one per screen: the `PartIcons` row (the line on screen filled), part type, the name as read in full, price, and "Fix"; Back and Next page through, and Next on the last line ("Done") returns to the summary. "Fix" turns the card into edit fields (Part, Name, Price ($)) with Delete and Done. A line missing a name or price opens at once, marked red in the icons, and the summary says how many need fixing. The user's lines and prices are marked as not counted. If the server returned no lines, shows the couldn't-read message with "+ Add by hand" and "Try again".
 PRD ref: `prd.md > Reading the Quote`, `prd.md > States and Boundaries` (Couldn't read / Partly read).
 
 ### Results Step
-`web/src/components/ResultsStep.tsx`, `ResultCard.tsx` (renamed from `ResultRow.tsx`), `PriceBar.tsx`, `PartIcon.tsx`. One card per screen; `ResultsStep` holds the card index and shows "Part N of M" with large Back and Next buttons.
-- Overview card: the one-sentence overview ("4 of 8 parts look reasonable."), "3 questions to ask." when there are any, and one `PartIcon` per part in its verdict color (labeled for screen readers).
-- Part card: `part_label` · quoted price, verdict phrase, `headline`, `advice` (when not null). "Show proof" replaces the card body with the proof: the full name as read, price range bar ("Typical (middle) $299"), each listing (store, price, date), `rule_text`, and `sample_data_note`; a Can't verify proof shows one reason sentence instead.
-- Question cards: one `ask_seller` question per card; the position line reads "Ask the seller · 1 of 3".
+`web/src/components/ResultsStep.tsx`, `ResultCard.tsx` (renamed from `ResultRow.tsx`), `PriceBar.tsx`, `PartIcons.tsx`, `PartIcon.tsx`; money formatting and the reasonable range in `web/src/money.ts`. One card per screen; `ResultsStep` holds the card index, with large Back and Next buttons.
+- Overview card: the one-sentence overview ("4 of 8 parts look reasonable."), "3 questions to ask." when there are any, and the `PartIcons` grid in verdict colors (labeled for screen readers); tapping an icon opens that part.
+- Part card: above it, the `PartIcons` row in verdict colors with the part on screen filled, in place of "Part N of M"; tapping an icon jumps to that part. The card: `part_label` · quoted price, verdict phrase, `headline`, `advice` (when not null). "Show proof" replaces the card body with the proof, and "Hide proof" brings it back: the name as written, cut to `key_words` with "…" where words were left out ("…RTX 4060…"; tap for the whole name; unmatched names whole), price range bar ("Typical (middle) $299", legend "A store listing"), each listing (store, price, date; the header row is for screen readers only), one range sentence with the band's swatch ("Reasonable: $210–$328, 70–110% of typical.", from `money.reasonableRange` and `rule_text`), and `sample_data_note`; a Can't verify proof shows one reason sentence instead.
+- Question cards: one `ask_seller` question per card; the position line reads "Ask the seller · 1/3".
 - Not-counted elements carry `data-words="skip"` (buttons, step bar, and position are skipped by tag or class), so a browser check can count every screen the same way the README describes.
 PRD ref: `prd.md > Price Verdicts`, `prd.md > Swap-Risk Flag`, `prd.md > Large Type and Ten Words a Screen`.
 
@@ -126,7 +126,8 @@ PRD ref: `prd.md > Reading the Quote`.
 - Match if the normalized name contains a normalized alias of exactly one product of the same part type (aliases live in `prices.json`, e.g., `rtx4060`, `geforcertx4060`). More than one product matching → no match, reason "name too vague."
 - An alias followed by a model-variant suffix (`ti`, `super`, `xt`, `x3d`, `x`, `k`, `f`, ...) does not count: "RTX 4060 Ti" is not an RTX 4060.
 - **Vague-name check** (also drives the swap-risk note): after removing generic words (`ssd`, `nvme`, `hdd`, `psu`, `power supply`, `ram`, `memory`, `ddr4`, `ddr5`, `case`, `cooler`, ...) and sizes/ratings (`1tb`, `650w`, `16gb`, `80+ gold`, ...), nothing that looks like a maker or model is left.
-- Results: `matched(product)`, `vague` → Can't verify "name too vague," `not_found` → Can't verify "not in our sample data."
+- Results: `matched(product, key_words)`, `vague` → Can't verify "name too vague," `not_found` → Can't verify "not in sample data."
+- `key_words` = the words of the name as written that hold the matched alias, widened to whole words: "MSI GeForce RTX 4060 Ventus 2X 8GB" → "RTX 4060". Only the user's own words, so the proof never shows a name the user didn't write; and they are exactly the words that decided the match.
 PRD ref: `prd.md > Price Verdicts` (Can't verify), `prd.md > Swap-Risk Flag`.
 
 ### Verdict Engine (server)
@@ -140,9 +141,9 @@ PRD ref: `prd.md > Price Verdicts` (Can't verify), `prd.md > Swap-Risk Flag`.
 - `ask_seller(...)` = one fixed-template question per Worth questioning / Unusually low / too-vague line, naming the part only, in plain words (e.g., "Why is the power supply $20 above typical?", "Is the graphics card new and the exact model?", "Which maker and model is the storage?"); `None` otherwise.
 - `advice(...)` = a fixed two-word action or `None`: "Ask why." (Worth questioning, Unusually low), "Ask which." (too vague, with or without swap risk), `None` (Reasonable, not in sample).
 - `part_label` = the part type in plain words: CPU → "Processor", GPU → "Graphics card", RAM → "Memory", PSU → "Power supply", Cooler → "CPU cooler", Other → "Other part"; Motherboard, Storage, Case unchanged.
-- Can't verify headlines: "No model named" (swap risk), "Name too vague" (fits several products), "Not in our sample data".
-- `WORD_LIMIT = 10` and `count_words(text)` (space-separated runs holding a letter or digit): `part_label` + quoted price + verdict phrase + `headline` + `advice` must fit, for every verdict path, with prices up to $9,999.99; so must each question, the overview sentences, and `RULE_TEXT` + `sample_data_note`. A test enforces it; a headless-browser check counts the rendered screens.
-- `RULE_TEXT` = "Reasonable: −30% to +10% of typical." Sent with every result so the screen shows the code's own rule.
+- Can't verify headlines: "No model named" (swap risk), "Name too vague" (fits several products), "Not in sample data".
+- `WORD_LIMIT = 10` and `count_words(text)` (space-separated runs holding a letter or digit): `part_label` + quoted price + verdict phrase + `headline` + `advice` must fit, for every verdict path, with prices up to $9,999.99; so must each question, the overview sentences, and the proof's range sentence + `sample_data_note`. A test enforces it; a headless-browser check counts the rendered screens.
+- `RULE_TEXT` = "70–110% of typical" (the same band as −30% to +10%). Sent with every result so the screen shows the code's own rule; the proof puts the range in dollars before it: "Reasonable: $210–$328, 70–110% of typical."
 PRD ref: `prd.md > Price Verdicts`.
 
 ### API (server)
@@ -160,6 +161,7 @@ ReadResult   { lines: PartLine[], problem: null | { kind: "unreadable" | "not_a_
 
 Listing      { store: string, price_usd: number, date: "YYYY-MM-DD" }
 LineResult   { line: PartLine,
+               key_words: null | string,       // the words of the name that matched, as written: "RTX 4060"
                verdict: "reasonable" | "worth_questioning" | "unusually_low" | "cant_verify",
                headline: string,                 // e.g. "$12 below typical"
                cant_verify_reason: null | "not_in_sample" | "name_too_vague",
@@ -208,8 +210,8 @@ devpost-basics/
 │   │   └── prices.json         # hand-made sample prices, fictional stores
 │   └── tests/
 │       ├── test_verdict.py     # boundary cases: +10%, +11%, −30%, −31%
-│       ├── test_card_text.py   # every verdict path and the questions card fit CARD_TEXT_LIMIT
-│       └── test_matcher.py     # alias match, vague names, not-in-sample
+│       ├── test_card_text.py   # every card, question, and proof sentence fits WORD_LIMIT
+│       └── test_matcher.py     # alias match, key words, vague names, not-in-sample
 ├── web/
 │   ├── package.json
 │   ├── vite.config.ts          # proxies /api to :8010
@@ -219,7 +221,8 @@ devpost-basics/
 │       ├── App.tsx             # current step, lines, results (all state lives here)
 │       ├── api.ts              # readQuote(), checkPrices()
 │       ├── types.ts            # mirrors server/app/models.py
-│       ├── sampleQuote.ts      # text for "Try a sample quote"
+│       ├── sampleQuote.ts      # text for "Try sample"
+│       ├── money.ts            # usd(), the reasonable range in whole dollars
 │       ├── styles.css          # CSS variables from Look and Feel
 │       └── components/
 │           ├── StepBar.tsx
@@ -228,6 +231,7 @@ devpost-basics/
 │           ├── ResultsStep.tsx
 │           ├── ResultCard.tsx
 │           ├── PriceBar.tsx
+│           ├── PartIcons.tsx   # icon per part: grid on ② and the overview, position row on cards
 │           └── PartIcon.tsx
 ├── samples/
 │   └── sample-quote.png        # screenshot of the sample quote, for the demo upload
@@ -253,7 +257,7 @@ No other external services.
 
 ## Important Failure Modes
 - **The model can't read the image, or it isn't a quote** → `/api/read` returns no lines and a `problem`; step ② shows "We couldn't read this image. It may be blurry, or it may not be a PC quote." with buttons to try another image or paste text. Telling blurry from not-a-quote is best-effort.
-- **OpenAI call fails** (no key, network, wrong model name) → the server answers with a plain error; step ① shows "Reading failed — check the server log," and the text box still works. "Try a sample quote" still needs the model, so the demo run is verified before recording.
+- **OpenAI call fails** (no key, network, wrong model name) → the server answers with a plain error; step ① shows "Reading failed — check the server log," and the text box still works. "Try sample" still needs the model, so the demo run is verified before recording.
 - **The model misreads a name or price** → visible and editable in step ②; never turns into a verdict silently.
 
 ## What Was Simplified and Why

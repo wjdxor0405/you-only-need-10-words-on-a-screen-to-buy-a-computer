@@ -45,6 +45,7 @@ class PriceData(BaseModel):
 
 class LineResult(BaseModel):
     line: PartLine
+    key_words: str | None  # the words of the name that matched, as written: "RTX 4060"
     verdict: Verdict
     headline: str
     cant_verify_reason: Literal["not_in_sample", "name_too_vague"] | None

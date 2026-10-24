@@ -42,19 +42,38 @@ def is_vague(name: str) -> bool:
 VARIANT_SUFFIX = re.compile(r"^(ti|super|xtx|xt|x3d|gre|ks|kf|k|f|x)(?![a-z])")
 
 
-def _names_product(compact_name: str, alias: str) -> bool:
+def _alias_at(compact_name: str, alias: str) -> int:
+    """Where the alias names the product in the compacted name, or -1."""
     start = compact_name.find(alias)
     while start != -1:
         if not VARIANT_SUFFIX.match(compact_name[start + len(alias):]):
-            return True
+            return start
         start = compact_name.find(alias, start + 1)
-    return False
+    return -1
+
+
+def key_words(name: str, alias: str) -> str | None:
+    """The words of the name as written that hold the alias, widened to whole words.
+
+    'MSI GeForce RTX 4060 Ventus 2X 8GB' with alias 'rtx4060' -> 'RTX 4060'.
+    """
+    kept = [i for i, c in enumerate(name) if c.isascii() and c.isalnum()]
+    start = _alias_at("".join(name[i].lower() for i in kept), alias)
+    if start == -1:
+        return None
+    lo, hi = kept[start], kept[start + len(alias) - 1] + 1
+    while lo > 0 and not name[lo - 1].isspace():
+        lo -= 1
+    while hi < len(name) and not name[hi].isspace():
+        hi += 1
+    return name[lo:hi]
 
 
 @dataclass
 class Match:
     kind: Literal["matched", "vague", "not_found"]
     product: Product | None = None
+    key_words: str | None = None  # the words of the name that matched, as written
 
 
 def match(line: PartLine, products: list[Product]) -> Match:
@@ -62,11 +81,12 @@ def match(line: PartLine, products: list[Product]) -> Match:
         return Match("vague")
     name = compact(line.name)
     found = [
-        p for p in products
-        if p.part_type == line.part_type and any(_names_product(name, a) for a in p.aliases)
+        (p, a) for p in products if p.part_type == line.part_type
+        for a in p.aliases if _alias_at(name, a) != -1
     ]
-    if len(found) == 1:
-        return Match("matched", found[0])
-    if len(found) > 1:
+    if len({p.id for p, _ in found}) > 1:
         return Match("vague")
+    if found:
+        product, alias = found[0]
+        return Match("matched", product, key_words(line.name, alias))
     return Match("not_found")
