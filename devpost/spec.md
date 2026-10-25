@@ -56,6 +56,9 @@ Learner-agreed: FastAPI server + React (Vite) screen — the stack the learner a
 ## Where It Runs and How Someone Tries It
 Runs locally only. Deployment: none (learner decision).
 
+- **Public repository:** https://github.com/wjdxor0405/you-only-need-10-words-on-a-screen-to-buy-a-computer (MIT license).
+- **Demo video:** not yet recorded.
+
 Requirements: Python 3.12, `uv`, Node 22, an OpenAI API key.
 
 ```
@@ -73,7 +76,7 @@ The Vite dev server forwards `/api/*` to port 8010, so the browser talks to one 
 
 **On a phone:** start the screen with `npm run dev -- --host` and open the Network URL it prints, from a phone on the same Wi-Fi.
 
-**For the demo recording:** on a phone (or a phone-sized browser window) → choose `samples/sample-quote.png` → step ② → step ③ → page through the cards; open the proof on one Reasonable card, the Worth questioning card, and a Can't verify card. Submission needs the video plus the public GitHub repo; `6-ship` handles both.
+**For the demo recording:** on a phone (or a phone-sized browser window) → choose `samples/sample-quote.png` → step ② → step ③ → page through the cards; open the proof on one Reasonable card, the Worth questioning card, and a Can't verify card. Submission needs the video plus the public GitHub repo (both linked at the top of this section).
 
 ## Look and Feel
 From `prd.md > Look and Feel`. Defined as CSS variables in `web/src/styles.css`:
