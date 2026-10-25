@@ -73,14 +73,15 @@ Build mode: fast
 
 - [x] Early usable behavior explored — after slice 1 (the verdict and evidence screen; does it convince?)
   Feedback: "Only text" → added a price range bar and part-type icons (learner: "looks fine"). Learner also chose a one-sentence overview and "Questions to ask the seller" (fixed-rule questions).
-- [ ] Final kick-the-tires exploration and feedback completed
+- [x] Final kick-the-tires exploration and feedback completed
+  Feedback: on the phone, the learner found the question cards unclear, asked whether the questions would read as an attack on the seller, asked for a review of the other screens for people who read less, and found the part icons small — each fixed and retried under Final Review. The sample screenshot was also read end to end (all 8 lines as written, every verdict once).
 
 ## Final Review
 
 - [x] Question cards say what to do with a question — learner: "I can't tell what this asks me to do" (also: who asks whom, which part it is about, who the seller is). Fix: the question in a sent-message bubble, "Copy all 3" (one numbered message, works over plain http), the part filled in the icon row, and "Ask the seller" on the part card in place of "Ask why." / "Ask which.". Retry: on the phone, open a doubtful part, tap "Ask the seller", tap "Copy all 3", and paste into a chat.
 - [x] Questions don't read as an attack on the seller — learner: "would the message feel like attacking the seller?" Fix: each question asks the seller to check, with no "why" and no dollar amount; the copied message opens with "Hi! A few quick questions before I decide:" and ends with "Thanks!". Retry: copy the sample's questions on the phone and read the pasted message as the seller would.
 - [x] Screens reviewed for people who read less and for how the seller would read them — learner asked to review the other features after the question rewording. Fix: "3 questions to ask" on the overview opens the first question (13 taps to the copied questions → 5); ✓ ! ? on every part icon; the swap-risk sentence blames the quote, not the seller; "Couldn't check prices. Try again."; Back returns to where a jump started. Retry: from the overview, tap "3 questions to ask", then Back; read the icon row without looking at colors. Learner retried all three on the phone: Back returns to the overview, the pasted message reads fine, the marks read without color but the icons could be bigger → overview icons 44 → 56px, the row above a card grows with the screen up to 44px (still one row of eight at 360px).
-- [ ] Final review complete — feedback resolved and learner confirms ready to ship
+- [x] Final review complete — feedback resolved and learner confirms ready to ship
 
 ## Code Tour and App Map
 
