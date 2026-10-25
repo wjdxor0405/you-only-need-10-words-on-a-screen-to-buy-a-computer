@@ -282,8 +282,8 @@ textarea {
 .part-icon-button {
   display: grid;
   place-items: center;
-  width: 44px;
-  height: 44px;
+  width: 56px;
+  height: 56px;
   padding: 0;
   border-radius: 50%;
   background: var(--bg);
@@ -306,8 +306,8 @@ button.part-icon-button {
   display: grid;
   place-items: center;
   box-sizing: border-box;
-  width: 20px;
-  height: 20px;
+  width: 24px;
+  height: 24px;
   border: 2px solid var(--surface);
   border-radius: 50%;
   background: var(--verdict);
@@ -319,6 +319,11 @@ button.part-icon-button {
 
 .part-icons li[class*='verdict-'] .part-icon {
   stroke: var(--verdict-text);
+}
+
+.part-icons .part-icon {
+  width: 32px;
+  height: 32px;
 }
 
 .part-icons li.problem .part-icon-button {
@@ -339,24 +344,27 @@ button.part-icon-button {
   font-variant-numeric: tabular-nums;
 }
 
-/* Above a card: smaller, one row for eight parts at 360px, the one on screen filled. */
+/* Above a card: smaller, one row for eight parts, the one on screen filled.
+   As wide as eight fit across the page (36px at 360px), up to 44px. */
 .part-icons.small {
   gap: 4px;
   margin-bottom: 12px;
 }
 
 .part-icons.small .part-icon-button {
-  width: 36px;
-  height: 36px;
+  width: min(44px, calc((100vw - 60px) / 8));
+  height: min(44px, calc((100vw - 60px) / 8));
 }
 
 .part-icons.small .part-icon {
-  width: 20px;
-  height: 20px;
+  width: 55%;
+  height: 55%;
 }
 
 /* Inside the 4px gap, so a mark doesn't touch the next icon */
 .part-icons.small .verdict-mark {
+  width: 20px;
+  height: 20px;
   right: -3px;
   bottom: -3px;
 }
