@@ -51,12 +51,6 @@ textarea {
   padding: 24px 16px 48px;
 }
 
-.page-header h1 {
-  margin: 0 0 16px;
-  font-size: 28px;
-  line-height: 1.25;
-}
-
 
 .card {
   background: var(--surface);

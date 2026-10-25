@@ -64,12 +64,7 @@ export default function App() {
 
   return (
     <main className="page">
-      {/* The title only on ①: each later screen keeps its ten words for the quote. */}
-      {step === 'upload' && (
-        <header className="page-header">
-          <h1>Quote Check</h1>
-        </header>
-      )}
+      {/* No title on screen: the project name is a sentence and would take ①'s ten words. */}
       <StepBar current={step} onGo={goTo} />
       {step === 'upload' && (
         <UploadStep
