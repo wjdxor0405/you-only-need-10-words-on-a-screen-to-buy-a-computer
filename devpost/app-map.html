@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Quote Check — App Map</title>
+<style>
+  :root {
+    --bg: #f4f7fb;
+    --surface: #ffffff;
+    --text: #1b2230;
+    --muted: #5a6475;
+    --border: #d9e0ea;
+    --accent: #2f5bff;
+    --accent-soft: #e6ecff;
+    --ok: #1a8f4c;
+    --warn: #b86e00;
+    --code-bg: #eef2f7;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #11151c;
+      --surface: #1a202a;
+      --text: #e8ecf2;
+      --muted: #9aa5b5;
+      --border: #2e3746;
+      --accent: #7d9bff;
+      --accent-soft: #232d48;
+      --ok: #4cc283;
+      --warn: #e2a04a;
+      --code-bg: #232a36;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font: 17px/1.55 system-ui, -apple-system, "Segoe UI", sans-serif;
+  }
+  main { max-width: 860px; margin: 0 auto; padding: 32px 16px 64px; }
+  h1 { font-size: 30px; line-height: 1.2; margin: 0 0 8px; }
+  h2 { font-size: 21px; margin: 40px 0 12px; }
+  p { margin: 0 0 12px; }
+  .lead { color: var(--muted); margin-bottom: 24px; }
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 16px;
+  }
+  code {
+    font: 15px/1.4 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    background: var(--code-bg);
+    border-radius: 4px;
+    padding: 1px 5px;
+    overflow-wrap: anywhere;
+  }
+  pre {
+    background: var(--code-bg);
+    border-radius: 8px;
+    padding: 12px 14px;
+    overflow-x: auto;
+    margin: 8px 0 12px;
+  }
+  pre code { background: none; padding: 0; }
+  .pieces { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
+  .pieces .card { margin: 0; }
+  .pieces h3 { font-size: 17px; margin: 0 0 6px; }
+  .pieces p { color: var(--muted); margin: 0; font-size: 16px; }
+  /* On a phone the diagram keeps a readable size and scrolls sideways inside its card. */
+  .diagram { overflow-x: auto; }
+  svg { width: 100%; min-width: 640px; height: auto; display: block; }
+  svg .box { fill: var(--surface); stroke: var(--border); stroke-width: 1.5; }
+  svg .box.kernel { stroke: var(--accent); stroke-width: 2.5; }
+  svg .box.external { stroke-dasharray: 6 4; }
+  svg text { fill: var(--text); font: 14px system-ui, sans-serif; }
+  svg text.small { fill: var(--muted); font: 12.5px ui-monospace, Menlo, Consolas, monospace; }
+  svg .arrow { stroke: var(--muted); stroke-width: 1.5; fill: none; marker-end: url(#head); }
+  svg #head path { fill: var(--muted); }
+  ol.route { padding-left: 0; list-style: none; counter-reset: stop; margin: 0; }
+  ol.route > li { counter-increment: stop; position: relative; padding-left: 48px; margin-bottom: 20px; }
+  ol.route > li::before {
+    content: counter(stop);
+    position: absolute; left: 0; top: 0;
+    width: 32px; height: 32px; border-radius: 50%;
+    display: grid; place-items: center;
+    background: var(--accent-soft); color: var(--accent); font-weight: 700;
+  }
+  ol.route h3 { font-size: 17px; margin: 4px 0 4px; }
+  table { width: 100%; border-collapse: collapse; font-size: 16px; }
+  th, td { text-align: left; vertical-align: top; padding: 8px 6px; border-top: 1px solid var(--border); }
+  th { color: var(--muted); font-weight: 600; border-top: none; }
+  details { margin-top: 8px; }
+  summary { cursor: pointer; color: var(--accent); font-weight: 600; }
+  summary:focus-visible, a:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+  .note { color: var(--muted); font-size: 15px; }
+  @media (max-width: 560px) {
+    table, thead, tbody, tr, th, td { display: block; }
+    thead { display: none; }
+    td { border-top: none; padding: 2px 0; }
+    tr { border-top: 1px solid var(--border); padding: 8px 0; }
+  }
+</style>
+</head>
+<body>
+<main>
+  <h1>Quote Check — App Map</h1>
+  <p class="lead">A take-home guide to where things live. Quote Check reads a PC quote you were given and shows, part by part, whether each price is reasonable and why — or an honest "can't verify". A language model only reads the quote; plain code decides every verdict.</p>
+
+  <h2>The main pieces</h2>
+  <div class="pieces">
+    <div class="card">
+      <h3>The screen</h3>
+      <p>React + TypeScript in <code>web/src/</code>. Three steps — ① Upload, ② Confirm, ③ Results — held in <code>App.tsx</code>. Nothing is saved.</p>
+    </div>
+    <div class="card">
+      <h3>The server</h3>
+      <p>FastAPI in <code>server/app/main.py</code>, two endpoints: <code>/api/read</code> and <code>/api/check</code>.</p>
+    </div>
+    <div class="card">
+      <h3>The verdict rules</h3>
+      <p><code>server/app/verdict.py</code> and <code>matcher.py</code>: the median of sample listings and a fixed +10% / −30% band. Pure functions.</p>
+    </div>
+    <div class="card">
+      <h3>Data and the model</h3>
+      <p>Hand-made sample prices in <code>server/data/prices.json</code>. One OpenAI call in <code>quote_reader.py</code> turns a screenshot or text into part lines.</p>
+    </div>
+  </div>
+
+  <h2>One action, end to end: "Check prices"</h2>
+  <div class="card">
+    <div class="diagram" tabindex="0" aria-label="Diagram, scrolls sideways on narrow screens">
+    <svg viewBox="0 0 800 330" role="img" aria-labelledby="diagram-title diagram-desc">
+      <title id="diagram-title">What happens when you press Check prices</title>
+      <desc id="diagram-desc">The Confirm screen calls handleCheck in App.tsx, which posts the lines to /api/check. The server's check_line matches each line against prices.json and applies the verdict rule, then the Results screen shows one card per part and the questions for the seller. Before that, Read quote sends the screenshot to the model, which only reads it into part lines.</desc>
+      <defs>
+        <marker id="head" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+          <path d="M0 0 L10 5 L0 10 z"/>
+        </marker>
+      </defs>
+      <!-- Earlier step: reading the quote -->
+      <rect class="box" x="10" y="10" width="230" height="64" rx="10"/>
+      <text x="24" y="36">① Read quote</text>
+      <text class="small" x="24" y="58">readQuote → /api/read</text>
+      <rect class="box external" x="290" y="10" width="230" height="64" rx="10"/>
+      <text x="304" y="36">OpenAI model (reads only)</text>
+      <text class="small" x="304" y="58">quote_reader.read_quote</text>
+      <path class="arrow" d="M240 42 H286"/>
+      <path class="arrow" d="M405 74 V104 H125 V126"/>
+      <text class="small" x="140" y="98">part lines you confirm on ②</text>
+
+      <!-- The action -->
+      <rect class="box" x="10" y="130" width="230" height="72" rx="10"/>
+      <text x="24" y="158">② Check prices</text>
+      <text class="small" x="24" y="180">App.tsx handleCheck</text>
+      <text class="small" x="24" y="196">api.ts checkPrices</text>
+      <rect class="box kernel" x="290" y="130" width="250" height="72" rx="10"/>
+      <text x="304" y="158">POST /api/check</text>
+      <text class="small" x="304" y="180">main.py check_line</text>
+      <text class="small" x="304" y="196">match · judge · ask_seller</text>
+      <rect class="box" x="590" y="130" width="200" height="72" rx="10"/>
+      <text x="604" y="158">Sample prices</text>
+      <text class="small" x="604" y="180">server/data/</text>
+      <text class="small" x="604" y="196">prices.json</text>
+      <path class="arrow" d="M240 166 H286"/>
+      <path class="arrow" d="M540 166 H586"/>
+      <path class="arrow" d="M415 202 V246"/>
+
+      <!-- The result -->
+      <rect class="box" x="210" y="250" width="410" height="70" rx="10"/>
+      <text x="224" y="278">③ Results: overview → one card per part → questions</text>
+      <text class="small" x="224" y="300">ResultsStep.tsx · ResultCard.tsx · sellerMessage</text>
+    </svg>
+    </div>
+    <p class="note">Solid blue outline: the kernel (price evidence). Dashed: an external service.</p>
+  </div>
+
+  <h2>Reference route — three stops</h2>
+  <p class="note">A route to follow in your editor. Search for the name in each file; line numbers drift.</p>
+  <ol class="route">
+    <li>
+      <h3><code>web/src/App.tsx</code> → <code>handleCheck</code></h3>
+      <p>Pressing "Check prices" on ② sends the lines you confirmed to the server through <code>checkPrices</code> in <code>web/src/api.ts</code>, then moves to ③. A failure keeps you on ② with "Couldn't check prices. Try again."</p>
+    </li>
+    <li>
+      <h3><code>server/app/main.py</code> → <code>check_line</code></h3>
+      <p>For each line: <code>match</code> (<code>matcher.py</code>) finds the sample product, or says the name is too vague or not in the sample — that becomes Can't verify. Otherwise <code>typical_price_cents</code> takes the median listing and <code>judge</code> (<code>verdict.py</code>) applies the band. <code>ask_seller</code> writes the question from a fixed template; the model never writes verdict text.</p>
+      <details>
+        <summary>The rule itself</summary>
+<pre><code>def judge(quoted_usd: float, typical_cents: Fraction) -&gt; Verdict:
+    quoted_cents = to_cents(quoted_usd)
+    if quoted_cents * 100 &gt; typical_cents * 110:
+        return "worth_questioning"
+    if quoted_cents * 100 &lt; typical_cents * 70:
+        return "unusually_low"
+    return "reasonable"</code></pre>
+        <p class="note">Whole cents and a Fraction median keep the edges exact: 10% above is still Reasonable.</p>
+      </details>
+    </li>
+    <li>
+      <h3><code>web/src/components/ResultsStep.tsx</code> → <code>ResultsStep</code></h3>
+      <p>One card per screen: the overview, each part (<code>ResultCard.tsx</code>, with "Show proof"), then each question in a message bubble. <code>sellerMessage</code> builds the text "Copy all 3" puts on the clipboard. The icon row above each card is <code>PartIcons.tsx</code>.</p>
+    </li>
+  </ol>
+
+  <h2>To change this, start here</h2>
+  <div class="card">
+    <table>
+      <thead><tr><th>To change…</th><th>Start in</th><th>Then check</th></tr></thead>
+      <tbody>
+        <tr><td>The +10% / −30% band</td><td><code>server/app/verdict.py</code> → <code>judge</code>, <code>RULE_TEXT</code></td><td><code>server/tests/test_verdict.py</code></td></tr>
+        <tr><td>Sample products and prices</td><td><code>server/data/prices.json</code></td><td><code>server/tests/test_matcher.py</code></td></tr>
+        <tr><td>Card text or a seller question</td><td><code>verdict.py</code> → <code>headline</code>, <code>ask_seller</code></td><td><code>server/tests/test_card_text.py</code> (ten words a card)</td></tr>
+        <tr><td>The copied message's opening and closing</td><td><code>ResultsStep.tsx</code> → <code>sellerMessage</code></td><td>Copy on a phone and paste into a chat</td></tr>
+        <tr><td>What the model pulls out of a quote</td><td><code>server/app/quote_reader.py</code> → <code>INSTRUCTIONS</code></td><td><code>server/scripts/probe_model.py</code>, then <code>samples/sample-quote.png</code> in the app</td></tr>
+        <tr><td>Colors, type sizes, icon sizes</td><td><code>web/src/styles.css</code> → <code>:root</code>, <code>.part-icon-button</code></td><td>A 360px-wide window: one row of eight icons above a card</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>A practice to reuse</h2>
+  <div class="card">
+    <p><strong>When it works on your machine but not on the user's device, make the test reproduce the device before trusting a fix.</strong></p>
+    <p>On a phone (Android Chrome 155) the page went blank after "Read quote", while the automated walk in desktop Chrome 144 passed. The phone's error, sent to the server log, pointed at a scroll-to-top effect: newer Chrome returns a Promise from <code>window.scrollTo</code>, and an arrow function without braces handed it to React as a cleanup function. The walk was changed so <code>scrollTo</code> returns a Promise; it then failed on the old build and passed on the fixed one, and the phone confirmed the fix.</p>
+<pre><code>// web/src/App.tsx — braces, so the effect returns nothing
+useEffect(() =&gt; {
+  window.scrollTo({ top: 0 })
+}, [step])</code></pre>
+    <p class="note">Recorded in <code>devpost/checklist.md</code> → Revisions ("Scroll-to-top effects now return nothing"). The same move helps on any project: when a bug shows up only for users, copy their condition into your own check, see the check fail, then see it pass.</p>
+  </div>
+
+  <h2>Run it again</h2>
+  <div class="card">
+<pre><code># once
+cp .env.example .env            # then put OPENAI_API_KEY in .env
+cd server &amp;&amp; uv sync
+cd ../web &amp;&amp; npm install
+
+# every time — two terminals
+cd server &amp;&amp; uv run uvicorn app.main:app --reload --port 8010
+cd web &amp;&amp; npm run dev           # open http://localhost:5173</code></pre>
+    <p class="note">"Try sample" on ① fills in a sample quote. This map is a snapshot of commit <code>b0b8a7a</code>; the code can drift from it.</p>
+  </div>
+</main>
+</body>
+</html>

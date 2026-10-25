@@ -85,9 +85,11 @@ Build mode: fast
 
 ## Code Tour and App Map
 
-- [ ] Learning activity complete — guided route, focused alternative, prior practice connected, or brief recap
+- [x] Learning activity complete — guided route, focused alternative, prior practice connected, or brief recap
+  Brief recap (the learner chose the short form; video and submission are next): connected to practice that already happened during the build — the phone-only blank screen, traced from the phone's error in the server log to the scroll-to-top effect, reproduced by making `scrollTo` return a Promise in the headless walk (failed before the fix, passed after), and confirmed on the phone. No new hands-on activity.
 - [ ] Optional edit and transfer reflection addressed — offered/declined/already covered/not applicable as appropriate
-- [ ] `devpost/app-map.html` generated from finished code, checked, and shown, including a project-grounded practice to reuse
+- [x] `devpost/app-map.html` generated from finished code, checked, and shown, including a project-grounded practice to reuse
+  From commit `b0b8a7a`: the "Check prices" action (`App.tsx` `handleCheck` → `main.py` `check_line` → `ResultsStep.tsx`), change-here pointers, and the device-reproduction practice. Every path and symbol checked against the source; rendered with scripts off at 390px (light and dark) and 860px with no page-wide horizontal scroll.
 
 Activity and evidence:
 Route and stops:
