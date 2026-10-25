@@ -57,7 +57,7 @@ Learner-agreed: FastAPI server + React (Vite) screen — the stack the learner a
 Runs locally only. Deployment: none (learner decision).
 
 - **Public repository:** https://github.com/wjdxor0405/you-only-need-10-words-on-a-screen-to-buy-a-computer (MIT license).
-- **Demo video:** not yet recorded.
+- **Demo video:** https://www.youtube.com/watch?v=y97zbmorzm8 (public, 1:37, captions without narration).
 
 Requirements: Python 3.12, `uv`, Node 22, an OpenAI API key.
 
