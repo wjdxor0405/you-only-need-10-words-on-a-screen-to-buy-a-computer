@@ -49,3 +49,7 @@ The web dev server forwards `/api/*` to the server on port 8010.
 ```
 cd server && uv run pytest
 ```
+
+## License
+
+MIT — see [LICENSE](LICENSE).
