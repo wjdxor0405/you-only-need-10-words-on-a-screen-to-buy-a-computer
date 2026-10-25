@@ -3,7 +3,7 @@ doc: spec
 status: approved
 ---
 
-# Quote Check (working title) — Technical Spec
+# You Only Need 10 Words On A Screen To Buy A Computer — Technical Spec
 
 ## How This Works, In Plain Language
 There are two programs running on your laptop.

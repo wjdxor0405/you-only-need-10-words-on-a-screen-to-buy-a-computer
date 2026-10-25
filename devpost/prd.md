@@ -3,7 +3,7 @@ doc: prd
 status: approved
 ---
 
-# Quote Check (working title) — Product Requirements
+# You Only Need 10 Words On A Screen To Buy A Computer — Product Requirements
 
 A pre-purchase check for people who don't want to read long text, readable on a phone without zooming: upload or paste a PC quote you were given, and see, part by part, whether each price is reasonable and why — or an honest "can't verify."
 Source: `scope.md > The Unique Kernel`, `scope.md > Who It's For`.
@@ -150,4 +150,4 @@ Added during the build: the quote arrives on a phone, the user should decide one
 - Accounts, login, or a database.
 
 ## Open Questions
-- **Project name (can wait):** "Quote Check" is a working title; the learner names it for submission.
+- **Project name** (resolved in 6-ship): the learner named it "You Only Need 10 Words On A Screen To Buy A Computer"; "Quote Check" was the working title. No screen shows the name (see Product Decisions).

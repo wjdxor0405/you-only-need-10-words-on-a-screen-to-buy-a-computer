@@ -17,7 +17,7 @@ MAX_IMAGE_BYTES = 5 * 1024 * 1024
 load_dotenv(Path(__file__).resolve().parents[2] / ".env")
 log = logging.getLogger("uvicorn.error")
 
-app = FastAPI(title="Quote Check")
+app = FastAPI(title="You Only Need 10 Words On A Screen To Buy A Computer")
 prices = PriceData.model_validate(json.loads(PRICES_PATH.read_text()))
 
 

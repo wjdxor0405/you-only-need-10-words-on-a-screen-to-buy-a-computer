@@ -3,7 +3,7 @@ doc: scope
 status: approved
 ---
 
-# Quote Check (working title)
+# You Only Need 10 Words On A Screen To Buy A Computer
 
 A pre-purchase check for people who don't want to read long text, readable on a phone without zooming: paste or upload a PC quote you were given, and see, part by part, whether the price is reasonable and why — or an honest "can't verify."
 

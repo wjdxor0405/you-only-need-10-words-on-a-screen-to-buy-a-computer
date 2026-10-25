@@ -1,4 +1,4 @@
-# Quote Check
+# You Only Need 10 Words On A Screen To Buy A Computer
 
 A pre-purchase check for people who don't want to read long text: upload a screenshot of a PC quote you were given, or paste its text, and see, part by part, whether each price is reasonable and why — or an honest "can't verify." No PC knowledge needed.
 
