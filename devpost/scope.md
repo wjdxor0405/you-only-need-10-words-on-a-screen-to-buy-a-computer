@@ -5,15 +5,15 @@ status: approved
 
 # Quote Check (working title)
 
-A pre-purchase check for PC beginners, readable on a phone without zooming: paste or upload a PC quote you were given, and see, part by part, whether the price is reasonable and why — or an honest "can't verify."
+A pre-purchase check for people who don't want to read long text, readable on a phone without zooming: paste or upload a PC quote you were given, and see, part by part, whether the price is reasonable and why — or an honest "can't verify."
 
 ## The Unique Kernel
-**Price evidence.** Every verdict comes with the reason a beginner can follow ("similar listings sell for about X"), and when there is no evidence the tool says "can't verify" instead of guessing. Honesty about what it doesn't know is part of the kernel, not an error state.
+**Price evidence.** Every verdict comes with a reason anyone can follow without knowing PCs ("similar listings sell for about X"), and when there is no evidence the tool says "can't verify" instead of guessing. Honesty about what it doesn't know is part of the kernel, not an error state.
 
 ## Who It's For
-Someone who doesn't know computers and has been handed a quote — by a shop, a friend, or an influencer's build list — and is hesitating before paying: "Can I trust this price, these parts?" Today they either trust the person who gave it to them or try reviews they can't fully trust (ads, fake reviews).
+Someone who doesn't want to read long text and has been handed a PC quote — by a shop, a friend, or an influencer's build list — and is hesitating before paying: "Can I trust this price, these parts?" Today they either trust the person who gave it to them or read their way through reviews they can't fully trust (ads, fake reviews), spec sheets, and listings. Knowing PCs is not part of the definition: a beginner is one such person, not the only one.
 
-**Demo persona** (revised during the build): a parent paying for their teenager's first gaming PC. The teen picked the parts from videos; the parent may play games but has never had a reason to learn parts or fair prices. The shop's quote arrives on their phone.
+**Demo persona** (revised twice during the build): the video's narrator, speaking for themselves — someone who doesn't want to read long text. A shop's PC quote arrives on their phone, and they want to know whether the prices are fair without reading reviews or spec sheets. Earlier: a parent paying for their teenager's first gaming PC (`prd.md > Product Decisions`).
 
 ## The Core Loop
 They paste the quote they received → each line comes back with a simple verdict and its evidence → they read it without having to think hard, and decide whether to buy.
@@ -30,7 +30,7 @@ Finish one project end to end, from an empty folder to submission, in a short ti
 
 ## What "Working" Looks Like
 The learner's own definition: the user sees the evidence and **is convinced** — that is when it is "done."
-For the demo: paste a sample quote → a per-part result appears, with price evidence on the reasonable lines and an honest "can't verify" on at least one line. The "oh" beat is a beginner reading a line and understanding *why* without knowing anything about PCs — on a phone, without zooming.
+For the demo: paste a sample quote → a per-part result appears, with price evidence on the reasonable lines and an honest "can't verify" on at least one line. The "oh" beat is someone who won't read long text reading one line and understanding *why*, without knowing anything about PCs — on a phone, without zooming.
 
 ## The POC Boundary
 - One screen: quote in, per-part verdicts with evidence out.

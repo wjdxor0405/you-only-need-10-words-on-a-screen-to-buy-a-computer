@@ -1,6 +1,6 @@
 # Quote Check
 
-A pre-purchase check for PC beginners: upload a screenshot of a PC quote you were given, or paste its text, and see, part by part, whether each price is reasonable and why — or an honest "can't verify."
+A pre-purchase check for people who don't want to read long text: upload a screenshot of a PC quote you were given, or paste its text, and see, part by part, whether each price is reasonable and why — or an honest "can't verify." No PC knowledge needed.
 
 A language model only *reads* the quote into part lines, which you confirm. The verdicts come from plain code: the median of sample listings and a fixed +10% / −30% rule, shown on screen.
 
